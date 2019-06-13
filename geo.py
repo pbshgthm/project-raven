@@ -16,19 +16,20 @@ print(len(data))
 
 
 def extract_loc(place):
+    print(place)
     geo=place['geometry']
     crd=(geo['location']['lat'],geo['location']['lng'])
-    bound=((geo['bounds']['northeast']['lat'],
-                             geo['viewport']['northeast']['lng']),
-                            (geo['viewport']['southwest']['lat'],
-                             geo['viewport']['southwest']['lng']))
+    #bound=((geo['bounds']['northeast']['lat'],
+    #                         geo['viewport']['northeast']['lng']),
+    #                        (geo['viewport']['southwest']['lat'],
+    #                         geo['viewport']['southwest']['lng']))
 
     add=place['formatted_address']
-    return({'crd':crd,'bound':bound,'add':add})
+    return({'crd':crd,'add':add})
 
 
 child_data=[]
-for i in data:
+for i in data[224:227]:
     child=i
     print(child['id'])
 
@@ -45,12 +46,10 @@ for i in data:
 
     native=extract_loc(nr['results'][0])
     child['n_crd']=native['crd']
-    child['n_bound']=native['bound']
     child['n_add']=native['add']
 
     raid=extract_loc(rr['results'][0])
     child['r_crd']=raid['crd']
-    child['r_bound']=raid['bound']
     child['r_add']=raid['add']
 
     child_data.append(child)
