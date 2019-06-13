@@ -16,7 +16,6 @@ print(len(data))
 
 
 def extract_loc(place):
-    print(place)
     geo=place['geometry']
     crd=(geo['location']['lat'],geo['location']['lng'])
     #bound=((geo['bounds']['northeast']['lat'],
@@ -29,7 +28,7 @@ def extract_loc(place):
 
 
 child_data=[]
-for i in data[224:227]:
+for i in data:
     child=i
     print(child['id'])
 
