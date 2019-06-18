@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
-    <script src="heatmap.json"></script>
+    <script src="heatmap2.json"></script>
     <title>Project Raven</title>
     <style>
       .mapbox-logo{
@@ -35,6 +35,7 @@
       	geo['type']='FeatureCollection';
       	geo['features']=[];
         for(var i=0;i<crds.length;i++){
+          if(crds[i]=="")continue
           var c={
       			"type":"Feature",
       			"properties": {
@@ -55,7 +56,7 @@
       map.on('load', function(){
               map.addSource('earthquakes', {
                   "type": "geojson",
-                  "data": toGeojson(hm_data['n'])
+                  "data": toGeojson(hm_data['n_v'])
               });
 
               map.addLayer({
@@ -65,13 +66,15 @@
                     "maxzoom": 13,
                     "paint": {
                         // Increase the heatmap weight based on frequency and property magnitude
+                        ///*
                         "heatmap-weight": [
                             "interpolate",
                             ["linear"],
                             ["get", "val"],
                             0, 0,
-                            60, 2
+                            20, 1
                             ],
+                        //*/
                         // Increase the heatmap color weight weight by zoom level
                         // heatmap-intensity is a multiplier on top of heatmap-weight
                         "heatmap-intensity": [
@@ -79,7 +82,7 @@
                             ["linear"],
                             ["zoom"],
                             0, 1,
-                            22, 5
+                            50, 2
                             ],
                         // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
                         // Begin color ramp at 0-stop with a 0-transparancy color
@@ -92,7 +95,7 @@
                               0.10, "#C5E1A5",
                               0.20, "#FFCA28",
                               0.30, "#FFA726",
-                              0.999, "#FF7043",
+                              0.99, "#FF7043",
                               1, "#ef5350"
                               ],
                           // Adjust the heatmap radius by zoom level
@@ -100,8 +103,8 @@
                               "interpolate",
                               ["linear"],
                               ["zoom"],
-                              0, 3,
-                              9, 30
+                              0, 5,
+                              9, 15
                               ],
               // Transition from heatmap to circle layer by zoom level
                           "heatmap-opacity": [

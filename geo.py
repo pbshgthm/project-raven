@@ -21,14 +21,17 @@ def extract_loc(place):
     add=place['Address']['Label']
     return({'crd':crd,'add':add})
 
+with open('partial.json') as file:
+    child_data=json.loads(file.read())
 
-child_data=[]
+
+
+
 for i in data:
     child=i
     print(child['id'])
 
-
-    '''
+    #'''
     nr = requests.get(api_url+child['n_dist']+','+child['n_state']).json()['Response']['View']
     if len(nr) == 0:
         print('Native not found : ', child['id'])
@@ -46,7 +49,8 @@ for i in data:
     raid=extract_loc(rr[0]["Result"][0]['Location'])
     child['r_crd']=raid['crd']
     child['r_add']=raid['add']
-    '''
+    #'''
+
 
     nv=requests.get(api_url+child['n_vil']+','+child['n_state']).json()['Response']['View']
     if len(nv) == 0:
