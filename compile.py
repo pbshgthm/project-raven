@@ -63,7 +63,8 @@ for i in data:
 
 
 new_data=[]
-for i in data[:10]:
+for i in data:
+    print(i["id"])
     child=i
     if i['n_v_crd'] == "":
         print(i['n_vil'])
