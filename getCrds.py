@@ -59,7 +59,6 @@ for i in data:
         child['native']['vil']=fill_blank(child['native']['vil'])
     else:
         q=st+'&searchtext='+vl
-        print(q)
         req=requests.get(api_url+q).json()['Response']['View']
         if len(req) ==0:
             child['native']['vil']=fill_blank(child['native']['vil'])
@@ -74,7 +73,6 @@ for i in data:
         child['native']['ps']=fill_blank(child['native']['ps'])
     else:
         q=st+'&searchtext='+vl
-        print(q)
         req=requests.get(api_url+q).json()['Response']['View']
         if len(req) ==0:
             child['native']['ps']=fill_blank(child['native']['ps'])
@@ -89,7 +87,6 @@ for i in data:
         child['raid']['vil']=fill_blank(child['raid']['vil'])
     else:
         q=st+'&searchtext='+vl
-        print(q)
         req=requests.get(api_url+q).json()['Response']['View']
         if len(req) ==0:
             child['raid']['vil']=fill_blank(child['raid']['vil'])
@@ -104,7 +101,6 @@ for i in data:
         child['raid']['ps']=fill_blank(child['raid']['ps'])
     else:
         q=st+'&searchtext='+vl
-        print(q)
         req=requests.get(api_url+q).json()['Response']['View']
         if len(req) ==0:
             child['raid']['ps']=fill_blank(child['raid']['ps'])
