@@ -2,501 +2,69 @@
     {
         "paramt": "",
         "emrel": "",
-        "r_date": "18/01/2005",
+        "r_date": "09/04/2005",
         "raid": {
             "ps": {
-                "name": "Handia",
+                "name": "Badarpur",
                 "crd": [
-                    82.18698,
-                    25.36347
+                    77.30348,
+                    28.50738
                 ],
-                "add": "Handia, Prayagraj, UP, IND",
+                "add": "Delhi, South, DL, IND",
                 "meta": [
-                    "city",
+                    "district",
                     1.0
                 ]
             },
             "vil": {
-                "name": "Paklor & Belari",
+                "name": "Badarpur",
                 "crd": [
-                    77.49707,
-                    30.15363
+                    77.30348,
+                    28.50738
                 ],
-                "add": "Behat, Saharanpur, UP, IND",
+                "add": "Delhi, South, DL, IND",
                 "meta": [
                     "district",
-                    0.85
-                ]
-            },
-            "area": "Allahabad, Uttar Pradesh, India"
-        },
-        "age": 18,
-        "since": -1,
-        "brought": "",
-        "task": "Carpet Weaving",
-        "paypar": "no",
-        "indst": "Carpet Industry",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Chhatarpur",
-                "crd": [
-                    84.19594,
-                    24.37599
-                ],
-                "add": "Chhatarpur, Palamu, JH, IND",
-                "meta": [
-                    "city",
                     1.0
                 ]
             },
-            "vil": {
-                "name": "Aakabaka",
-                "crd": [
-                    84.27968,
-                    24.54264
-                ],
-                "add": "Pipra, Palamu, JH, IND",
-                "meta": [
-                    "district",
-                    0.72
-                ]
-            },
-            "area": "Palamu, Jharkhand, India"
-        },
-        "id": "CH000001",
-        "emp_ind": "EM000001"
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "18/01/2005",
-        "raid": {
-            "ps": {
-                "name": "Handia",
-                "crd": [
-                    82.18698,
-                    25.36347
-                ],
-                "add": "Handia, Prayagraj, UP, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
-            },
-            "vil": {
-                "name": "Paklor & Belari",
-                "crd": [
-                    77.49707,
-                    30.15363
-                ],
-                "add": "Behat, Saharanpur, UP, IND",
-                "meta": [
-                    "district",
-                    0.85
-                ]
-            },
-            "area": "Allahabad, Uttar Pradesh, India"
-        },
-        "age": 13,
-        "since": -1,
-        "brought": "",
-        "task": "Carpet Weaving",
-        "paypar": "no",
-        "indst": "Carpet Industry",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Chhatarpur",
-                "crd": [
-                    84.19594,
-                    24.37599
-                ],
-                "add": "Chhatarpur, Palamu, JH, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
-            },
-            "vil": {
-                "name": "Churwahi",
-                "crd": [
-                    84.27968,
-                    24.54264
-                ],
-                "add": "Pipra, Palamu, JH, IND",
-                "meta": [
-                    "district",
-                    0.72
-                ]
-            },
-            "area": "Palamu, Jharkhand, India"
-        },
-        "id": "CH000002",
-        "emp_ind": "EM000001"
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "18/01/2005",
-        "raid": {
-            "ps": {
-                "name": "Handia",
-                "crd": [
-                    82.18698,
-                    25.36347
-                ],
-                "add": "Handia, Prayagraj, UP, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
-            },
-            "vil": {
-                "name": "Paklor & Belari",
-                "crd": [
-                    77.49707,
-                    30.15363
-                ],
-                "add": "Behat, Saharanpur, UP, IND",
-                "meta": [
-                    "district",
-                    0.85
-                ]
-            },
-            "area": "Allahabad, Uttar Pradesh, India"
+            "area": "South East Delhi, Delhi, India"
         },
         "age": 15,
         "since": -1,
         "brought": "",
-        "task": "Carpet Weaving",
-        "paypar": "no",
-        "indst": "Carpet Industry",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Vishrampur",
-                "crd": [
-                    83.92613,
-                    24.24986
-                ],
-                "add": "Bishrampur, Palamu, JH, IND",
-                "meta": [
-                    "city",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Ithku",
-                "crd": [
-                    84.27968,
-                    24.54264
-                ],
-                "add": "Pipra, Palamu, JH, IND",
-                "meta": [
-                    "district",
-                    0.79
-                ]
-            },
-            "area": "Palamu, Jharkhand, India"
-        },
-        "id": "CH000003",
-        "emp_ind": "EM000001"
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "18/01/2005",
-        "raid": {
-            "ps": {
-                "name": "Handia",
-                "crd": [
-                    82.18698,
-                    25.36347
-                ],
-                "add": "Handia, Prayagraj, UP, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
-            },
-            "vil": {
-                "name": "Paklor & Belari",
-                "crd": [
-                    77.49707,
-                    30.15363
-                ],
-                "add": "Behat, Saharanpur, UP, IND",
-                "meta": [
-                    "district",
-                    0.85
-                ]
-            },
-            "area": "Allahabad, Uttar Pradesh, India"
-        },
-        "age": 15,
-        "since": -1,
-        "brought": "",
-        "task": "Carpet Weaving",
-        "paypar": "no",
-        "indst": "Carpet Industry",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Vishrampur",
-                "crd": [
-                    83.92613,
-                    24.24986
-                ],
-                "add": "Bishrampur, Palamu, JH, IND",
-                "meta": [
-                    "city",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Ithku",
-                "crd": [
-                    84.27968,
-                    24.54264
-                ],
-                "add": "Pipra, Palamu, JH, IND",
-                "meta": [
-                    "district",
-                    0.79
-                ]
-            },
-            "area": "Palamu, Jharkhand, India"
-        },
-        "id": "CH000004",
-        "emp_ind": "EM000001"
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "06/04/2005",
-        "raid": {
-            "ps": {
-                "name": "Jamia Nagar",
-                "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "South East Delhi, Delhi, India"
-        },
-        "age": 13,
-        "since": -1,
-        "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Sighia",
-                "crd": [
-                    86.16311,
-                    25.84132
-                ],
-                "add": "Singhia, Samastipur, BR, IND",
-                "meta": [
-                    "city",
-                    0.97
-                ]
-            },
-            "vil": {
-                "name": "Mohiuddinpur",
-                "crd": [
-                    85.83048,
-                    25.88659
-                ],
-                "add": "Warisnagar, Samastipur, BR, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "Samastipur, Bihar, India"
-        },
-        "id": "CH000005",
-        "emp_ind": ""
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "06/04/2005",
-        "raid": {
-            "ps": {
-                "name": "Jamia Nagar",
-                "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "South East Delhi, Delhi, India"
-        },
-        "age": 14,
-        "since": -1,
-        "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Musari Gharari",
-                "crd": [
-                    85.73662,
-                    25.8014
-                ],
-                "add": "Sarairanjan, Samastipur, BR, IND",
-                "meta": [
-                    "street",
-                    0.82
-                ]
-            },
-            "vil": {
-                "name": "Barhatta",
-                "crd": [
-                    85.73088,
-                    25.61078
-                ],
-                "add": "Vidyapati Nagar, Samastipur, BR, IND",
-                "meta": [
-                    "district",
-                    0.93
-                ]
-            },
-            "area": "Samastipur, Bihar, India"
-        },
-        "id": "CH000006",
-        "emp_ind": ""
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "06/04/2005",
-        "raid": {
-            "ps": {
-                "name": "Jamia Nagar",
-                "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "South East Delhi, Delhi, India"
-        },
-        "age": 12,
-        "since": -1,
-        "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
+        "task": "Zari Unit-Embroidery Work",
+        "paypar": "",
+        "indst": "Garment",
         "bckwg": "",
         "native": {
             "ps": {
                 "name": "",
-                "crd": [
-                    85.13565,
-                    25.95505
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
+                "crd": [],
+                "add": "",
+                "meta": []
             },
             "vil": {
-                "name": "Kabahi,Paschim Tola",
-                "crd": [
-                    85.13565,
-                    25.95505
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "city",
-                    0.51
-                ]
+                "name": "Sita Nagar",
+                "crd": [],
+                "add": "",
+                "meta": []
             },
-            "area": "Vaishali, Bihar, India"
+            "area": ", , India"
         },
-        "id": "CH000007",
-        "emp_ind": ""
+        "id": "CH000074",
+        "emp_ind": "EM000003"
     },
     {
         "paramt": "",
         "emrel": "",
-        "r_date": "06/04/2005",
+        "r_date": "09/04/2005",
         "raid": {
             "ps": {
-                "name": "Jamia Nagar",
+                "name": "Badarpur",
                 "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
+                    77.30348,
+                    28.50738
                 ],
                 "add": "Delhi, South, DL, IND",
                 "meta": [
@@ -504,135 +72,11 @@
                     1.0
                 ]
             },
-            "area": "South East Delhi, Delhi, India"
-        },
-        "age": 15,
-        "since": -1,
-        "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "",
-                "crd": [
-                    85.13565,
-                    25.95505
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "city",
-                    1.0
-                ]
-            },
             "vil": {
-                "name": "Kabahi,Paschim Tola",
+                "name": "Badarpur",
                 "crd": [
-                    85.13565,
-                    25.95505
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "city",
-                    0.51
-                ]
-            },
-            "area": "Vaishali, Bihar, India"
-        },
-        "id": "CH000008",
-        "emp_ind": ""
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "06/04/2005",
-        "raid": {
-            "ps": {
-                "name": "Jamia Nagar",
-                "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "South East Delhi, Delhi, India"
-        },
-        "age": 12,
-        "since": -1,
-        "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
-        "bckwg": "",
-        "native": {
-            "ps": {
-                "name": "Chakalhadad",
-                "crd": [
-                    85.13565,
-                    25.95505
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "city",
-                    0.64
-                ]
-            },
-            "vil": {
-                "name": "Habibpur",
-                "crd": [
-                    85.09801,
-                    25.95128
-                ],
-                "add": "Vaishali, Vaishali, BR, IND",
-                "meta": [
-                    "district",
-                    1.0
-                ]
-            },
-            "area": "Vaishali, Bihar, India"
-        },
-        "id": "CH000009",
-        "emp_ind": ""
-    },
-    {
-        "paramt": "",
-        "emrel": "",
-        "r_date": "06/04/2005",
-        "raid": {
-            "ps": {
-                "name": "Jamia Nagar",
-                "crd": [
-                    77.28602,
-                    28.56277
-                ],
-                "add": "Delhi, South, DL, IND",
-                "meta": [
-                    "district",
-                    0.95
-                ]
-            },
-            "vil": {
-                "name": "Shaheen Bagh",
-                "crd": [
-                    77.29697,
-                    28.54892
+                    77.30348,
+                    28.50738
                 ],
                 "add": "Delhi, South, DL, IND",
                 "meta": [
@@ -645,9 +89,9 @@
         "age": 13,
         "since": -1,
         "brought": "",
-        "task": "",
-        "paypar": "no",
-        "indst": "",
+        "task": "Zari Unit-Embroidery Work",
+        "paypar": "",
+        "indst": "Garment",
         "bckwg": "",
         "native": {
             "ps": {
@@ -676,7 +120,7 @@
             },
             "area": "Vaishali, Bihar, India"
         },
-        "id": "CH000010",
+        "id": "CH000075",
         "emp_ind": ""
     }
 ]
