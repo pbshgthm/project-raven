@@ -21,7 +21,7 @@ print(len(data))
 
 def extract_loc(place,name):
     
-    print(place,name)
+    #print(place,name)
     geo=place['Location']['DisplayPosition']
     crd=(geo['Longitude'],geo['Latitude'])
     meta=(place['MatchLevel'],place['Relevance'])
