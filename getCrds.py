@@ -41,7 +41,7 @@ child_data=[]
 
 
 
-for i in data[:10]:
+for i in data:
     child=i
     print(child['id'])
 
