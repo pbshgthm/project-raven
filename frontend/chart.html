@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="support.js"></script>
+    <script src="data.json"></script>
+    <title>Raven Chart</title>
+	
+</head>
+<body>
+	<div id="chartDiv"></div>
+</body>
+<script type="text/javascript">
+	
+	Data.init(raw_data);
+
+	var trace = {
+    x: Data.ageDist(),
+    type: 'histogram',
+  	};
+
+	var data = [trace];
+	Plotly.newPlot('chartDiv', data);
+
+</script>
+</html>
