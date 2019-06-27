@@ -9,19 +9,45 @@
 	
 </head>
 <body>
-	<div id="chartDiv"></div>
+	<div id="age-dist"></div>
+	<div id="since-dist"></div>
 </body>
 <script type="text/javascript">
 	
 	Data.init(raw_data);
 
-	var trace = {
-    x: Data.ageDist(),
-    type: 'histogram',
-  	};
 
-	var data = [trace];
-	Plotly.newPlot('chartDiv', data);
+	function plotAge(){
+		var trace = {
+	    	x: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+	    	y: Data.ageDist(),
+	    	type: 'bar',
+	  	};
+
+	  	var layout = {
+	  		hovermode: false,
+		};
+
+		var data = [trace];
+		Plotly.newPlot('age-dist', data,layout,{displayModeBar: false,staticPlot: true});
+	}
+
+	function plotSince(){
+		var trace = {
+	    	x: Data.traffickDate(),
+	    	type: 'histogram',
+	  	};
+
+	  	var layout = {
+	  		bargap: 0.05,
+	  		//hovermode: false,
+		};
+
+		var data = [trace];
+		Plotly.newPlot('since-dist',data,layout,{displayModeBar: false});
+	}
+	//plotSince()
+	plotAge();
 
 </script>
 </html>

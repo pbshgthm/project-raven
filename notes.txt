@@ -1,0 +1,86 @@
+//+age distribution
++ gen trafficked date
+
+
+
+
+
+
+
+
+
+
+
+// NOTES
+
+
+NARRATIVE
+	track the journey of one kid. 
+	and as you proceed tell the story of the whole situation
+
+INDUSTRY VIZ
+	try sankey/sunburst for industry
+		but sankey, it just helps in grouping
+		sunburst can be interactive
+		make sankey interactive? like collapse things? <- seems promising
+		while presenting show examples ?
+
+
+
+META OF DATA
+	*only half (5979) of the items have proper dates
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//META
+
+INDUSTRY
+	Garment,  4170
+	Hotel/Dhaba,  1234
+	Footwear,  1024
+	Handicraft,  699
+	Jute/Plastic/Rexin/Cloth Bags,  667
+	Cosmetic,  639
+	Domestic Servant,  520
+	Automobile/Transport,  495
+	Metal,  410
+	Retail Shop/Office,  327
+	Electrical & Electronics,  277
+	Leather,  277
+	Jewellery,  173
+	Bakery,  159
+	Odd Jobs,  133
+	Plastic and Nylon units,  129
+	Carpet Industry,  89
+	Toy Making Unit,  78
+	Stone Quarry,  71
+	Paper Industry,  67
+	Brick Kilns & Roof tiles units,  65
+	Building and Construction,  62
+	Carpentry,  39
+	Printing,  28
+	Abattoirs/Slaughter Houses,  26
+	Circus,  22
+	Agriculture,  21
+	Suitcase Making,  19
+	Dairy Products,  19
+	Cracker Industry,  13
+	Umbrela Making Factory,  12
+	Tobacco & Chewing Tobacco,  11
+	Factory,  9
+	Flour Mill,  6
+	Paint Making Unit,  5
+	Lock Making,  4
+	Sculpture Making Unit,  2
+	Curtain Making Unit,  1
