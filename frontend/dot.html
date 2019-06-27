@@ -5,7 +5,7 @@
 	<script src="d3.min.js"></script>
     <script src="support.js"></script>
     <script src="data.json"></script>
-    <title>Raven Chart</title>
+    <title>Raven Dots</title>
 	
 </head>
 <body>
@@ -13,80 +13,149 @@
 </body>
 <script type="text/javascript">
 
+var svg;
+var circles;
 
 var clrs=['#e53935','#D81B60','#8E24AA','#5E35B1','#3949AB','#1E88E5','#039BE5','#00ACC1','#00897B','#43A047','#7CB342','#C0CA33','#F9A825','#FF8F00','#FB8C00','#F4511E','#6D4C41','#757575','#546E7A']
 
 Data.init(raw_data);
 
-data=[]
-for(var i=0;i<1000;i++){
-	data.push([Math.random()*1400,Math.random()*550,Math.random()*360])
-}
 
-var svg = d3.select("#ground")
-  			.append("svg")
-    		.attr("width", 1400)
-    		.attr("height", 800)
-    		//.style('background-color','#ECEFF1')
+function initDots(){
+
+    var data=[]
+    for(var i=0;i<5000;i++)
+      data.push([300+((i%100)*5),250+Math.floor(i/100)*5])
+    data=data.concat(Array(5).fill(data[0]))
+
+
+    svg = d3.select("#ground")
+        .append("svg")
+        .attr("width", 1400)
+        .attr("height", 800)
+        //.style('background-color','#ECEFF1')
 
     circles=svg.append('g')
-     	.selectAll("dot")
-    	.data(data)
-    	.enter()
-    	.append("circle")
+      .selectAll("dot")
+      .data(data)
+      .enter()
+      .append("circle")
 
     circles.attr("cx", function (d) { return d[0]; } )
-      	.attr("cy", function (d) { return d[1]; } )
-      	.attr("r", 2.5 )
-      	//.style("fill", function(d){return "hsl("+d[2]+",70%,70%)"})
-      	.style("fill",'#BF360C')
+        .attr("cy", function (d) { return d[1]; } )
+        .attr("r", 1.5 )
+        //.style("fill", function(d){return "hsl("+d[2]+",70%,70%)"})
+        .style("fill",'#BF360C')
         .style('opacity',1)
 
 
-function update(data) {
+}
 
-	//data=[]
-	//for(var i=0;i<1000;i++){
-	//	data.push([Math.random()*800,Math.random()*800,Math.random()*360])
-	//}
+
+function updateDots(data) {
 
     circles.data(data)
-    	.transition()
-    	.ease(d3.easeSin)
-        .duration(1000)
+    	  //.transition()
+    	  //.ease(d3.easeCubicOut)
+        //.duration(1500)
         .attr("cx", function(d) { return d[0]; })
         .attr("cy", function(d) { return d[1]; })
         //.style('fill',function(d){ return d[2]; })
 
 }
 
-function ageDots(){
 
-  rData=Data.ageDist();
+function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }return array;
+}
+
+
+function plotBars(rData,layout,sym=false){
+
+  
   data=[]
   for(var i=0;i<rData.length;i++)
-    data.push(Math.round(rData[i]/(12.458)))
-
-  var dot_size=2.5;
-  var base_y=500;
-  var start_x=150;
-  var width=5;
-  var dot_pad=2;
-  var bar_pad=10;
+    data.push(Math.round(rData[i]/(rData.reduce((a, b) => a + b, 0)/5000)))
+  
+  var dn=data.reduce((a, b) => a + b, 0)
+  console.log(dn)
+  
+  var dot_size=layout['dot_size'];
+  var base_y=layout['base_y'];
+  var start_x=layout['start_x'];
+  var width_n=layout['width_n'];
+  var dot_pad=layout['dot_pad'];
+  var bar_pad=layout['bar_pad'];
 
   var ageBin=[]
   var pad=dot_pad+dot_size*2;
   for(var i=0;i<data.length;i++){
-    s_x=start_x+(bar_pad+width*pad)*i;
+    s_x=start_x+(bar_pad+width_n*pad)*i;
 
     for(var j=0;j<data[i];j++){
-      ageBin.push([s_x+pad*(j%width),base_y-Math.floor(j/width)*pad])
+      var sym_ofst=0
+      if(sym)sym_ofst=Math.round(data[i]/width_n)*pad/2;
+      
+      ageBin.push([s_x+pad*(j%width_n),(base_y+sym_ofst)-Math.floor(j/width_n)*pad])
     }
   }
-  return ageBin
+
+  if(dn<5005){
+    console.log('sssd')
+    var buff=Array(5005-dn).fill(ageBin[0]);
+    console.log(buff)
+    ageBin=ageBin.concat(buff);
+  }
+  console.log(ageBin.length)
+  return shuffle(ageBin)
 }
 
 
-  		
+
+
+
+function goPack(){
+  data=[]
+  for(var i=0;i<5000;i++)
+    data.push([300+((i%100)*5),250+Math.floor(i/100)*5])
+  data=data.concat(Array(5).fill(data[0]))
+  updateDots(data);
+}
+
+function goDate(){
+  var tlLayout={
+      dot_size:1.5,
+      base_y:250,
+      start_x:200,
+      width_n:3,
+      dot_pad:1,
+      bar_pad:4
+  }
+  updateDots(plotBars(Data.traffickDate(),tlLayout,sym=true));
+}
+
+
+function goAge(){
+
+  var ageLayout={
+      dot_size:1.5,
+      base_y:450,
+      start_x:150,
+      width_n:10,
+      dot_pad:0.5,
+      bar_pad:10
+  }
+  updateDots(plotBars(Data.ageDist(),ageLayout));
+}
+
+	
+
+
+initDots();
 </script>
 </html>

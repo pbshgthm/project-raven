@@ -56,14 +56,14 @@ var Data = {
     		age[this.raw[i]['age']]+=1;
         tot+=1
     	}
-      console.log(tot)
       age.shift()
     	return age;
   },
 
   traffickDate : function(){
       var date=[];
-      var s_freq=[];
+      var s_freq=Array(121).fill(0);
+      var hist=[]
       for(var i=0;i<this.raw.length;i++){
         var since=this.raw[i]['since'];
         var r_date=this.raw[i]['r_date'];
@@ -80,15 +80,19 @@ var Data = {
         var y = rr_date.getFullYear();
 
         var t_date = dd + '/'+ mm + '/'+ y;
-        var t_mdate = (y-2009)*12+mm
+        var t_mdate = Math.floor(((y-2011)*12+mm)/2)
         
         date.push([r_date,since,r_date]);
 
-        if(y>2009)
-        s_freq.push(t_mdate);
+        if(y>=2011){
+          s_freq[t_mdate]+=1
+          hist.push(t_mdate);
+        }
+        
 
       }
       return s_freq;
+      
   },
 
   industryDist : function(){
