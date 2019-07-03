@@ -80,7 +80,7 @@ var Data = {
         var y = rr_date.getFullYear();
 
         var t_date = dd + '/'+ mm + '/'+ y;
-        var t_mdate = Math.floor(((y-2011)*12+mm)/2)
+        var t_mdate = Math.floor(((y-2011)*12+mm)/1)
         
         date.push([r_date,since,r_date]);
 
