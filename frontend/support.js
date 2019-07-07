@@ -60,10 +60,12 @@ var Data = {
     	return age;
   },
 
+
   traffickDate : function(){
       var date=[];
-      var s_freq=Array(121).fill(0);
+      var s_freq=Array(229).fill(0);
       var hist=[]
+      var r_month=Array(229).fill(0);
       for(var i=0;i<this.raw.length;i++){
         var since=this.raw[i]['since'];
         var r_date=this.raw[i]['r_date'];
@@ -71,7 +73,15 @@ var Data = {
         if(r_date=="")continue;
 
         r_date=r_date.split("/");
+
+        r_mdate=Math.floor((parseInt(r_date[2])-2000)*12+parseInt(r_date[1]))
+        r_month[r_mdate]+=1
+
         r_date=r_date[1]+"/"+r_date[0]+"/"+r_date[2];
+
+        
+
+
         var rr_date=new Date(r_date)
         rr_date.setDate(rr_date.getDate()+(-1*since))
 
@@ -80,41 +90,60 @@ var Data = {
         var y = rr_date.getFullYear();
 
         var t_date = dd + '/'+ mm + '/'+ y;
-        var t_mdate = Math.floor(((y-2011)*12+mm)/1)
+        var t_mdate = Math.floor(((y-2000)*12+mm)/1)
         
-        date.push([r_date,since,r_date]);
+        date.push([t_mdate,r_mdate]);
 
-        if(y>=2011){
+        if(y>=2000){
           s_freq[t_mdate]+=1
           hist.push(t_mdate);
         }
         
 
       }
+      return date
+      return r_month;
       return s_freq;
       
   },
 
   industryDist : function(){
+      var indCat=[
+        ['Garment','Footwear','Jewellery'],
+        ['Automobile/Transport','Metal','Retail Shop/Office','Odd Jobs','Stone Quarry','Factory','Plastic and Nylon units'],
+        ['Hotel/Dhaba','Bakery','Abattoirs/Slaughter Houses','Flour Mill','Agriculture','Dairy Products','Tobacco & Chewing Tobacco'],
+        ['Jute/Plastic/Rexin/Cloth Bags','Cosmetic','Domestic Servant','Electrical & Electronics','Leather','Handicraft','Carpet Industry','Toy Making Unit','Paper Industry','Brick Kilns & Roof tiles units','Printing','Building and Construction','Carpentry','Paint Making Unit','Lock Making','Sculpture Making Unit','Curtain Making Unit','Suitcase Making','Cracker Industry','Umbrela Making Factory']
+      ]  
       var ind_dict={}
       for(var i=0;i<this.raw.length;i++){
         var ind=this.raw[i]['indst'];
         if(ind=="")continue;
-        var task=this.raw[i]['task'];
-
+        
         if(ind in ind_dict)
           ind_dict[ind]+=1;
         else
           ind_dict[ind]=1;
       }
-      ind_list=[];
-      for(i in ind_dict){
-        ind_list.push([i,ind_dict[i]])
+      for(var i=0;i<indCat.length;i++){
+        for(var j=0;j<indCat[i].length;j++)
+          indCat[i][j]=ind_dict[indCat[i][j]]
+        indCat[i].sort(function(a,b){return b-a})
       }
+      
+      return indCat;
+  },
 
+  getDict : function(item){
+    var gen_dict={}
+    for(var i=0;i<this.raw.length;i++){
+      if(this.raw[i][item] in gen_dict)
+        gen_dict[this.raw[i][item]]+=1;
+      else
+        gen_dict[this.raw[i][item]]=1;
+    }
 
-      return ind_list.sort(function (a,b){return b[1]-a[1]});
-  }
+    return Object.entries(gen_dict);      
+  },
 
 }
 

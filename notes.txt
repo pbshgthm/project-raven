@@ -32,6 +32,19 @@ META OF DATA
 
 
 
+396 tasks
+
+
+
+#CHARTLIST
+
+Age - Violin
+Date - Timeline dots
+Industry - nested bubble
+Who got there - 
+EmpId - dots
+Paypar - 
+Paramt - 
 
 
 
@@ -84,3 +97,52 @@ INDUSTRY
 	Lock Making,  4
 	Sculpture Making Unit,  2
 	Curtain Making Unit,  1
+
+
+
+
+[
+	'Garment',
+	'Footwear',
+	'Jewellery'
+],[
+	'Automobile/Transport',
+	'Metal',
+	'Retail Shop/Office',
+	'Odd Jobs',
+	'Stone Quarry',
+	'Factory',
+	'Plastic and Nylon units'
+],[
+	'Hotel/Dhaba',
+	'Bakery',
+	'Abattoirs/Slaughter Houses',
+	'Flour Mill',
+	'Agriculture',
+	'Dairy Products',
+	'Tobacco & Chewing Tobacco'
+],[
+	'Jute/Plastic/Rexin/Cloth Bags',
+	'Cosmetic',
+	'Domestic Servant',
+	'Electrical & Electronics',
+	'Leather',
+	'Handicraft',
+	'Carpet Industry',
+	'Toy Making Unit',
+	'Paper Industry',
+	'Brick Kilns & Roof tiles units',
+	'Printing',
+	'Building and Construction',
+	'Carpentry',
+	'Paint Making Unit',
+	'Lock Making',
+	'Sculpture Making Unit',
+	'Curtain Making Unit',
+	'Suitcase Making',
+	'Cracker Industry',
+	'Umbrela Making Factory'
+]
+
+
+5367,1574,1476,3563
