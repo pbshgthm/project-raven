@@ -101,10 +101,56 @@ var Data = {
         
 
       }
+
       return date
-      return r_month;
+      //return r_month;
       return s_freq;
       
+  },
+
+  raidDist : function(){
+      var r_data={};
+      for(var i=0;i<this.raw.length;i++){
+        var r_date=this.raw[i]['r_date']
+        var r_place=this.raw[i]['raid']['vil']['name']
+        if(r_date=="")continue;
+        if(r_place=="")continue;
+        var _key=r_date+'--'+r_place;
+        if(_key in r_data)r_data[_key]+=1
+        else r_data[_key]=1
+      }
+    var r_list=Object.entries(r_data);
+    var r_freq=Array(121).fill(0).sort()
+    for(var i=0;i<r_list.length;i++){
+      var r_d=r_list[i][0].split('/')
+      var m=(parseInt(r_d[2])-2011)*12+parseInt(r_d[1])
+      if(parseInt(r_d[2])<2011)continue
+      if(r_freq[m]==0)
+        r_freq[m]=[r_list[i][1]]
+      else
+        r_freq[m].push(r_list[i][1])
+    }
+    r_freq=r_freq.map(x=>x==0?[]:x)
+    return r_freq;
+  },
+
+  originDist: function(){
+      var s_data={};
+      for(var i=0;i<this.raw.length;i++){
+        var s_val=this.raw[i]['since']
+        var r_date=this.raw[i]['r_date']
+        var n_place=this.raw[i]['native']['vil']['name']
+        var r_place=this.raw[i]['raid']['vil']['name']
+        if(s_val==-1)continue;
+        if(r_place=="")continue;
+        if(n_place=="")continue;
+        if(r_place=="")continue;
+
+        var _key=s_val+r_date+n_place+r_place;
+        if(_key in s_data)s_data[_key]+=1
+        else s_data[_key]=1
+      }
+    return s_data;
   },
 
   industryDist : function(){
@@ -142,8 +188,10 @@ var Data = {
         gen_dict[this.raw[i][item]]=1;
     }
 
-    return Object.entries(gen_dict);      
+    return Object.entries(gen_dict).sort(function(a,b){return b[1]-a[1]});      
   },
+
+  
 
 }
 
