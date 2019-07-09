@@ -1,16 +1,3 @@
-//+age distribution
-+ gen trafficked date
-
-
-
-
-
-
-
-
-
-
-
 // NOTES
 
 
@@ -38,14 +25,18 @@ META OF DATA
 
 #CHARTLIST
 
-Age - Violin
-Date - Timeline dots
-Industry - nested bubble
-Who got there - 
-EmpId - dots
-Paypar - 
-Paramt - 
-
++ Number of bro/sis and order of birth
++ relatives working there
++ mom/dad working and live status ? occupation req ?
++ child wage
++ co-workers inclusing other kids
++ reason of working + consent
+* working start age/if worked before
+* worked before location vs curr location dist
++ schooling status, last class, reason
++ promises to get the child
++ family incomme
++ child wish
 
 
 
@@ -57,46 +48,6 @@ Paramt -
 
 
 //META
-
-INDUSTRY
-	Garment,  4170
-	Hotel/Dhaba,  1234
-	Footwear,  1024
-	Handicraft,  699
-	Jute/Plastic/Rexin/Cloth Bags,  667
-	Cosmetic,  639
-	Domestic Servant,  520
-	Automobile/Transport,  495
-	Metal,  410
-	Retail Shop/Office,  327
-	Electrical & Electronics,  277
-	Leather,  277
-	Jewellery,  173
-	Bakery,  159
-	Odd Jobs,  133
-	Plastic and Nylon units,  129
-	Carpet Industry,  89
-	Toy Making Unit,  78
-	Stone Quarry,  71
-	Paper Industry,  67
-	Brick Kilns & Roof tiles units,  65
-	Building and Construction,  62
-	Carpentry,  39
-	Printing,  28
-	Abattoirs/Slaughter Houses,  26
-	Circus,  22
-	Agriculture,  21
-	Suitcase Making,  19
-	Dairy Products,  19
-	Cracker Industry,  13
-	Umbrela Making Factory,  12
-	Tobacco & Chewing Tobacco,  11
-	Factory,  9
-	Flour Mill,  6
-	Paint Making Unit,  5
-	Lock Making,  4
-	Sculpture Making Unit,  2
-	Curtain Making Unit,  1
 
 
 
@@ -146,3 +97,67 @@ INDUSTRY
 
 
 5367,1574,1476,3563
+
+
+
+#ASHRAM_DATA
+
+Child ID 0
+Raid Date 1
+Rescue Mode 2
+Custody 3
+House Address 4
+Village Name 5
+Post Offices 6
+Police Station 7
+District 8
+State 9
+Country 10
+No of brothers 11
+No of Sisters 12
+Status 13
+No of sibling working is same place 14
+relatives working in work place 15
+Father Occuaption 16
+Mother Occuaption 17
+Parents Status 18
+factory address 19
+Factory location 20
+Task 21
+Child realation with Employer 22
+Child Working scince 23
+ 24
+Wage Amount 25
+Wage Period 26
+Total people working with child 27
+Total children working with child 28
+Reason for Working 29
+Work starting age 30
+Child worked before 31
+Worked before place 32
+Occupation Before 33
+Schooling Status 34
+School Name 35
+School Type 36
+Study till class 37
+Discontinuation Reason 38
+Caste 39
+Child took parents consent 40
+missing complaint lodged 41
+missing complaint Poloce Station 42
+Child brought to work by 43
+Child brought to work by name 44
+false promise 45
+Parents took Money 46
+Amount received by parents 47
+Family Owns 48
+Father workinh since 49
+mother working since 50
+Days Stayed in Ashram 51
+Repatriation 52
+Repatriation by RC on train number 53
+repatriation by RC than mode 54
+Child Wish 55
+Family Income 56
+Case Study Flag 57
+child want to go after ashram 58
