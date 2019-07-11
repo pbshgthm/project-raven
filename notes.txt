@@ -21,18 +21,20 @@ META OF DATA
 
 396 tasks
 
-
+CHANGE SIB PLOT => not easy to read, doesnt fit the context
 
 #CHARTLIST
 
-+ Number of bro/sis and order of birth
+//+ Number of bro/sis and order of birth
 + relatives working there
 + mom/dad working and live status ? occupation req ?
-+ child wage
+	less than 8% so needed ? 
+//+ child wage
 + co-workers inclusing other kids
+	not much of insights
 + reason of working + consent
-* working start age/if worked before
-* worked before location vs curr location dist
+//* working start age/if worked before
+* worked before location vs curr location dist ??
 + schooling status, last class, reason
 + promises to get the child
 + family incomme
