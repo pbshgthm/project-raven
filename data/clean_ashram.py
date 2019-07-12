@@ -26,10 +26,34 @@ def get_dict(ind,ind2=False):
 	#print(al)
 	return g_list
 
-a=get_dict(26)
+a=get_dict(40)
 for i in a:
 	print(i[0]+' '+str(i[1]))
 
+#a=a[1:]
+#print(a[:20],sum([x[1] for x in a[:20]]))
+
+
+
+
+
+
+
+
+def get_wish():
+	wish={}
+	for i in cData:
+		w=i[55]
+		if w=="":continue
+		if w in wish:wish[w]+=1
+		else: wish[w]=1
+
+	w=[]
+	for i in wish:
+		w.append({"text":i,"size":wish[i]})
+	print(w)
+
+#get_wish()
 
 def get_wage():
 	w={
@@ -77,9 +101,7 @@ def get_wage():
 		print(x)
 		print(int(x[0].split('-')[0]))
 	w_l.sort(key = lambda x: int(x[0].split('-')[0]))
-	print(w_l)
-get_wage()
-#a=a[1:]
-#print(a[:20],sum([x[1] for x in a[:20]]))
+	#print(w_l)
+#get_wage()
 
 

@@ -21,24 +21,30 @@ META OF DATA
 
 396 tasks
 
-CHANGE SIB PLOT => not easy to read, doesnt fit the context
+SEE IF LOG SCALES ARE COOL
+
+THINK ABOUT CREATING BINS FOR WAGES/INC/PAYPAR INSTEAD OF CONTINUOUS 
+	CONTI HAS TOO MANY DATA POINTS
+
+//COMBINE PARAMT AND PAYPAR
+//CHANGE SIB PLOT => not easy to read, doesnt fit the context
 
 #CHARTLIST
 
 //+ Number of bro/sis and order of birth
-+ relatives working there
-+ mom/dad working and live status ? occupation req ?
+//+ relatives working there -> as number
+//+ mom/dad working and live status ? occupation req ? \\NOT NEEDED
 	less than 8% so needed ? 
 //+ child wage
 + co-workers inclusing other kids
 	not much of insights
-+ reason of working + consent
+//+ reason of working + consent
 //* working start age/if worked before
-* worked before location vs curr location dist ??
+//* worked before location vs curr location dist ??
 + schooling status, last class, reason
-+ promises to get the child
-+ family incomme
-+ child wish
+//+ promises to get the child
+//+ family incomme
+//+ child wish
 
 
 
@@ -163,3 +169,87 @@ Child Wish 55
 Family Income 56
 Case Study Flag 57
 child want to go after ashram 58
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Teacher 398
+Doctor 298
+Police 295
+Businessman 103
+Tailor 93
+Engineer 69
+Shopkeeper 44
+Soldier 42
+Maulovi 34
+Lawyer 24
+Mechanic 21
+Govt Servant 15
+Advocate 14
+Electrician 14
+Officer 13
+Cricketer 13
+Embroidery Worker 12
+Driver 11
+Mechanic 10
+Social Worker 9
+Cook 9
+Factory Owner 8
+Actor 8
+Computer Operator 7
+Bank Manager 7
+Mason 6
+Carpenter 6
+Singer 5
+Fashion Designer 5
+Pilot 4
+Machine Operater 4
+Judge 4
+Inspector 4
+Employed 4
+Mukhiya 3
+Mobile Repair Man 3
+Automobile Workshop 3
+Tailoring Shop 2
+Sweetshop Owner 2
+Leader 2
+Collector 2
+Painter 2
+Weilder 2
+Farmer 2
+Dancer 2
+Professor 1
+Editor 1
+Factory Worker 1
+Property Dealer 1
+Agriculture Scientist 1
+District Magistrate 1
+Clerk 1
+Director 1
+Writer 1
+POP Work Labour 1
+Wrestler 1
+Bindi Designer 1
+Carpet Weaver1
+Circus Performer 1
+Labour 1
+Waiter 1
+Band Man 1
+Auto Repair Man 1
+Garment Shopkeeper 1
+Electrical Product Maker 1
+Tea Shop Helper 1
+Manager 1
+Child Care Worker 1
+Vegetable Shop 1
