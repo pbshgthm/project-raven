@@ -58,7 +58,7 @@ var Data = {
         return age;
     },
 
-    traffickDate: function() {
+    traffickDate: function(val) {
         var date = [];
         var s_freq = Array(229).fill(0);
         var hist = []
@@ -99,9 +99,9 @@ var Data = {
 
         }
 
-        return date
-        //return r_month;
-        return s_freq;
+        if(val=='timeline')return s_freq;
+        if(val=='since')return date
+        
     },
 
     raidDist: function() {
@@ -176,22 +176,21 @@ var Data = {
     },
 
     parPay: function() {
-        var paypar={};
-        var p_c=0;
-        var a_c=0;
-        for(var i=0;i<Data.raw.length;i++){
-          var pay=Data.raw[i]['paypar'];
-          var amt=Data.raw[i]['paramt'];
-          if(amt!="")
-            { 
-              if(pay=="")continue;
-              var k=amt+'-'+pay;
-              if(k in paypar)paypar[k]+=1
-              else paypar[k]=1
+        var paypar = {};
+        var p_c = 0;
+        var a_c = 0;
+        for (var i = 0; i < Data.raw.length; i++) {
+            var pay = Data.raw[i]['paypar'];
+            var amt = Data.raw[i]['paramt'];
+            if (amt != "") {
+                if (pay == "") continue;
+                var k = amt + '-' + pay;
+                if (k in paypar) paypar[k] += 1
+                else paypar[k] = 1
             }
-          
+
         }
-        paypar=Object.entries(paypar);
+        paypar = Object.entries(paypar);
         return paypar
 
     },
