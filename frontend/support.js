@@ -1,8 +1,16 @@
 var Data = {
 
     raw: [],
-    init: function(raw) {
-        this.raw = raw;
+    init: function(raw_csv) {
+        var key=raw_csv[0]
+        var data=[]
+        for(var i=1;i<raw_csv.length;i++){
+            var c_d={}
+            for(var j=0;j<raw_csv[i].length;j++)
+                c_d[key[j]]=raw_csv[i][j]
+            data.push(c_d)
+        }
+        this.raw = data;
     },
 
     toGeojson: function(crds, typ = "Point") {
@@ -28,21 +36,27 @@ var Data = {
     },
 
     getPoints: function(src) {
-        src = src.split('_')
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
-            crds.push(this.raw[i][src[0]][src[1]]['crd'])
+            var crd=this.raw[i][src].split(',')
+            if(crd[0]=="")crd=[]
+            crds.push(crd)
         }
         return this.toGeojson(crds)
     },
 
     getLines: function(src, dst) {
-        src = src.split('_')
-        dst = dst.split('_')
-
+        
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
-            crds.push([this.raw[i][src[0]][src[1]]['crd'], this.raw[i][dst[0]][dst[1]]['crd']])
+            var s_crd=this.raw[i][src].split(',')
+            if(s_crd[0]=="")s_crd=[]
+            
+            var d_crd=this.raw[i][dst].split(',')
+            if(d_crd[0]=="")d_crd=[]
+            crds.push([s_crd,d_crd])
+
+
         }
         return this.toGeojson(crds, "LineString")
     },
@@ -58,57 +72,42 @@ var Data = {
         return age;
     },
 
-    traffickDate: function(val) {
-        var date = [];
-        var s_freq = Array(229).fill(0);
-        var hist = []
-        var r_month = Array(229).fill(0);
-        for (var i = 0; i < this.raw.length; i++) {
-            var since = this.raw[i]['since'];
-            var r_date = this.raw[i]['r_date'];
-            if (since == -1) continue;
-            if (r_date == "") continue;
-
-            r_date = r_date.split("/");
-
-            r_mdate = Math.floor((parseInt(r_date[2]) - 2000) * 12 + parseInt(r_date[1]))
-            r_month[r_mdate] += 1
-
-            r_date = r_date[1] + "/" + r_date[0] + "/" + r_date[2];
-
-
-
-
-            var rr_date = new Date(r_date)
-            rr_date.setDate(rr_date.getDate() + (-1 * since))
-
-            var dd = rr_date.getDate();
-            var mm = rr_date.getMonth() + 1;
-            var y = rr_date.getFullYear();
-
-            var t_date = dd + '/' + mm + '/' + y;
-            var t_mdate = Math.floor(((y - 2000) * 12 + mm) / 1)
-
-            date.push([t_mdate, r_mdate]);
-
-            if (y >= 2000) {
-                s_freq[t_mdate] += 1
-                hist.push(t_mdate);
-            }
-
-
-        }
-
-        if(val=='timeline')return s_freq;
-        if(val=='since')return date
+    traffickDate: function() {
         
+        var traf_m={}
+        for(var i=0;i<this.raw.length;i++){
+            var m=this.raw[i]['t_date'].split('/')
+            m=(m[2]-2000)*12+parseInt(m[1])
+            if(isNaN(m))continue
+            if(m in traf_m)traf_m[m]+=1
+            else traf_m[m]=1
+        }
+        
+        traf_m=Object.entries(traf_m).map(x=>[parseInt(x[0]),x[1]])
+
+        return traf_m.sort(function(a,b){return a[0]-b[0]}) 
+        
+    },
+
+    traffickDur: function(){
+        var dur=[]
+        for(var i=0;i<this.raw.length;i++){
+            var t=this.raw[i]['t_date'].split("/")
+            var r=this.raw[i]['r_date'].split("/")
+            t=(t[2]-2000)*12+parseInt(t[1])
+            r=(r[2]-2000)*12+parseInt(r[1])
+            if(isNaN(t)||isNaN(r))continue;
+            dur.push([t,r])
+        }
+        return dur.sort(function(a,b){return a[0]-b[0]});
+
     },
 
     raidDist: function() {
         var r_data = {};
         for (var i = 0; i < this.raw.length; i++) {
             var r_date = this.raw[i]['r_date']
-            var r_place = this.raw[i]['raid']['vil']['name']
+            var r_place = this.raw[i]['raid_v_name']
             if (r_date == "") continue;
             if (r_place == "") continue;
             var _key = r_date + '--' + r_place;

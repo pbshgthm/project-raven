@@ -4,8 +4,34 @@ ROUTES FROM HOTSPOTS TO FACTORIES
 CROSSLINK MAP AND PLOTS
 
 
-+ cleaned data
-+ annotated form of this
+
+
+
+
+MAIN DATA ITEMS
+
+'id',
+'age',
+'r_date',
+'t_date',
+'dur',
+'raid_v_name',
+'raid_v_add',
+'raid_v_crd',
+'native_v_name',
+'native_v_add',
+'native_v_crd',
+'indst',
+'paypar',
+'paramt',
+'brought'
+
+
+
+
+
+
+
 
 /////////////////////////
 
@@ -21,8 +47,6 @@ PARENT AMOUNT
 INCOME
 SIBLINGS
 WAGE
-
-
 
 
 
