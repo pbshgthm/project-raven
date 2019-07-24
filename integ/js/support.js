@@ -95,7 +95,7 @@ var Data = {
     },
 
 
-    ageDist: function() {
+    age_dist: function() {
         var age = Array(21).fill(0)
         var tot = 0;
         for (var i = 0; i < this.raw.length; i++) {
@@ -111,8 +111,9 @@ var Data = {
         var traf_m={}
         for(var i=0;i<this.raw.length;i++){
             var m=this.raw[i]['t_date'].split('/')
-            m=(m[2]-2000)*12+parseInt(m[1])
+            m=(m[2]-2010)*6+parseInt(parseInt(m[1])/2)
             if(isNaN(m))continue
+            //if(m<0)continue
             if(m in traf_m)traf_m[m]+=1
             else traf_m[m]=1
         }
@@ -240,21 +241,21 @@ var Data = {
         return Object.entries(gen_dict).sort(function(a, b) { return b[1] - a[1] });
     },
 
-    subPlot: function(filter="indst",val="Footwear",key="age"){
+    subPlot: function(filter, val, key){
         var dist={}
         for(var i=0;i<this.raw.length;i++){
             var f=this.raw[i][filter];
             
             if(filter=="t_date"){
                 f=f.split("/")
-                f=(f[2]-2000)*12+parseInt(f[1])
+                f=(f[2]-2010)*6+parseInt(parseInt(f[1])/2)
             }
             
             if(f!=val)continue;
             var k=this.raw[i][key];
             if(k=="")continue;
             if(key.slice(-3)=="add")
-                k=k.split(',')[2]
+                k=k.split(',')[2].substring(1)
 
             if(k in dist){
                 dist[k]+=1;

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+    <script src="js/d3.min.js"></script>
+    <script src="js/d3.geo.min.js"></script>
+    <script src="js/indiaGeo.json"></script>
+    <script src="js/support.js"></script>
+    <script src="js/fin_data.json"></script>
+    <script src="js/s_data.json"></script>
+    <link rel="stylesheet" type="text/css" href="assets/main.css">
+    <title>Project Raven</title>
+</head>
+
+<body>
+    <div id="nav-pane"></div>
+    <div class="page-sec">
+        <div id="age-board" class="viz-board"></div>
+        <div class="viz-panel">
+            <div class="sub-indst" id="age-indst-sub"></div>
+            <div class="sub-map" id="age-map-sub"></div>
+        </div>
+    </div>
+    <div class="page-sec">
+        <div id="traf-board" class="viz-board"></div>
+        <div class="viz-panel">
+            <div class="sub-age" id="traf-age-sub"></div>
+            <div class="sub-map" id="traf-map-sub"></div>
+            <div class="sub-indst" id="traf-indst-sub"></div>
+        </div>
+    </div>
+    <div class="page-sec">
+        <div id="raid-board" class="viz-board"></div>
+        <div class="viz-panel">
+            
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+Data.init(raw_data);
+
+var board_width = d3.select('.viz-board').style('width').slice(0, -2);
+var board_height = d3.select('.viz-board').style('height').slice(0, -2);
+
+
+var sub_indst_width = d3.select('.sub-indst').style('width').slice(0, -2);
+var sub_indst_height = d3.select('.sub-indst').style('height').slice(0, -2);
+
+
+var sub_age_width = d3.select('.sub-age').style('width').slice(0, -2);
+var sub_age_height = d3.select('.sub-age').style('height').slice(0, -2);
+
+
+var sub_map_width = d3.select('.sub-map').style('width').slice(0, -2);
+var sub_map_height = d3.select('.sub-map').style('height').slice(0, -2);
+
+
+
+
+
+//MAIN PLOTS -------------------------------------
+
+//AGE PLOT ------------
+function ageBars() {
+
+    age_svg = d3.select("#age-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .style('background-color', 'white')
+        .append('g')
+
+    var age_bins = Data.age_dist();
+    var since_bins = since_age //from s_data
+
+    age_svg.selectAll('text')
+        .data(age_bins)
+        .enter().append('text')
+        .attr('id', function(d, i) { return 'age-txt-' + i })
+        .attr('class', 'age-txt')
+        .attr('text-anchor', 'middle')
+        .attr("x", function(d, i) { return 62 + i * 30 })
+        .attr("y", 405)
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .text(function(d, i) { return i + 1; })
+        .on('mouseover', age_mouseover)
+        .on('mouseout', age_mouseout)
+        .on('click', age_click)
+
+
+    var age_bars = age_svg.selectAll("bar")
+        .data(age_bins).enter()
+        .append("rect")
+        .attr('id', function(d, i) { return 'age-bar-' + i })
+        .attr('class', 'age-age-bar')
+        .attr("fill", "#FFB74D")
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr("x", function(d, i) { return 50 + i * 30 })
+        .attr("width", 25)
+        .attr('opacity', 0.5)
+        .attr("y", function(d, i) { return 400 - d / 8; })
+        .attr("height", function(d, i) { return d / 8; })
+        .on('mouseover', age_mouseover)
+        .on('mouseout', age_mouseout)
+        .on('click', age_click)
+
+
+    var ref_bars = age_svg.selectAll("age-bar")
+        .data(age_bins).enter()
+        .append("rect")
+        .attr('id', function(d, i) { return 'age-ref-' + i })
+        .attr('class', 'age-ref-bar')
+        .attr("fill", "#ECEFF1")
+        .attr('rx', 0)
+        .attr('ry', 0)
+        .attr("x", function(d, i) { return 50 + i * 30 })
+        .attr("width", 27)
+        .attr('opacity', 0.5)
+        .attr("y", 402)
+        .attr("height", 15)
+        .on('mouseover', age_mouseover)
+        .on('mouseout', age_mouseout)
+        .on('click', age_click)
+    //*/
+
+    var since_bars = age_svg.selectAll("bar")
+        .data(since_bins).enter()
+        .append("rect")
+        .attr('id', function(d, i) { return 'since-bar-' + i })
+        .attr('class', 'age-since-bar')
+        .attr("fill", "#42A5F5")
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr('opacity', 0.5)
+        .attr("x", function(d, i) { return 50 + i * 30 })
+        .attr("width", 25)
+        .attr("y", function(d, i) { return 420 })
+        .attr("height", function(d, i) { return d / 5; })
+        .on('mouseover', age_mouseover)
+        .on('mouseout', age_mouseout)
+        .on('click', age_click)
+
+
+    function age_mouseover() {
+
+        var _id = d3.select(this).attr('id').split('-')[2]
+        if (parseInt(_id) + 1 == curr_age) return;
+        d3.select('#since-bar-' + _id)
+            .attr('opacity', 0.8)
+        d3.select('#age-bar-' + _id)
+            .attr('opacity', 0.8)
+        d3.select('#age-txt-' + _id)
+            .attr('fill', '#546E7A')
+
+    }
+
+    function age_mouseout() {
+
+        var _id = d3.select(this).attr('id').split('-')[2]
+        if (parseInt(_id) + 1 == curr_age) return;
+        d3.select('#since-bar-' + _id)
+            .attr('opacity', 0.5)
+        d3.select('#age-bar-' + _id)
+            .attr('opacity', 0.5)
+        d3.select('#age-txt-' + _id)
+            .attr('fill', '#B0BEC5')
+
+    }
+
+    function age_click() {
+
+        var _id = curr_age - 1
+
+        d3.select('#since-bar-' + _id)
+            .attr('opacity', 0.5)
+        d3.select('#age-bar-' + _id)
+            .attr('opacity', 0.5)
+        d3.select('#age-txt-' + _id)
+            .attr('fill', '#546E7A')
+
+
+        var _id = d3.select(this).attr('id').split('-')[2]
+        curr_age = parseInt(_id) + 1
+
+
+        d3.select('#since-bar-' + _id)
+            .attr('opacity', 1)
+        d3.select('#age-bar-' + _id)
+            .attr('opacity', 1)
+        d3.select('#age-txt-' + _id)
+            .attr('fill', '#546E7A')
+
+        subplot_indst("age", curr_age, age_indst_svg);
+        subplot_map("age", curr_age, 'native', age_map_svg);
+
+    }
+
+}
+//---------------------
+
+
+//TRAF PLOT -----------
+function timeLine() {
+
+
+    var month_name = ['Jan-Feb', 'Mar-Apr', 'May-Jun', 'Jul-Aug', 'Sep-Oct', 'Nov-Dec']
+
+    traf_svg = d3.select("#traf-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .style('background-color', 'white')
+        .call(d3.zoom().on("zoom", function() {
+            traf_svg.attr("transform", d3.event.transform)
+        }))
+        .append("g")
+
+
+
+    var month_data = Data.traffickDate();
+    var colorise = d3.scaleSequential().domain([-50, 270])
+        .interpolator(d3.interpolateInferno);
+
+
+
+
+
+
+    var traf_box = traf_svg.selectAll("traf-box")
+        .data(month_data).enter()
+        .append("rect")
+        .attr('id', function(d, i) { return 'traf-box-' + i })
+        .attr("fill", 'white')
+        .attr("x", function(d, i) { return -30 + d[0] * 13 - 50 + 6.5 })
+        .attr("width", 100)
+        .attr('stroke', function(d) { return colorise(d[1]) })
+        .attr('stroke-width', 2)
+        .attr('rx', 8)
+        .attr('ry', 8)
+        .attr('opacity', 0.9)
+        .attr('display', 'none')
+        .attr("y", 285)
+        .attr("height", 30)
+
+
+
+    var traf_label = traf_svg.selectAll("traf-label")
+        .data(month_data).enter()
+        .append("text")
+        .attr('id', function(d, i) { return 'traf-label-' + i })
+        .attr('text-anchor', 'middle')
+        .attr("x", function(d, i) { return -30 + d[0] * 13 + 6.5 })
+        .attr("y", 295)
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr("fill", function(d) { return colorise(d[1]) })
+        .attr('opacity', 0)
+        .text(function(d) { return month_name[d[0] % 6] + ' ' + (10 + parseInt(d[0] / 6)) })
+
+
+    var bars = traf_svg.selectAll("bar")
+        .data(month_data).enter()
+        .append("rect")
+        .attr('id', function(d, i) { return 'traf-bar-' + i })
+        .attr("fill", function(d) { return colorise(d[1]) })
+        .attr("x", function(d, i) { return -30 + d[0] * 13 })
+        .attr("width", 13)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 5)
+        .attr('rx', 4)
+        .attr('ry', 4)
+        .attr('opacity', 0.5)
+        .attr("y", function(d, i) { return 300 - d[1]; })
+        .attr("height", function(d, i) { return d[1] * 2; })
+        .on('mouseover', traf_mouseover)
+        .on('mouseout', traf_mouseout)
+        .on('click', traf_click)
+
+
+    ///*
+    var central = traf_svg
+        .append('line')
+        .attr("x1", 000)
+        .attr("x2", 800)
+        .attr("y1", 300)
+        .attr("y2", 300)
+        .style("stroke", "white")
+        .attr('opacity',0.5)
+        .style("stroke-linecap", "round")
+        .style("stroke-width", 15);
+	//*/
+
+        
+    var central_marks = traf_svg.selectAll('central-marks')
+    	.data(month_data).enter()
+        .append('rect')
+        .attr("x", function(d, i) { return -30 + d[0] * 13 -1})
+        .attr("width", 2)
+        .attr('fill', '#607D8B')
+        .attr("y", function(d, i) { return 300-5  })
+        .attr("height", function(d, i) { return (d[0]%6==0)?10:0 })
+    
+
+    var central_label = traf_svg.selectAll("central-label")
+        .data(month_data).enter()
+        .append("text")
+        .attr('text-anchor', 'middle')
+        .attr("x", function(d, i) { return -30 + d[0] * 13 + 13 })
+        .attr("y", 295)
+        .attr("dy", "10px")
+        .style("font-size", function(d,i){return (d[0]%6==2)?"12px":'0px'})
+        .style('font-family', 'Arial')
+        .attr("fill", '#455A64')
+        .text(function(d) { return (2010 + parseInt(d[0] / 6)) })
+
+
+
+    function traf_mouseover() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+
+
+        if (_id == curr_traf) return
+        d3.select('#traf-bar-' + _id)
+            .attr('opacity', 1)
+
+        d3.select('#traf-box-' + _id)
+            .attr('display', 'block')
+
+        d3.select('#traf-label-' + _id)
+            .attr('opacity', 1)
+
+        d3.select('#traf-box-' + _id).raise()
+        d3.select('#traf-label-' + _id).raise()
+    }
+
+    function traf_mouseout() {
+
+        var _id = d3.select(this).attr('id').split('-')[2]
+
+        if (_id == curr_traf) return
+        d3.select('#traf-bar-' + _id)
+            .attr('opacity', 0.5)
+
+        d3.select('#traf-box-' + _id)
+            .attr('display', 'none')
+
+        d3.select('#traf-label-' + _id)
+            .attr('opacity', 0)
+
+        d3.select('#traf-box-' + _id).lower()
+        d3.select('#traf-label-' + _id).lower()
+    }
+
+    function traf_click() {
+
+        var _id = curr_traf
+        d3.select('#traf-bar-' + _id)
+            .attr('opacity', 0.5)
+
+        d3.select('#traf-box-' + _id)
+            .attr('display', 'none')
+
+        d3.select('#traf-label-' + _id)
+            .attr('opacity', 0)
+
+
+
+        var d = (30 + parseInt(d3.select(this).attr('x'))) / 13
+        subplot_age('t_date', d, traf_age_svg)
+        subplot_indst("t_date", d, traf_indst_svg);
+        subplot_map("t_date", d, "native", traf_map_svg);
+
+        var _id = d3.select(this).attr('id').split('-')[2]
+        curr_traf = _id
+        console.log(_id)
+        d3.select('#traf-bar-' + _id)
+            .attr('opacity', 1)
+
+        d3.select('#traf-box-' + _id)
+            .attr('display', 'block')
+
+        d3.select('#traf-label-' + _id)
+            .attr('opacity', 1)
+
+    }
+
+}
+//---------------------
+
+//------------------------------------------------
+
+
+
+
+
+
+//SUB PLOTS --------------------------------------
+
+
+//INDST SUB PLOT -----
+function subplot_indst(src, val, board) {
+
+    var s_ind = ["Garment", "Hotel/Dhaba", "Footwear", "Jute/Plastic/Rexin/Cloth Bags", "Handicraft", "Domestic Servant", "Cosmetic", "Stone Quarry", "Odd Jobs", "Automobile/Transport"]
+
+    var s_ind_clean = ["Garment", "Hotel", "Footwear", "Cloth Bags", "Handicraft", "Domestic Servant", "Cosmetic", "Stone Quarry", "Odd Jobs", "Transport"]
+
+
+    var data = Data.subPlot(src, val, "indst");
+    var sum = data.reduce((sum, i) => sum + i[1], 0);
+
+    var bar_ratio = Array(10).fill(0)
+    for (var i = 0; i < data.length; i++) {
+        var ind = s_ind.indexOf(data[i][0])
+        if (ind == -1) continue;
+        bar_ratio[ind] = data[i][1]
+    }
+
+    bar_ratio = bar_ratio.map(x => x / sum)
+
+    board.selectAll('text')
+        .data(s_ind_clean)
+        .enter().append('text')
+        .attr('text-anchor', 'end')
+        .attr("x", 145)
+        .attr("y", function(d, i) { return 54 + 17 * i })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .text(function(d) { return d; });
+
+    var sub_indst_bars = board.selectAll("rect")
+        .data(bar_ratio)
+
+    var entering = sub_indst_bars.enter()
+        .append("rect");
+
+    sub_indst_bars.merge(entering)
+        .transition().duration(500)
+        .attr("fill", "#90CAF9")
+        .attr('rx', 0.5)
+        .attr('ry', 0.5)
+        .attr("x", 160)
+        .attr("width", function(d) { return Math.min(d * 500, 200) })
+        .attr("y", function(d, i) { return 58 + 17 * i })
+        .attr("height", 3);
+
+
+    var sub_indst_circle = board.selectAll("circle")
+        .data(bar_ratio)
+
+    var entering_c = sub_indst_circle.enter()
+        .append("circle");
+
+    sub_indst_circle.merge(entering_c)
+        .transition().duration(500)
+        .attr("fill", "#B3E5FC")
+        .attr('r', 5)
+        .attr("cx", function(d) { return 160 + Math.min(d * 500, 200) })
+        .attr("cy", function(d, i) { return 60 + 17 * i })
+
+}
+//---------------------
+
+
+//LOC SUB MAP ---------
+function subplot_map(src, val, loc, board) {
+
+    var proj = d3.geo.mercator();
+    var path = d3.geo.path().projection(proj);
+
+    proj.scale(2400);
+    proj.translate([-420, 280]);
+
+
+    var clr_data = Data.subPlot(src, val, loc + '_v_add')
+    var max_val = clr_data.reduce((max, x) => x[1] > max ? x[1] : max, 0)
+
+    var colorise = d3.scaleSequential().domain([2 * max_val, -max_val / 5])
+        .interpolator(d3.interpolateInferno);
+
+    clr_data = clr_data.map(x => [code_to_state[x[0]], colorise(x[1])])
+    var clr_dict = {}
+    for (var i = 0; i < clr_data.length; i++)
+        clr_dict[clr_data[i][0]] = clr_data[i][1]
+
+
+    var sub_map = board.selectAll("path")
+        .data(india_geo.features)
+
+    var entering = sub_map.enter()
+        .append("path");
+
+    sub_map.merge(entering)
+        .transition().duration(500)
+        .attr("d", path)
+        .style('stroke', 'white')
+        .style('stroke-width', 0.5)
+        .style("fill", function(d, i) {
+            if (d.id in clr_dict)
+                return clr_dict[d.id]
+            else
+                return '#CFD8DC'
+        })
+        .style("opacity", 0.7)
+
+
+    if (clr_data.length < 5)
+        clr_data = clr_data.concat(Array(5 - clr_data.length).fill(['', 'none']))
+    var map_top_states = board.selectAll('text')
+        .data(clr_data.slice(0, 5))
+
+    var entering_txt = map_top_states.enter()
+        .append('text')
+
+    map_top_states.merge(entering_txt)
+        .transition().duration(500)
+        .attr("x", 230)
+        .attr("y", function(d, i) { return 130 + 17 * i })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', function(d) { return d[1]; })
+        .text(function(d, i) { return (i + 1) + '. ' + d[0]; });
+
+}
+//---------------------
+
+
+// AGE SUB PLOT -------
+function subplot_age(src, val, board) {
+    var data = Data.subPlot(src, val, "age");
+    var num_data = Array(20).fill(0)
+    for (var i = 0; i < data.length; i++)
+        num_data[parseInt(data[i][0]) - 1] = data[i][1]
+
+    var sum = num_data.reduce((sum, i) => sum + i, 0)
+
+    num_data = num_data.map(x => x / sum)
+
+    board.selectAll('text')
+        .data(num_data)
+        .enter().append('text')
+        .attr('text-anchor', 'end')
+        .attr("x", function(d, i) { return 35 + 17 * i })
+        .attr("y", 205)
+        .attr("dy", "10px")
+        .style("font-size", "10px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .text(function(d, i) { return i + 1; });
+
+    var sub_age_bars = board.selectAll("rect")
+        .data(num_data)
+
+    var entering = sub_age_bars.enter()
+        .append("rect");
+
+    sub_age_bars.merge(entering)
+        .transition().duration(500)
+        .attr("fill", "#FFAB91")
+        .attr('rx', 1)
+        .attr('ry', 1)
+        .attr('opacity', 1)
+        .attr("x", function(d, i) { return 25 + 17 * i })
+        .attr("width", 10)
+        .attr("y", function(d) { return 200 - Math.min(190, 700 * d) })
+        .attr("height", function(d) { return 1 + Math.min(190, 700 * d) });
+
+}
+//---------------------
+
+
+// ------------------------------------------------
+
+
+
+// PLOT INITS -------------------------------------
+
+
+//AGE PLOT INIT ------
+var age_svg
+var curr_age
+
+var age_indst_svg = d3.select("#age-indst-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_indst_width)
+    .attr("height", sub_indst_height)
+var age_map_svg = d3.select("#age-map-sub").append("svg:svg")
+    .attr("width", sub_map_width)
+    .attr("height", sub_map_height)
+    //.style('background-color','red')
+    .append("svg:g")
+
+
+ageBars();
+subplot_indst("age", 13, age_indst_svg);
+subplot_map("age", 13, "native", age_map_svg);
+//--------------------
+
+
+
+
+//TRAF PLOT INIT -----
+var traf_svg
+var curr_traf
+
+var traf_age_svg = d3.select("#traf-age-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+var traf_indst_svg = d3.select("#traf-indst-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_indst_width)
+    .attr("height", sub_indst_height)
+var traf_map_svg = d3.select("#traf-map-sub").append("svg:svg")
+    .attr("width", sub_map_width)
+    .attr("height", sub_map_height)
+    .append("svg:g")
+
+
+timeLine()
+subplot_age('t_date', 40, traf_age_svg)
+subplot_indst("t_date", 40, traf_indst_svg);
+subplot_map("t_date", 40, "native", traf_map_svg);
+//---------------
+
+//------------------------------------------------
+
+
+</script>
+
+</html>

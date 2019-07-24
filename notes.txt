@@ -1,3 +1,48 @@
+ RAID MAP
+	profile card
+	native line
+
+NATIVE MAP
+	profile card
+
+LINE MAP
+	state summary
+
+AGE PLOT
+	bar -> industry*, location*, (wage)*, brought*, paramt/paypar ?
+
+RAID PLOT
+	circle -> industry, location
+
+TRAFFICK DATE
+	line -> location*, industry*, age*, brought*, map
+
+DURATION ARC
+	arc -> location, industry, age ??
+
+INDUST DIST
+	dist over time, age*, location*, (wage)*, brought*
+
+PARAMT PLOT
+	map, location on map, industry*, TRAFFICK MONTH (try bar or linear heatmap ?)
+
+INCOME PLOT
+	Link it with paramt, location, industry  (try bar or linear heatmap ?)
+
+SIB PLOT
+	compare it against national average
+
+WAGE
+	paramt, age, industry (try bar or linear heatmap ?)
+
+
+
+
+
+
+
+
+
 
 PROFILE FOR CHILD ON MAP (hover card, click profile)
 ROUTES FROM HOTSPOTS TO FACTORIES
@@ -29,6 +74,24 @@ MAIN DATA ITEMS
 
 
 
+frame rate drops when all alements are drawn at once
+draw them sequentially, or lazy load maybe ?
+
+
+map.setPaintProperty('circle-layer','circle-stroke-color','green')
+
+
+
+'circle-color': [
+'match',
+['get', 'ethnicity'],
+'White', '#fbb03b',
+'Black', '#223b53',
+'Hispanic', '#e55e5e',
+'Asian', '#3bb2d0',
+/* other */ '#ccc'
+]
+}
 
 
 
@@ -158,7 +221,18 @@ THINK ABOUT CREATING BINS FOR WAGES/INC/PAYPAR INSTEAD OF CONTINUOUS
 
 5367,1574,1476,3563
 
-
+"Garment"
+"Hotel/Dhaba"
+"Footwear"
+"Jute/Plastic/Rexin/Cloth Bags"
+"Handicraft"
+"Domestic Servant"
+"Cosmetic"
+"Stone Quarry"
+"Odd Jobs"
+"Automobile/Transport"
+"Brick Kilns & Roof tiles units"
+"Metal"
 
 #ASHRAM_DATA
 

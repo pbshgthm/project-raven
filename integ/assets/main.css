@@ -1,0 +1,60 @@
+body,html{
+	margin: 0;
+	padding: 0;
+}
+
+#nav-pane{
+	position: fixed;
+	top: 5vh;
+	left: 2vw;
+	width: 15vw;
+	height: 90vh;
+	background-color: white;
+}
+
+.page-sec{
+	width: 81vw;
+	height: 95vh;
+	padding-top: 5vh;
+	padding-left: 19vw;
+	border-bottom: 3px solid white;
+	background-color: #ECEFF1;
+	
+}
+
+.viz-board{
+	position: absolute;
+	left: 19vw;
+	width: 50vw;
+	height: 90vh;
+	background-color: white;
+
+}
+
+.viz-panel{
+	position: absolute;
+	left: 71vw;
+	width: 27vw;
+	height: 90vh;
+	background-color: white;
+}
+
+.sub-indst{
+	width: 27vw;
+	height: 30vh;
+}
+
+.sub-map{
+	width: 27vw;
+	height: 30vh;
+}
+
+.sub-age{
+	width: 27vw;
+	height: 30vh;
+}
+
+.label-font{
+	font-family: Ariel;
+}
+
