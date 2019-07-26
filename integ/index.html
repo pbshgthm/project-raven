@@ -35,7 +35,6 @@
     <div class="page-sec">
         <div id="raid-board" class="viz-board"></div>
         <div class="viz-panel">
-            
         </div>
     </div>
 </body>
@@ -64,7 +63,7 @@ var sub_map_height = d3.select('.sub-map').style('height').slice(0, -2);
 //MAIN PLOTS -------------------------------------
 
 //AGE PLOT ------------
-function ageBars() {
+function age_plot() {
 
     age_svg = d3.select("#age-board")
         .append("svg")
@@ -207,7 +206,7 @@ function ageBars() {
 
 
 //TRAF PLOT -----------
-function timeLine() {
+function traf_plot() {
 
 
     var month_name = ['Jan-Feb', 'Mar-Apr', 'May-Jun', 'Jul-Aug', 'Sep-Oct', 'Nov-Dec']
@@ -293,21 +292,21 @@ function timeLine() {
         .attr("y1", 300)
         .attr("y2", 300)
         .style("stroke", "white")
-        .attr('opacity',0.5)
+        .attr('opacity', 0.5)
         .style("stroke-linecap", "round")
         .style("stroke-width", 15);
-	//*/
+    //*/
 
-        
+
     var central_marks = traf_svg.selectAll('central-marks')
-    	.data(month_data).enter()
+        .data(month_data).enter()
         .append('rect')
-        .attr("x", function(d, i) { return -30 + d[0] * 13 -1})
+        .attr("x", function(d, i) { return -30 + d[0] * 13 - 1 })
         .attr("width", 2)
         .attr('fill', '#607D8B')
-        .attr("y", function(d, i) { return 300-5  })
-        .attr("height", function(d, i) { return (d[0]%6==0)?10:0 })
-    
+        .attr("y", function(d, i) { return 300 - 5 })
+        .attr("height", function(d, i) { return (d[0] % 6 == 0) ? 10 : 0 })
+
 
     var central_label = traf_svg.selectAll("central-label")
         .data(month_data).enter()
@@ -316,7 +315,7 @@ function timeLine() {
         .attr("x", function(d, i) { return -30 + d[0] * 13 + 13 })
         .attr("y", 295)
         .attr("dy", "10px")
-        .style("font-size", function(d,i){return (d[0]%6==2)?"12px":'0px'})
+        .style("font-size", function(d, i) { return (d[0] % 6 == 2) ? "12px" : '0px' })
         .style('font-family', 'Arial')
         .attr("fill", '#455A64')
         .text(function(d) { return (2010 + parseInt(d[0] / 6)) })
@@ -391,6 +390,223 @@ function timeLine() {
             .attr('opacity', 1)
 
     }
+
+}
+//---------------------
+
+
+//RAID PLOT -----------
+function raid_plot() {
+
+
+    var zoom = d3.zoom()
+        .on('zoom', function() {
+            raid_svg.attr('transform', d3.event.transform);
+        })
+
+    function move(pan_x) {
+        zoom.translateTo(raid_svg_g, -20 + 4.65 * (pan_x) + board_width / 2, board_height / 2);
+    }
+
+    raid_svg_g = d3.select("#raid-board")
+
+    raid_svg = raid_svg_g
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height / 1.5)
+        .append("g")
+
+    raid_scale_svg = d3.select("#raid-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height / 3)
+        .append("g")
+
+    var r_data = Data.raidDist();
+    var cir_data = []
+    var line_data = []
+    for (var i = 0; i < r_data.length; i++) {
+        var x = 10 + i * 14;
+        var y = undefined
+        for (var j = 0; j < r_data[i].length; j++) {
+            y = j * 13;
+            cir_data.push([x, y, r_data[i][j]])
+        }
+        line_data.push([x, y])
+    }
+
+
+    var a = Array(170).fill(0).map((d, i) => i)
+
+    //guide line
+    for (var i = 0; i < line_data.length; i++) {
+        if (line_data[i][1] == undefined) continue
+        raid_svg
+            .append('line')
+            .attr("x1", -1300 + line_data[i][0])
+            .attr("x2", -1300 + line_data[i][0])
+            .attr("y1", 385)
+            .attr("y2", 370 - line_data[i][1])
+            .style("stroke", "#F4511E")
+            .attr('opacity', 0.1)
+            .style("stroke-linecap", "round")
+            .style("stroke-width", 1);
+    }
+
+    //masks
+    var raid_mask_dots = raid_svg.selectAll('dots')
+        .data(cir_data).enter()
+        .append('circle')
+        .attr('cx', function(d) { return -1300 + d[0] })
+        .attr('cy', function(d) { return 370 - d[1] })
+        .attr('r', function(d) { return 2 + d[2] / 6 })
+        .attr('fill', 'white')
+        .attr('opacity', 1)
+
+    //dots
+    var raid_dots = raid_svg.selectAll('dots')
+        .data(cir_data).enter()
+        .append('circle')
+        .attr('class', function(d) { return 'raid-dots-' + d[0] })
+        //.attr('id',function(d){return 'raid-dots-'+d[0]})
+        .attr('cx', function(d) { return -1300 + d[0] })
+        .attr('cy', function(d) { return 370 - d[1] })
+        .attr('r', function(d) { return 2 + d[2] / 6 })
+        .attr('fill', '#F4511E')
+        .attr('opacity', 0.3)
+        .on('mouseover', raid_mouseover)
+        .on('mouseout', raid_mouseout)
+
+    //months
+    for (var i = 0; i < line_data.length; i++) {
+        raid_svg
+            .append('rect')
+            .attr('id', 'raid-months-' + line_data[i][0])
+            .attr("x", -1300 + line_data[i][0] - 6.5)
+            .attr("y", 385)
+            .attr('rx', 6.5)
+            .attr('ry', 6.5)
+            .attr('width', 14)
+            .attr('height', 30)
+            .attr('fill', '#CFD8DC')
+            .style("stroke", "white")
+            .style("stroke-width", 3)
+            .on('mouseover', raid_mouseover)
+            .on('mouseout', raid_mouseout)
+    }
+
+    //scale
+    var dots_scale = raid_scale_svg.selectAll('dots')
+        .data(cir_data).enter()
+        .append('circle')
+        .attr('cx', function(d) { return 130 + (d[0]) / 5 })
+        .attr('cy', function(d) { return 60 + (300 - d[1]) / 5 })
+        .attr('r', function(d) { return (3 + d[2] / 7) / 5 })
+        .attr('fill', '#F4511E')
+        .attr('opacity', 0.7)
+
+
+    var a = Array(170).fill(0).map((d, i) => i)
+
+    raid_scale_svg
+        .append('line')
+        .attr("x1", 120)
+        .attr("x2", 610)
+        .attr("y1", 131)
+        .attr("y2", 131)
+        .style("stroke", "#B0BEC5")
+        .attr('opacity', 1)
+        .style("stroke-linecap", "round")
+        .style("stroke-width", 0.8);
+
+    for (var i = 0; i < a.length; i++) {
+
+        if (a[i] % 12 != 0) continue;
+
+
+        raid_scale_svg
+            .append("text")
+            .attr("x", 137 + 14 * a[i] / 5)
+            .attr("y", 136)
+            .attr("dy", "8px")
+            .style("font-size", '9px')
+            .style('font-family', 'Arial')
+            .attr("fill", '#B0BEC5')
+            .text((a[i] / 12 < 14) ? (a[i] / 12) + 2005 : "")
+
+
+        raid_scale_svg
+            .append('line')
+            .attr("x1", 130 + 14 * a[i] / 5)
+            .attr("x2", 130 + 14 * a[i] / 5)
+            .attr("y1", 131)
+            .attr("y2", 145)
+            .style("stroke", "#B0BEC5")
+            .attr('opacity', 1)
+            .style("stroke-linecap", "round")
+            .style("stroke-width", 0.8);
+    }
+
+
+
+    var drag = d3.drag().subject(function(d) {
+            return d == null ? { x: d3.event.x, y: d3.event.y } : d;
+        })
+        .on("start", onStart)
+        .on("drag", onDrag)
+        .on("end", onEnd);
+
+
+    var scale_window = raid_scale_svg
+        .append('rect')
+        .datum({ x: 390 })
+        .attr('x', 390)
+        .attr('y', 30)
+        .attr('width', 140)
+        .attr('height', 100)
+        .attr('opacity', 0.2)
+        .attr('fill', '#FF9800')
+        .call(drag);
+
+
+
+
+
+    function onStart() {
+        d3.select(this).raise().classed("active", true);
+    }
+
+    function onDrag(d) {
+        if (d3.event.x < 110 || d3.event.x > 490) return;
+        d3.select(this).attr("x", (d.x = d3.event.x));
+        move(d3.event.x - 390)
+    }
+
+    function onEnd() {
+        d3.select(this).classed("active", false);
+    }
+
+
+    function raid_mouseover() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+
+        d3.selectAll('.raid-dots-' + _id)
+            .attr('fill', '#FF5722')
+            .attr('opacity', 0.8)
+        d3.select('#raid-months-' + _id)
+            .style('fill', '#FFC107')
+    }
+
+    function raid_mouseout() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+
+        d3.selectAll('.raid-dots-' + _id)
+            .attr('fill', '#F4511E')
+            .attr('opacity', 0.3)
+        d3.select('#raid-months-' + _id)
+            .style('fill', '#CFD8DC')
+    }
+
 
 }
 //---------------------
@@ -602,7 +818,7 @@ var age_map_svg = d3.select("#age-map-sub").append("svg:svg")
     .append("svg:g")
 
 
-ageBars();
+age_plot();
 subplot_indst("age", 13, age_indst_svg);
 subplot_map("age", 13, "native", age_map_svg);
 //--------------------
@@ -630,7 +846,7 @@ var traf_map_svg = d3.select("#traf-map-sub").append("svg:svg")
     .append("svg:g")
 
 
-timeLine()
+traf_plot()
 subplot_age('t_date', 40, traf_age_svg)
 subplot_indst("t_date", 40, traf_indst_svg);
 subplot_map("t_date", 40, "native", traf_map_svg);
@@ -639,6 +855,11 @@ subplot_map("t_date", 40, "native", traf_map_svg);
 //------------------------------------------------
 
 
+
+//RAID PLOT INIT ----
+
+var raid_svg_g
+raid_plot()
 </script>
 
 </html>

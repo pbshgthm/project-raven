@@ -150,11 +150,11 @@ var Data = {
             else r_data[_key] = 1
         }
         var r_list = Object.entries(r_data);
-        var r_freq = Array(121).fill(0).sort()
+        var r_freq = Array(170).fill(0).sort()
         for (var i = 0; i < r_list.length; i++) {
             var r_d = r_list[i][0].split('/')
-            var m = (parseInt(r_d[2]) - 2011) * 12 + parseInt(r_d[1])
-            if (parseInt(r_d[2]) < 2011) continue
+            var m = (parseInt(r_d[2]) - 2005) * 12 + parseInt(r_d[1])
+            if (parseInt(r_d[2]) < 2005) continue
             if (r_freq[m] == 0)
                 r_freq[m] = [r_list[i][1]]
             else
