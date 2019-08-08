@@ -10,9 +10,10 @@
     <script src="fin_data.json"></script>
     <script src="s_data.json"></script>
     <link rel="stylesheet" type="text/css" href="main.css">
-
     <title>Raven Hybrid</title>
 </head>
+
+
 
 <body>
 
@@ -993,7 +994,7 @@ function plotInc() {
     var svg = incSVG;
 
 
-    /*
+    ///*
     var inc=famInc;
     inc=inc.sort(function(a,b){return a[0]-b[0]});
     inc=inc.map(x=>[5+x[0]/100,440-x[1]*2])
@@ -1023,15 +1024,15 @@ function plotInc() {
       var path = svg
                   .append('path')
                   .attr('d', line([
-                                [5+inc[i][0]/100,450],
-                                [5+inc[i][0]/100,440-inc[i][1]*2]
+                                [5+inc[i][0]/100,300+2*inc[i][1]],
+                                [5+inc[i][0]/100,300-inc[i][1]*2]
                   ]))
                   .attr("stroke", colorise(inc[i][1]*2))
                   .attr("stroke-width", 5)
                   .attr('opacity',0.5)
     }
     //*/
-    ///*
+    /*
     var inc = famInc;
     inc = inc.sort(function(a, b) { return a[0] - b[0] });
     inc = inc.map(x => [15 + x[0] / 100, x[1] / 2])

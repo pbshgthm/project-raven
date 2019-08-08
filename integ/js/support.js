@@ -95,6 +95,31 @@ var Data = {
     },
 
 
+    filterPoints: function(filter,val){
+        var crds=[]
+        for(var i=0;i<this.raw.length;i++){
+            var f=this.raw[i][filter];
+            
+            if(filter=="t_date"){
+                f=f.split("/")
+                f=(f[2]-2010)*12+(parseInt(f[1]))
+                if(f<val||f>=val+4)
+                    continue
+                if(isNaN(f))continue;
+                
+            }
+            else
+                if(f!=val&&val!=-1)continue;
+   
+            
+            var crd=this.raw[i]['native_v_crd'].split(',')
+            if(crd[0]=="")continue;
+            
+            crds.push(crd)
+        }
+        return this.toGeojson(crds)
+    },
+
     age_dist: function() {
         var age = Array(21).fill(0)
         var tot = 0;
@@ -250,7 +275,7 @@ var Data = {
                 f=f.split("/")
                 f=(f[2]-2010)*6+parseInt(parseInt(f[1])/2)
             }
-            
+
             if(f!=val)continue;
             var k=this.raw[i][key];
             if(k=="")continue;
@@ -267,6 +292,40 @@ var Data = {
         dist=Object.entries(dist);
         dist.sort(function(a,b){return b[1]-a[1]})
         return dist;
+    },
+
+    r_month_data: function(curr_month){
+        var month_data=[]
+        var r_data={}
+        for(var i=0;i<this.raw.length;i++){
+
+            f=this.raw[i]['r_date']
+            f=f.split("/")
+            f=(f[2]-2005)*12+parseInt(f[1])
+            if(f!=curr_month)continue
+
+            
+            var r_date = this.raw[i]['r_date']
+            var r_place = this.raw[i]['raid_v_name']+'&'+this.raw[i]['raid_v_add']
+            var r_indst = this.raw[i]['indst']
+            if (r_date == "") continue;
+            if (r_place == "") continue;
+            var _key = r_date + '--' + r_place;
+            if (_key in r_data){
+                if(r_indst in r_data[_key])
+                    r_data[_key][r_indst]+=1
+                else
+                    r_data[_key][r_indst]=1
+            }
+            else r_data[_key] = {r_indst:1}
+
+        }
+        month_data=Object.entries(r_data)
+        month_data=month_data.map(x=>x[0].split('--').concat(x[1]))
+        month_data.sort(function(a,b){return parseInt(a[0].split('/')[0])-parseInt(b[0].split('/')[0])})
+        month_data=month_data.map(x=>x.slice(0,2).concat([Object.entries(x[2])]))
+        return month_data
+               
     }
 
 

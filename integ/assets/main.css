@@ -58,3 +58,9 @@ body,html{
 	font-family: Ariel;
 }
 
+#sub-raid{
+	width: 27vw;
+	height: 90vh;
+	overflow-y: scroll;
+}
+
