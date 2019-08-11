@@ -2,12 +2,12 @@ var Data = {
 
     raw: [],
     init: function(raw_csv) {
-        var key=raw_csv[0]
-        var data=[]
-        for(var i=1;i<raw_csv.length;i++){
-            var c_d={}
-            for(var j=0;j<raw_csv[i].length;j++)
-                c_d[key[j]]=raw_csv[i][j]
+        var key = raw_csv[0]
+        var data = []
+        for (var i = 1; i < raw_csv.length; i++) {
+            var c_d = {}
+            for (var j = 0; j < raw_csv[i].length; j++)
+                c_d[key[j]] = raw_csv[i][j]
             data.push(c_d)
         }
         this.raw = data;
@@ -35,28 +35,28 @@ var Data = {
         return geo;
     },
 
-    getMarkers : function(loc,key){
+    getMarkers: function(loc, key) {
         var geo = {};
         geo['type'] = 'FeatureCollection';
         geo['features'] = [];
 
 
-        var clrs=['#f44336','#E91E63','#9C27B0','#673AB7','#3F51B5','#2196F3',
-        '#03A9F4','#00BCD4','#00BCD4','#009688','#4CAF50','#8BC34A','#CDDC39',
-        '#FFEB3B','#FFC107','#FF9800','#FF5722','#795548','#9E9E9E','#607D8B'
+        var clrs = ['#f44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3',
+            '#03A9F4', '#00BCD4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39',
+            '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'
         ]
 
-        for(var i=0;i<this.raw.length;i++){
-            var crd=this.raw[i][loc+"_v_crd"].split(',');
-            if(crd[0]=="")continue;
-            var item=this.raw[i][key];
-            if(item=="")continue;
+        for (var i = 0; i < this.raw.length; i++) {
+            var crd = this.raw[i][loc + "_v_crd"].split(',');
+            if (crd[0] == "") continue;
+            var item = this.raw[i][key];
+            if (item == "") continue;
             var c = {
                 "type": "Feature",
                 "properties": {
                     "val": 1,
                     "item": item,
-                    'clr': clrs[item-1]
+                    'clr': clrs[item - 1]
                 },
                 "geometry": {
                     "type": "Point",
@@ -71,23 +71,23 @@ var Data = {
     getPoints: function(src) {
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
-            var crd=this.raw[i][src].split(',')
-            if(crd[0]=="")crd=[]
+            var crd = this.raw[i][src].split(',')
+            if (crd[0] == "") crd = []
             crds.push(crd)
         }
         return this.toGeojson(crds)
     },
 
     getLines: function(src, dst) {
-        
+
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
-            var s_crd=this.raw[i][src].split(',')
-            if(s_crd[0]=="")s_crd=[]
-            
-            var d_crd=this.raw[i][dst].split(',')
-            if(d_crd[0]=="")d_crd=[]
-            crds.push([s_crd,d_crd])
+            var s_crd = this.raw[i][src].split(',')
+            if (s_crd[0] == "") s_crd = []
+
+            var d_crd = this.raw[i][dst].split(',')
+            if (d_crd[0] == "") d_crd = []
+            crds.push([s_crd, d_crd])
 
 
         }
@@ -95,26 +95,27 @@ var Data = {
     },
 
 
-    filterPoints: function(filter,val){
-        var crds=[]
-        for(var i=0;i<this.raw.length;i++){
-            var f=this.raw[i][filter];
-            
-            if(filter=="t_date"){
-                f=f.split("/")
-                f=(f[2]-2010)*12+(parseInt(f[1]))
-                if(f<val||f>=val+4)
-                    continue
-                if(isNaN(f))continue;
-                
+    filterPoints: function(age, time) {
+        var crds = []
+        for (var i = 0; i < this.raw.length; i++) {
+            if (age != this.raw[i]['age']) {
+                if (age != 0) continue;
             }
-            else
-                if(f!=val&&val!=-1)continue;
-   
-            
-            var crd=this.raw[i]['native_v_crd'].split(',')
-            if(crd[0]=="")continue;
-            
+
+            if (time != -1) {
+                var t = this.raw[i]['t_date'].split("/")
+                t = (t[2] - 2010) * 12 + (parseInt(t[1]))
+
+                if (t < time || t >= time + 4) continue
+                if (isNaN(t)) continue;
+
+            }
+
+
+
+            var crd = this.raw[i]['native_v_crd'].split(',')
+            if (crd[0] == "") continue;
+
             crds.push(crd)
         }
         return this.toGeojson(crds)
@@ -132,34 +133,34 @@ var Data = {
     },
 
     traffickDate: function() {
-        
-        var traf_m={}
-        for(var i=0;i<this.raw.length;i++){
-            var m=this.raw[i]['t_date'].split('/')
-            m=(m[2]-2010)*6+parseInt(parseInt(m[1])/2)
-            if(isNaN(m))continue
-            //if(m<0)continue
-            if(m in traf_m)traf_m[m]+=1
-            else traf_m[m]=1
-        }
-        
-        traf_m=Object.entries(traf_m).map(x=>[parseInt(x[0]),x[1]])
 
-        return traf_m.sort(function(a,b){return a[0]-b[0]}) 
-        
+        var traf_m = {}
+        for (var i = 0; i < this.raw.length; i++) {
+            var m = this.raw[i]['t_date'].split('/')
+            m = (m[2] - 2010) * 6 + parseInt(parseInt(m[1]) / 2)
+            if (isNaN(m)) continue
+            //if(m<0)continue
+            if (m in traf_m) traf_m[m] += 1
+            else traf_m[m] = 1
+        }
+
+        traf_m = Object.entries(traf_m).map(x => [parseInt(x[0]), x[1]])
+
+        return traf_m.sort(function(a, b) { return a[0] - b[0] })
+
     },
 
-    traffickDur: function(){
-        var dur=[]
-        for(var i=0;i<this.raw.length;i++){
-            var t=this.raw[i]['t_date'].split("/")
-            var r=this.raw[i]['r_date'].split("/")
-            t=(t[2]-2000)*12+parseInt(t[1])
-            r=(r[2]-2000)*12+parseInt(r[1])
-            if(isNaN(t)||isNaN(r))continue;
-            dur.push([t,r])
+    traffickDur: function() {
+        var dur = []
+        for (var i = 0; i < this.raw.length; i++) {
+            var t = this.raw[i]['t_date'].split("/")
+            var r = this.raw[i]['r_date'].split("/")
+            t = (t[2] - 2000) * 12 + parseInt(t[1])
+            r = (r[2] - 2000) * 12 + parseInt(r[1])
+            if (isNaN(t) || isNaN(r)) continue;
+            dur.push([t, r])
         }
-        return dur.sort(function(a,b){return a[0]-b[0]});
+        return dur.sort(function(a, b) { return a[0] - b[0] });
 
     },
 
@@ -266,66 +267,65 @@ var Data = {
         return Object.entries(gen_dict).sort(function(a, b) { return b[1] - a[1] });
     },
 
-    subPlot: function(filter, val, key){
-        var dist={}
-        for(var i=0;i<this.raw.length;i++){
-            var f=this.raw[i][filter];
-            
-            if(filter=="t_date"){
-                f=f.split("/")
-                f=(f[2]-2010)*6+parseInt(parseInt(f[1])/2)
+    subPlot: function(filter, val, key) {
+        var dist = {}
+        for (var i = 0; i < this.raw.length; i++) {
+            var f = this.raw[i][filter];
+
+            if (filter == "t_date") {
+                f = f.split("/")
+                f = (f[2] - 2010) * 6 + parseInt(parseInt(f[1]) / 2)
             }
 
-            if(f!=val)continue;
-            var k=this.raw[i][key];
-            if(k=="")continue;
-            if(key.slice(-3)=="add")
-                k=k.split(',')[2].substring(1)
+            if (f != val) continue;
+            var k = this.raw[i][key];
+            if (k == "") continue;
+            if (key.slice(-3) == "add")
+                k = k.split(',')[2].substring(1)
 
-            if(k in dist){
-                dist[k]+=1;
-            }else{
-                dist[k]=1;
+            if (k in dist) {
+                dist[k] += 1;
+            } else {
+                dist[k] = 1;
             }
         }
-        
-        dist=Object.entries(dist);
-        dist.sort(function(a,b){return b[1]-a[1]})
+
+        dist = Object.entries(dist);
+        dist.sort(function(a, b) { return b[1] - a[1] })
         return dist;
     },
 
-    r_month_data: function(curr_month){
-        var month_data=[]
-        var r_data={}
-        for(var i=0;i<this.raw.length;i++){
+    r_month_data: function(curr_month) {
+        var month_data = []
+        var r_data = {}
+        for (var i = 0; i < this.raw.length; i++) {
 
-            f=this.raw[i]['r_date']
-            f=f.split("/")
-            f=(f[2]-2005)*12+parseInt(f[1])
-            if(f!=curr_month)continue
+            f = this.raw[i]['r_date']
+            f = f.split("/")
+            f = (f[2] - 2005) * 12 + parseInt(f[1])
+            if (f != curr_month) continue
 
-            
+
             var r_date = this.raw[i]['r_date']
-            var r_place = this.raw[i]['raid_v_name']+'&'+this.raw[i]['raid_v_add']
+            var r_place = this.raw[i]['raid_v_name'] + '&' + this.raw[i]['raid_v_add']
             var r_indst = this.raw[i]['indst']
             if (r_date == "") continue;
             if (r_place == "") continue;
             var _key = r_date + '--' + r_place;
-            if (_key in r_data){
-                if(r_indst in r_data[_key])
-                    r_data[_key][r_indst]+=1
+            if (_key in r_data) {
+                if (r_indst in r_data[_key])
+                    r_data[_key][r_indst] += 1
                 else
-                    r_data[_key][r_indst]=1
-            }
-            else r_data[_key] = {r_indst:1}
+                    r_data[_key][r_indst] = 1
+            } else r_data[_key] = { r_indst: 1 }
 
         }
-        month_data=Object.entries(r_data)
-        month_data=month_data.map(x=>x[0].split('--').concat(x[1]))
-        month_data.sort(function(a,b){return parseInt(a[0].split('/')[0])-parseInt(b[0].split('/')[0])})
-        month_data=month_data.map(x=>x.slice(0,2).concat([Object.entries(x[2])]))
+        month_data = Object.entries(r_data)
+        month_data = month_data.map(x => x[0].split('--').concat(x[1]))
+        month_data.sort(function(a, b) { return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0]) })
+        month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
         return month_data
-               
+
     }
 
 
