@@ -13,156 +13,159 @@
     <title>Raven Hybrid</title>
 </head>
 
+
+
 <body>
+
     <!- ITEM MAP -->
     <div class="sub-sec">
         <div id="item-map" class="map-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
+
     <!- RAID MAP -->
     <div class="sub-sec">
         <div id="raid-map" class="map-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- NATIVE MAP -->
     <div class="sub-sec">
         <div id="native-map" class="map-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- LINE MAP -->
     <div class="sub-sec">
         <div id="line-map" class="map-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
+
+
     <!- AGE PLOT -->
     <div class="sub-sec">
         <div id="age-board" class="viz-board"></div>
         <div class="viz-panel">
-            <div class="temp-btn" onclick="ageBars(since=true)"></div>
-        </div>
+          <div class="temp-btn" onclick="ageBars(since=true)"></div>
+        </div>  
     </div>
     <!- RAID PLOT -->
     <div class="sub-sec">
         <div id="raid-board" class="viz-board"></div>
         <div class="viz-panel">
-            <div class="temp-btn" onclick="raidPlot(tot=true)"></div>
-        </div>
+          <div class="temp-btn" onclick="raidPlot(tot=true)"></div>
+        </div>  
     </div>
     <!- TIMELINE -->
     <div class="sub-sec">
         <div id="traf-board" class="viz-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- SINCE PLOT -->
     <div class="sub-sec">
         <div id="since-board" class="viz-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- INDUST PLOT -->
     <div class="sub-sec">
         <div id="indust-board" class="viz-board"></div>
         <div class="viz-panel">
-            <div class="temp-btn" onclick="indSplit(split='split')"></div>
-            <div class="temp-btn" onclick="indSplit(split='line')"></div>
-            <div class="temp-btn" onclick="indSplit(split='comb')"></div>
-        </div>
+          <div class="temp-btn" onclick="indSplit(split='split')"></div>
+          <div class="temp-btn" onclick="indSplit(split='line')"></div>
+          <div class="temp-btn" onclick="indSplit(split='comb')"></div>
+        </div>  
     </div>
     <!- PARAMT PLOT -->
     <div class="sub-sec">
         <div id="paramt-board" class="viz-board"></div>
         <div class="viz-panel">
-            <div class="temp-btn" onclick="amtPlot(split='split')"></div>
-            <div class="temp-btn" onclick="amtPlot(split='comb')"></div>
-        </div>
+          <div class="temp-btn" onclick="amtPlot(split='split')"></div>
+          <div class="temp-btn" onclick="amtPlot(split='comb')"></div>
+        </div>  
     </div>
     <!- INCOME PLOT -->
     <div class="sub-sec">
         <div id="inc-board" class="viz-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- SIBLING PLOT -->
     <div class="sub-sec">
         <div id="sib-board" class="viz-board"></div>
-        <div class="viz-panel"></div>
+        <div class="viz-panel"></div>  
     </div>
     <!- WAGE PLOT -->
     <div class="sub-sec">
         <div id="wage-board" class="viz-board"></div>
         <div class="viz-panel">
-            <div class="temp-btn" onclick="plotWage(split='comb')"></div>
-            <div class="temp-btn" onclick="plotWage(split='split')"></div>
-            <div class="temp-btn" onclick="plotWage(split='init')"></div>
-        </div>
+          <div class="temp-btn" onclick="plotWage(split='comb')"></div>
+          <div class="temp-btn" onclick="plotWage(split='split')"></div>
+          <div class="temp-btn" onclick="plotWage(split='init')"></div>
+        </div>  
     </div>
+    
 </body>
 <script type="text/javascript">
 Data.init(raw_data);
 
 var map
-
 function mapPoints() {
 
     mapboxgl.accessToken = 'pk.eyJ1IjoicGJzaGd0aG0iLCJhIjoiY2poaXl5NGkxMGRnazM2a2R1Z2VoOHFpNSJ9.oBXuyfoi8qB-paCmQpk8pQ';
 
-    map = new mapboxgl.Map({
-        container: 'item-map',
-        style: 'mapbox://styles/mapbox/light-v10',
-        center: [78.565, 22.2358],
-        zoom: 4,
-        maxZoom: 9,
-        maxBounds: [
-            [64.100, 7.414],
-            [100.256, 35.646]
-        ]
-    });
+      map = new mapboxgl.Map({
+          container: 'item-map',
+          style: 'mapbox://styles/mapbox/light-v10',
+          center: [78.565,22.2358],
+          zoom: 4,
+          maxZoom: 9,
+          maxBounds:[[64.100,7.414],[100.256,35.646]]
+      });
 
 
-    map.on('load', function() {
+    map.on('load', function(){
 
-        map.addSource('heatmap', {
-            "type": "geojson",
-            "data": Data.getMarkers('native', 'age')
-        });
+              map.addSource('heatmap', {
+                  "type": "geojson",
+                  "data": Data.getMarkers('native','age')
+              });
 
+              
+              map.addLayer({
+                    "id": "circle-layer",
+                    "type": "circle",
+                    "source": "heatmap",
+                    "transition": {
+  "duration": 3000,
+  "delay": 0
+},
+                    "paint": {
+                        
 
-        map.addLayer({
-            "id": "circle-layer",
-            "type": "circle",
-            "source": "heatmap",
-            "transition": {
-                "duration": 3000,
-                "delay": 0
-            },
-            "paint": {
+                        "circle-color": ["get", "clr"],
 
+                        "circle-color-transition": {duration: 2000},
 
-                "circle-color": ["get", "clr"],
+                        "circle-stroke-color": 'white',
+                        
+                        "circle-stroke-width": 0,                          
 
-                "circle-color-transition": { duration: 2000 },
-
-                "circle-stroke-color": 'white',
-
-                "circle-stroke-width": 0,
-
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 2,
-                    7, 4,
-                    9, 5
-                ],
-
-                "circle-opacity": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 0.5,
-                    7, 0.7,
-                    9, 0.8
-                ],
-            }
-        }, 'waterway-label');
+                        "circle-radius": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 2,
+                              7, 4,
+                              9, 5
+                              ],
+              
+                        "circle-opacity": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 0.5,
+                              7, 0.7,
+                              9, 0.8
+                              ],
+                    }
+              }, 'waterway-label');          
 
     })
 }
@@ -175,122 +178,116 @@ function mapHeatmap(val) {
 
     mapboxgl.accessToken = 'pk.eyJ1IjoicGJzaGd0aG0iLCJhIjoiY2poaXl5NGkxMGRnazM2a2R1Z2VoOHFpNSJ9.oBXuyfoi8qB-paCmQpk8pQ';
 
-    var map = new mapboxgl.Map({
-        container: val + '-map',
-        style: 'mapbox://styles/mapbox/light-v10',
-        center: [78.5075, 22.2358],
-        zoom: 4,
-        maxZoom: 9,
-        maxBounds: [
-            [60.929371, 7.41430],
-            [96.08562, 35.64620]
-        ]
-    });
+      var map = new mapboxgl.Map({
+          container: val+'-map',
+          style: 'mapbox://styles/mapbox/light-v10',
+          center: [78.5075,22.2358],
+          zoom: 4,
+          maxZoom: 9,
+          maxBounds:[[60.929371,7.41430],[96.08562,35.64620]]
+      });
 
 
-    map.on('load', function() {
+    map.on('load', function(){
 
-        map.addSource('heatmap', {
-            "type": "geojson",
-            "data": Data.getPoints(val + '_v_crd')
-        });
+              map.addSource('heatmap', {
+                  "type": "geojson",
+                  "data": Data.getPoints(val+'_v_crd')
+              });
 
+              
+              //heatmap init
 
-        //heatmap init
+              map.addLayer({
+                    "id": "heatmap-layer",
+                    "type": "heatmap",
+                    "source": "heatmap",
+                    "paint": {
+                        
+                        "heatmap-weight": [
+                            "interpolate",
+                            ["linear"],
+                            ["get", "val"],
+                            4, 0.4,
+                            9, 0.4
+                            ],
+                        
 
-        map.addLayer({
-            "id": "heatmap-layer",
-            "type": "heatmap",
-            "source": "heatmap",
-            "paint": {
+                        "heatmap-intensity": [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
+                            4, 0.3,
+                            9, 0.3
+                            ],
+                        
 
-                "heatmap-weight": [
-                    "interpolate",
-                    ["linear"],
-                    ["get", "val"],
-                    4, 0.4,
-                    9, 0.4
-                ],
+                        "heatmap-color": [
+                              "interpolate",
+                              ["linear"],
+                              ["heatmap-density"],
+                              0, "rgba(0,0,0,0)",
+                              0.10, "#C5E1A5",
+                              0.20, "#FFCA28",
+                              0.30, "#FFA726",
+                              0.99, "#FF7043",
+                              1, "#ef5350"
+                              ],
+                          
 
-
-                "heatmap-intensity": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 0.3,
-                    9, 0.3
-                ],
-
-
-                "heatmap-color": [
-                    "interpolate",
-                    ["linear"],
-                    ["heatmap-density"],
-                    0, "rgba(0,0,0,0)",
-                    0.10, "#C5E1A5",
-                    0.20, "#FFCA28",
-                    0.30, "#FFA726",
-                    0.99, "#FF7043",
-                    1, "#ef5350"
-                ],
-
-
-                "heatmap-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 10,
-                    9, 30
-                ],
-
-                "heatmap-opacity": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 1,
-                    9, 1
-                ],
-            }
-        }, 'waterway-label');
-        //*/
-
-
-        //circle init
-        map.addLayer({
-            "id": "circle-layer",
-            "type": "circle",
-            "source": "heatmap",
-            'layout': {
-                'visibility': 'none'
-            },
-            "paint": {
+                        "heatmap-radius": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 10,
+                              9, 30
+                              ],
+              
+                        "heatmap-opacity": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 1,
+                              9, 1
+                              ],
+                    }
+              }, 'waterway-label');
+              //*/
 
 
-                "circle-color": 'white',
+              //circle init
+              map.addLayer({
+                    "id": "circle-layer",
+                    "type": "circle",
+                    "source": "heatmap",
+                    "paint": {
+                        
 
-                "circle-stroke-color": 'white',
+                        "circle-color": 'white',
 
-                "circle-stroke-width": 0,
+                        "circle-stroke-color": 'white',
+                        
+                        "circle-stroke-width": 0,                          
 
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 0,
-                    7, 0,
-                    9, 5
-                ],
-
-                "circle-opacity": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 0,
-                    7, 0,
-                    9, 0.8
-                ],
-            }
-        }, 'waterway-label');
+                        "circle-radius": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 0,
+                              7, 0,
+                              9, 5
+                              ],
+              
+                        "circle-opacity": [
+                              "interpolate",
+                              ["linear"],
+                              ["zoom"],
+                              4, 0,
+                              7, 0,
+                              9, 0.8
+                              ],
+                    }
+              }, 'waterway-label');          
 
     })
 }
@@ -300,53 +297,50 @@ function mapLines() {
 
     mapboxgl.accessToken = 'pk.eyJ1IjoicGJzaGd0aG0iLCJhIjoiY2poaXl5NGkxMGRnazM2a2R1Z2VoOHFpNSJ9.oBXuyfoi8qB-paCmQpk8pQ';
 
-    var map = new mapboxgl.Map({
-        container: 'line-map',
-        style: 'mapbox://styles/mapbox/light-v10',
-        center: [78.5075, 22.2358],
-        zoom: 4,
-        maxZoom: 9,
-        maxBounds: [
-            [60.929371, 7.41430],
-            [96.08562, 35.64620]
-        ]
-    });
+      var map = new mapboxgl.Map({
+          container: 'line-map',
+          style: 'mapbox://styles/mapbox/light-v10',
+          center: [78.5075,22.2358],
+          zoom: 4,
+          maxZoom: 9,
+          maxBounds:[[60.929371,7.41430],[96.08562,35.64620]]
+      });
 
 
-    map.on('load', function() {
+    map.on('load', function(){
 
-        map.addSource('linemap', {
-            "type": "geojson",
-            'lineMetrics': true,
-            "data": Data.getLines('native_v_crd', 'raid_v_crd')
-        });
+              map.addSource('linemap', {
+                  "type": "geojson",
+                  'lineMetrics': true,
+                  "data": Data.getLines('native_v_crd','raid_v_crd')
+              });
 
-
-        //line init
-        map.addLayer({
-            "id": "line-layer",
-            "type": "line",
-            "source": "linemap",
-            "paint": {
-                'line-width': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 1,
-                    9, 2
-                ],
-                'line-color': '#FF7043',
-                'line-opacity': 0.05,
-                'line-gradient': [
-                    'interpolate',
-                    ['linear'],
-                    ['line-progress'],
-                    0, "#FFD54F",
-                    1, "#FF7043"
-                ]
-            }
-        }, 'waterway-label');
-
+              
+              //line init
+              map.addLayer({
+                    "id": "line-layer",
+                    "type": "line",
+                    "source": "linemap",
+                    "paint": {
+                        'line-width': [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
+                            4, 1,
+                            9, 2
+                            ],
+                        'line-color': '#FF7043',
+                        'line-opacity':0.05,
+                        'line-gradient': [
+                            'interpolate',
+                            ['linear'],
+                            ['line-progress'],
+                            0, "#FFD54F",
+                            1, "#FF7043"
+                            ]
+                    }
+              }, 'waterway-label');
+              
     })
 }
 
@@ -375,7 +369,7 @@ function ageViolin() {
 
 }
 
-function ageBars(since = false) {
+function ageBars(since=false) {
 
     var svg = ageSVG
 
@@ -402,15 +396,15 @@ function ageBars(since = false) {
             .attr("height", function(d, i) { return d / 7; });
     }
 
-
-    if (!since) {
-        drawBars(ageBins)
+    
+    if(!since){
+      drawBars(ageBins)
     }
-    if (since) {
-        var ageBins = [0, 0, 3, 0, 6, 27, 49, 98, 149, 365, 310, 546, 546, 385, 247, 196, 89, 12, 4, 1]
-        var s2 = ageBins.reduce((sum, i) => sum + i, 0)
-        //ageBins=ageBins.map(x=>x*(s1/s2))
-        drawBars(ageBins, '#AED581')
+    if(since){
+      var ageBins = [0, 0, 3, 0, 6, 27, 49, 98, 149, 365, 310, 546, 546, 385, 247, 196, 89, 12, 4, 1]
+      var s2 = ageBins.reduce((sum, i) => sum + i, 0)
+      //ageBins=ageBins.map(x=>x*(s1/s2))
+      drawBars(ageBins, '#AED581')
     }
 
 }
@@ -419,24 +413,24 @@ function ageBars(since = false) {
 
 
 var zoom = d3.zoom()
-    .on('zoom', function() {
-        trafSVG.attr('transform', d3.event.transform);
-    })
+  .on('zoom', function() {
+    trafSVG.attr('transform', d3.event.transform);
+})
 
-function move() {
+function move(){
 
-    zoom.translateTo(trafSVG_l.transition().duration(750), 700, 300);
+  zoom.translateTo(trafSVG_l.transition().duration(750), 700,300);
 
-    setTimeout(function() {
-        zoom.scaleTo(trafSVG_l.transition().duration(750), 1.9)
-    }, 750)
+  setTimeout(function(){
+    zoom.scaleTo(trafSVG_l.transition().duration(750), 1.9)  
+  },750)
 
 }
 
 trafSVG_l = d3.select("#traf-board")
     .append("svg")
 
-trafSVG = trafSVG_l
+trafSVG=trafSVG_l
     .attr("width", 900)
     .attr("height", 600)
     .style('background-color', 'white')
@@ -444,32 +438,32 @@ trafSVG = trafSVG_l
     .append("g")
 
 
-var svg = trafSVG;
+    var svg = trafSVG;
 
-var dates = Data.traffickDate();
-var colorise = d3.scaleSequential().domain([-50, 170])
-    .interpolator(d3.interpolateInferno);
+    var dates = Data.traffickDate();
+    var colorise = d3.scaleSequential().domain([-50, 170])
+        .interpolator(d3.interpolateInferno);
 
 
-function drawBars(points) {
-    bars = svg.selectAll("bar")
-        .data(points).enter()
-        .append("rect")
-        .attr('id', function(d, i) { return 't_m-' + d[0] })
-        .attr("fill", function(d) { return colorise(d[1]) })
-        .attr("x", function(d, i) { return d[0] * 3.7 })
-        .attr("width", 1)
-        .attr('rx', 0.5)
-        .attr('ry', 0.5)
-        .attr("y", 300)
-        .attr("height", 0)
-        //.transition().ease(d3.easeLinear).duration(400)
-        //.delay(function(d, i) { return i * 30; })
-        .attr("y", function(d, i) { return 300 - d[1]; })
-        .attr("height", function(d, i) { return d[1] * 2; });
-}
+    function drawBars(points) {
+        bars = svg.selectAll("bar")
+            .data(points).enter()
+            .append("rect")
+            .attr('id',function(d,i){return 't_m-'+d[0]})
+            .attr("fill", function(d) { return colorise(d[1]) })
+            .attr("x", function(d, i) { return d[0] * 3.7 })
+            .attr("width", 1)
+            .attr('rx', 0.5)
+            .attr('ry', 0.5)
+            .attr("y", 300)
+            .attr("height", 0)
+            //.transition().ease(d3.easeLinear).duration(400)
+            //.delay(function(d, i) { return i * 30; })
+            .attr("y", function(d, i) { return 300 - d[1]; })
+            .attr("height", function(d, i) { return d[1] * 2; });
+    }
 
-drawBars(dates)
+    drawBars(dates)
 
 //}
 
@@ -589,13 +583,13 @@ function raidPlot(tot) {
         .attr('r', 2)
         .attr('fill', '#CFD8DC')
 
-    if (tot) {
-        var curve = svg.append("path")
-            .attr("d", curveFunc(r_line))
-            //.attr("stroke", 'red')
-            .attr("stroke-width", 2)
-            .attr("opacity", 0.3)
-            .attr("fill", "#FFCCBC");
+    if(tot){
+      var curve = svg.append("path")
+          .attr("d", curveFunc(r_line))
+          //.attr("stroke", 'red')
+          .attr("stroke-width", 2)
+          .attr("opacity", 0.3)
+          .attr("fill", "#FFCCBC");
     }
 
 }
@@ -722,10 +716,10 @@ function indSplit(split) {
     }
 
     var ofst = [
-        [10 + 20, 100 + 40],
-        [380 + 20, 210 + 40],
-        [520 + 20, 215 + 40],
-        [650 + 20, 155 + 40]
+        [10+20, 100 + 40],
+        [380+20, 210 + 40],
+        [520+20, 215 + 40],
+        [650+20, 155 + 40]
     ];
     var bubClr = ['#B2EBF2', '#E1BEE7', '#C8E6C9', '#FFCCBC'];
     var comb_ofst = [
@@ -1001,43 +995,41 @@ function plotInc() {
 
 
     ///*
-    var inc = famInc;
-    inc = inc.sort(function(a, b) { return a[0] - b[0] });
-    inc = inc.map(x => [5 + x[0] / 100, 440 - x[1] * 2])
-    inc = [
-        [12, 450]
-    ].concat(inc)
-    inc.push([2010, 450])
+    var inc=famInc;
+    inc=inc.sort(function(a,b){return a[0]-b[0]});
+    inc=inc.map(x=>[5+x[0]/100,440-x[1]*2])
+    inc=[[12,450]].concat(inc)
+    inc.push([2010,450])
     var curveFunc = d3.line()
         .x(function(d) { return d[0] })
         .y(function(d) { return d[1] })
         .curve(d3.curveMonotoneX);
 
     var curve = svg.append("path")
-        .attr("d", curveFunc(inc))
-        //.attr("stroke", '#FF7043')
-        .attr("stroke-width", 4)
-        .attr("fill", "#FFAB91")
-        .attr('opacity', 0)
+            .attr("d", curveFunc(inc))
+            //.attr("stroke", '#FF7043')
+            .attr("stroke-width", 4)
+            .attr("fill", "#FFAB91")
+            .attr('opacity',0)
 
 
-    var inc = famInc;
-    inc = inc.sort(function(a, b) { return a[0] - b[0] });
+    var inc=famInc;
+    inc=inc.sort(function(a,b){return a[0]-b[0]});
     var line = d3.line()
-        .x(function(d) { return d[0] })
-        .y(function(d) { return d[1] });
+               .x(function(d) { return d[0] })
+               .y(function(d) { return d[1] });
 
-    for (var i = 0; i < inc.length; i++) {
+    for(var i=0;i<inc.length;i++){
 
-        var path = svg
-            .append('path')
-            .attr('d', line([
-                [5 + inc[i][0] / 100, 300 + 2 * inc[i][1]],
-                [5 + inc[i][0] / 100, 300 - inc[i][1] * 2]
-            ]))
-            .attr("stroke", colorise(inc[i][1] * 2))
-            .attr("stroke-width", 5)
-            .attr('opacity', 0.5)
+      var path = svg
+                  .append('path')
+                  .attr('d', line([
+                                [5+inc[i][0]/100,300+2*inc[i][1]],
+                                [5+inc[i][0]/100,300-inc[i][1]*2]
+                  ]))
+                  .attr("stroke", colorise(inc[i][1]*2))
+                  .attr("stroke-width", 5)
+                  .attr('opacity',0.5)
     }
     //*/
     /*
@@ -1065,94 +1057,94 @@ function plotInc() {
 
 
 
-function initSVG() {
+function initSVG(){
 
-    ageSVG = d3.select("#age-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            ageSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
+  ageSVG = d3.select("#age-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        ageSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
-    raidSVG = d3.select("#raid-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            raidSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
+  raidSVG = d3.select("#raid-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        raidSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
+
+  //
+
+  
+
+  
 
     //
+  sinceSVG = d3.select("#since-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        sinceSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
+  industSVG = d3.select("#indust-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        industSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
+  paramtSVG = d3.select("#paramt-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        paramtSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
+  incSVG = d3.select("#inc-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        incSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
+  sibSVG = d3.select("#sib-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        sibSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
-    //
-    sinceSVG = d3.select("#since-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            sinceSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
-
-    industSVG = d3.select("#indust-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            industSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
-
-    paramtSVG = d3.select("#paramt-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            paramtSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
-
-    incSVG = d3.select("#inc-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            incSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
-
-    sibSVG = d3.select("#sib-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            sibSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
-
-    wageSVG = d3.select("#wage-board")
-        .append("svg")
-        .attr("width", 900)
-        .attr("height", 600)
-        .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            wageSVG.attr("transform", d3.event.transform)
-        }))
-        .append("g")
+  wageSVG = d3.select("#wage-board")
+    .append("svg")
+    .attr("width", 900)
+    .attr("height", 600)
+    .style('background-color', 'white')
+    .call(d3.zoom().on("zoom", function() {
+        wageSVG.attr("transform", d3.event.transform)
+    }))
+    .append("g")
 
 }
 
@@ -1183,6 +1175,7 @@ indSplit('comb');
 plotSib();
 plotWage('comb');
 plotInc();
+
 </script>
 
 </html>

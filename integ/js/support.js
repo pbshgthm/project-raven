@@ -106,8 +106,9 @@ var Data = {
                 var t = this.raw[i]['t_date'].split("/")
                 t = (t[2] - 2010) * 12 + (parseInt(t[1]))
 
-                if (t < time || t >= time + 4) continue
+                if (t < time[0] || t > time[1]) continue
                 if (isNaN(t)) continue;
+                
 
             }
 
