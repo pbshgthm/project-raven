@@ -95,7 +95,10 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time) {
+    filterPoints: function(age, time,indst) {
+        console.log(indst)
+        var indst_r_list=["Garment","Hotel/Dhaba","Footwear","Handicraft","Jute/Plastic/Rexin/Cloth Bags","Cosmetic","Domestic Servant","Automobile/Transport","Metal","Retail Shop/Office","Electrical & Electronics","Leather","_others",""]
+        indst=indst.map(x=>indst_r_list[x])
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
             if (age != this.raw[i]['age']) {
@@ -112,8 +115,12 @@ var Data = {
 
             }
 
-
-
+            var _ind=this.raw[i]['indst']
+            //console.log(_ind,indst)
+            if(indst.indexOf(_ind)==-1&&indst!='_others'){
+                continue;
+            }
+            //console.log('sel',_ind)
             var crd = this.raw[i]['native_v_crd'].split(',')
             if (crd[0] == "") continue;
 

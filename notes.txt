@@ -41,6 +41,8 @@ WAGE
 
 
 
+age bars to be separate
+have industry filter
 
 
 
@@ -220,6 +222,52 @@ THINK ABOUT CREATING BINS FOR WAGES/INC/PAYPAR INSTEAD OF CONTINUOUS
 
 
 5367,1574,1476,3563
+
+
+
+
+
+"Garment", 4170
+"Hotel/Dhaba", 1234
+"Footwear", 1024
+"Handicraft", 699
+"Jute/Plastic/Rexin/Cloth Bags", 667
+"Cosmetic", 639
+"Domestic Servant", 520
+"Automobile/Transport", 495
+"", 456
+"Metal", 410
+"Retail Shop/Office", 327
+"Electrical & Electronics", 277
+"Leather", 277
+"Jewellery", 173
+"Bakery", 159
+"Odd Jobs", 133
+"Plastic and Nylon units", 129
+"Carpet Industry", 89
+"Toy Making Unit", 78
+"Stone Quarry", 71
+"Paper Industry", 67
+"Brick Kilns & Roof tiles units", 65
+"Building and Construction", 62
+"Carpentry", 39
+"Printing", 28
+"Abattoirs/Slaughter Houses", 26
+"Circus", 22
+"Agriculture", 21
+"Suitcase Making", 19
+"Dairy Products", 19
+"Cracker Industry", 13
+"Umbrela Making Factory", 12
+"Tobacco & Chewing Tobacco", 11
+"Factory", 9
+"Flour Mill", 6
+"Paint Making Unit", 5
+"Lock Making", 4
+"Sculpture Making Unit", 2
+"Curtain Making Unit", 1
+
+
 
 "Garment"
 "Hotel/Dhaba"

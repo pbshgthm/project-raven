@@ -1015,7 +1015,7 @@ function map_controls() {
             .attr('fill', 'white')
 
         map_age = _id;
-        var new_crds = Data.filterPoints(map_age, map_time);
+        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1045,13 +1045,10 @@ function map_controls() {
             .attr('fill', '#00BCD4')
         map_age = 0;
 
-        var new_crds = Data.filterPoints(map_age, map_time);
+        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
-
-
-
 
     var time_bars = Array(84).fill(0)
     time_bars = time_bars.map((x, i) => i)
@@ -1069,8 +1066,6 @@ function map_controls() {
         .attr('opacity', 0.8)
         .attr("y", 350)
         .attr("height", 15)
-
-
 
 
     var drag = d3.drag().subject(function(d) {
@@ -1121,9 +1116,7 @@ function map_controls() {
         .attr("y", 350+2.5)
         .attr("height", 10)
         .style('cursor', 'ew-resize')
-        .call(drag)
-
-    
+        .call(drag)   
 
     map_controls_svg
         .append("rect")
@@ -1162,7 +1155,7 @@ function map_controls() {
         d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4-1;
         d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4-1);
 
-        var new_crds = Data.filterPoints(map_age, map_time);
+        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1190,7 +1183,7 @@ function map_controls() {
             d3.select('#mc-time-r').attr("x", (anchor + 4 -1));
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4+4);
 
-            var new_crds = Data.filterPoints(map_age, map_time);
+            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1207,7 +1200,7 @@ function map_controls() {
 
             map_time[1] = parseInt((anchor - 27) / 4)+1;
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4+4);
-            var new_crds = Data.filterPoints(map_age, map_time);
+            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1233,7 +1226,7 @@ function map_controls() {
             map_time[0] = parseInt((anchor - 27 - 4) / 4)+1;
             map_time[1] = map_time[0] + r;
 
-            var new_crds = Data.filterPoints(map_age, map_time);
+            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1250,8 +1243,181 @@ function map_controls() {
     }
 
 
+    var indst_r_list=["Garment","Hotel/Dhaba","Footwear","Handicraft","Jute/Plastic/Rexin/Cloth Bags","Cosmetic","Domestic Servant","Automobile/Transport","Metal","Retail Shop/Office","Electrical & Electronics","Leather","_others",""]
+
+    var indst_c_list=["Garment","Hotel","Footwear","Handicraft","Cloth Bags","Cosmetic","Servant","Automobile","Metal","Retail Shop","Electronics","Leather","Others","Unknown"]
+
+    var ind_list=[];
+    for(var i=0;i<indst_r_list.length;i++){
+    	ind_list.push([80+parseInt(i/7)*140,490+35*(i%7),indst_c_list[i]])
+    }
+
+    map_controls_svg.selectAll('mc-ind-text')
+        .data(ind_list)
+        .enter()
+        .append("text")
+        .attr("fill", "#546E7A")
+        .attr("x", function(d) { return d[0] +35 })
+        .attr("y", function(d) { return d[1] })
+        .attr('text-anchor','middle')
+        .style("font-size", "12px")
+        .style('font-family', 'Arial')
+        .text(function(d) { return d[2] })
 
 
+    map_controls_svg.selectAll('mc-ind-ind')
+        .data(ind_list)
+        .enter()
+        .append("rect")
+        .attr('id',function(d,i){return 'mc-ind-'+i})
+        .attr("fill", "#80DEEA")
+        .attr('stroke','#00ACC1')
+        .attr('stroke-width',1)
+        .attr('rx',11.5)
+        .attr('ry',11.5)
+        .attr("x", function(d) { return d[0] -10 })
+        .attr("y", function(d) { return d[1] -16})
+        .attr('height',23)
+        .attr('width',90)
+        .attr('opacity',0.3)
+        .on('mouseover', mc_ind_mouseover)
+        .on('mouseout', mc_ind_mouseout)
+        .on('click', mc_ind_click)
+
+    map_controls_svg.append("rect")
+        .attr('id','mc-ind-all')
+        .attr("fill", "#80DEEA")
+        .attr('stroke','#00ACC1')
+        .attr('stroke-width',1)
+        .attr('rx',11.5)
+        .attr('ry',11.5)
+        .attr("x", 70)
+        .attr("y", 425)
+        .attr('height',23)
+        .attr('width',90)
+        .attr('opacity',0.3)
+        .on('mouseover', mc_ind_all_mouseover)
+        .on('mouseout', mc_ind_all_mouseout)
+       	.on('click', mc_ind_all_click)
+
+
+    map_controls_svg.append("rect")
+        .attr('id','mc-ind-clear')
+        .attr("fill", "white")
+        .attr('stroke','#00ACC1')
+        .attr('stroke-width',1)
+        .attr('rx',11.5)
+        .attr('ry',11.5)
+        .attr("x", 210)
+        .attr("y", 425)
+        .attr('height',23)
+        .attr('width',90)
+        .attr('opacity',0.3)
+        .on('mouseover', mc_ind_clear_mouseover)
+        .on('mouseout', mc_ind_clear_mouseout)
+       	.on('click', mc_ind_clear_click)
+
+
+
+
+        function mc_ind_mouseover(){
+        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
+        	if(map_ind.indexOf(_id)!=-1)return;
+        	d3.select('#mc-ind-'+_id).attr('fill','#B2EBF2')
+        }
+        function mc_ind_mouseout(){
+        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
+        	if(map_ind.indexOf(_id)!=-1)return;
+        	d3.select('#mc-ind-'+_id).attr('fill','white')
+        }
+        function mc_ind_click(){
+        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
+        	if(map_ind.indexOf(_id)==-1){
+
+
+        		d3.select('#mc-ind-'+_id).attr('fill','#80DEEA');	
+        		map_ind.push(_id)
+
+        		if(map_ind.length==14)d3.select('#mc-ind-all').attr('fill','#80DEEA')
+        		if(map_ind.length!=1)d3.select('#mc-ind-clear').attr('fill','white')
+
+
+        		var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        		map.getSource('heatmap').setData(new_crds)
+        	}
+        	else{
+
+        		if(map_ind.length==1)return;
+        		d3.select('#mc-ind-all').attr('fill','white')
+        		d3.select('#mc-ind-'+_id).attr('fill','white');	
+        		map_ind.splice(map_ind.indexOf(_id),1)
+
+        		if(map_ind.length==1)
+        		d3.select('#mc-ind-clear').attr('fill','#80DEEA')
+
+        		var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        		map.getSource('heatmap').setData(new_crds)
+        	}
+
+        	
+        }
+
+        function mc_ind_all_mouseover(){
+        	if(map_ind.length==14)return
+			d3.select(this).attr('fill','#B2EBF2')
+
+        }
+
+        function mc_ind_all_mouseout(){
+        	if(map_ind.length==14)return
+			d3.select(this).attr('fill','white')
+        }
+
+        function mc_ind_all_click(){
+        	
+			if(map_ind.length==14)return;
+			d3.select(this).attr('fill','#80DEEA')	
+			map_ind=Array(14).fill(0).map((x,i)=>i)
+			d3.select('#mc-ind-clear').attr('fill','white')
+
+			for(var i=0;i<map_ind.length;i++)
+				d3.select('#mc-ind-'+i).attr('fill','#80DEEA')
+			var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        	map.getSource('heatmap').setData(new_crds)	
+        }
+
+
+
+        function mc_ind_clear_mouseover(){
+        	if(map_ind.length==1)return
+			d3.select(this).attr('fill','#B2EBF2')
+
+        }
+
+        function mc_ind_clear_mouseout(){
+        	if(map_ind.length==1)return
+			d3.select(this).attr('fill','white')
+        }
+
+        function mc_ind_clear_click(){
+        	
+			if(map_ind.length==1)return;
+			d3.select(this).attr('fill','#80DEEA')	
+
+			for(var i=0;i<map_ind.length;i++)
+				d3.select('#mc-ind-'+map_ind[i]).attr('fill','white')
+
+			d3.select('#mc-ind-0').attr('fill','#80DEEA')
+			d3.select('#mc-ind-all').attr('fill','white')
+
+			map_ind=[0]
+			var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        	map.getSource('heatmap').setData(new_crds)	
+        }
+
+        
+        //DONT UNCHECK ALL OPTION
+        //HAVE UNCHECK ALL BUT ONE
 
 }
 //--------------------
@@ -1573,8 +1739,9 @@ var map_controls_svg = d3.select("#map-controls")
 var is_hm = 'y'
 var map_age = 0
 var map_time = [3, 8]
+var map_ind=Array(14).fill(0).map((x,i)=>i)
 
-mapHeatmap('native', Data.filterPoints(map_age, map_time))
+mapHeatmap('native', Data.filterPoints(map_age, map_time,map_ind))
 
 map_controls()
 
