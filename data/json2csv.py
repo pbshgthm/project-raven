@@ -2,7 +2,7 @@ import csv,json
 from datetime import datetime, timedelta
 
 
-data=json.load(open('master_data.json'))
+data=json.load(open('updated_data.json'))
 
 master=[[
 		'id',
@@ -17,11 +17,21 @@ master=[[
 		'native_v_add',
 		'native_v_crd',
 		'indst',
+		'wage_week',
+		'wage_type',
 		'paypar',
 		'paramt',
-		'brought'
+		'brought',
+		'sisters',
+		'brothers',
+		'school',
+		'class'
+
 ]
 ]
+
+
+
 
 for i in data:
 	a=[]
@@ -48,13 +58,19 @@ for i in data:
 	a.append(str(i['native']['vil']['crd'])[1:-1])
 	
 	a.append(i['indst'])
+	a.append(i['wage'][0])
+	a.append(i['wage'][1])
 	a.append(i['paypar'])
 	a.append(i['paramt'])
 	a.append(i['brought'])
+	a.append(i['bro'])
+	a.append(i['sis'])
+	a.append(i['school'])
+	a.append(i['class'])
 		
 	master.append(a)
 
-with open('data.csv', 'w') as csvFile:
+with open('new.csv', 'w') as csvFile:
     writer = csv.writer(csvFile)
     writer.writerows(master)
 

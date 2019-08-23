@@ -34,9 +34,9 @@ for i in a:
 #print(a[:20],sum([x[1] for x in a[:20]]))
 
 
-
-
-
+#qwerty
+#qwerty
+#qwerty
 
 
 
@@ -56,6 +56,7 @@ def get_wish():
 #get_wish()
 
 def get_wage():
+	
 	w={
 		'No Wage Earned' : [-1,0],
 		'Monthly' : [25,1],
