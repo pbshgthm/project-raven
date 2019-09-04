@@ -1000,6 +1000,7 @@ function plotInc() {
     inc=inc.map(x=>[5+x[0]/100,440-x[1]*2])
     inc=[[12,450]].concat(inc)
     inc.push([2010,450])
+
     var curveFunc = d3.line()
         .x(function(d) { return d[0] })
         .y(function(d) { return d[1] })
@@ -1015,6 +1016,7 @@ function plotInc() {
 
     var inc=famInc;
     inc=inc.sort(function(a,b){return a[0]-b[0]});
+    inc=inc.map(x=>[Math.round(x[0]/1000)*1000,x[1]])
     var line = d3.line()
                .x(function(d) { return d[0] })
                .y(function(d) { return d[1] });
@@ -1024,10 +1026,10 @@ function plotInc() {
       var path = svg
                   .append('path')
                   .attr('d', line([
-                                [5+inc[i][0]/100,300+2*inc[i][1]],
-                                [5+inc[i][0]/100,300-inc[i][1]*2]
+                                [50+inc[i][0]/100,400],
+                                [50+inc[i][0]/100,400-inc[i][1]*2]
                   ]))
-                  .attr("stroke", colorise(inc[i][1]*2))
+                  .attr("stroke", '#283593')
                   .attr("stroke-width", 5)
                   .attr('opacity',0.5)
     }

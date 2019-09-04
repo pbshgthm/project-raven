@@ -95,10 +95,12 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time,indst) {
-        console.log(indst)
-        var indst_r_list=["Garment","Hotel/Dhaba","Footwear","Handicraft","Jute/Plastic/Rexin/Cloth Bags","Cosmetic","Domestic Servant","Automobile/Transport","Metal","Retail Shop/Office","Electrical & Electronics","Leather","_others",""]
-        indst=indst.map(x=>indst_r_list[x])
+    filterPoints: function(age, time, indst) {
+        var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
+            "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
+            "Electrical & Electronics", "Leather", "_others", ""
+        ]
+        indst = indst.map(x => indst_r_list[x])
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
             if (age != this.raw[i]['age']) {
@@ -111,13 +113,13 @@ var Data = {
 
                 if (t < time[0] || t > time[1]) continue
                 if (isNaN(t)) continue;
-                
+
 
             }
 
-            var _ind=this.raw[i]['indst']
+            var _ind = this.raw[i]['indst']
             //console.log(_ind,indst)
-            if(indst.indexOf(_ind)==-1&&indst!='_others'){
+            if (indst.indexOf(_ind) == -1 && indst != '_others') {
                 continue;
             }
             //console.log('sel',_ind)
@@ -131,13 +133,14 @@ var Data = {
 
     age_dist: function() {
         var age = Array(21).fill(0)
-        var tot = 0;
+        var start_age = Array(21).fill(0)
         for (var i = 0; i < this.raw.length; i++) {
             age[this.raw[i]['age']] += 1;
-            tot += 1
+            start_age[this.raw[i]['start_age']] += 1;
         }
         age.shift()
-        return age;
+        start_age.shift()
+        return [age, start_age];
     },
 
     traffickDate: function() {
@@ -222,7 +225,11 @@ var Data = {
             ['Garment', 'Footwear', 'Jewellery'],
             ['Automobile/Transport', 'Metal', 'Retail Shop/Office', 'Odd Jobs', 'Stone Quarry', 'Factory', 'Plastic and Nylon units'],
             ['Hotel/Dhaba', 'Bakery', 'Abattoirs/Slaughter Houses', 'Flour Mill', 'Agriculture', 'Dairy Products', 'Tobacco & Chewing Tobacco'],
-            ['Jute/Plastic/Rexin/Cloth Bags', 'Cosmetic', 'Domestic Servant', 'Electrical & Electronics', 'Leather', 'Handicraft', 'Carpet Industry', 'Toy Making Unit', 'Paper Industry', 'Brick Kilns & Roof tiles units', 'Printing', 'Building and Construction', 'Carpentry', 'Paint Making Unit', 'Lock Making', 'Sculpture Making Unit', 'Curtain Making Unit', 'Suitcase Making', 'Cracker Industry', 'Umbrela Making Factory']
+            ['Jute/Plastic/Rexin/Cloth Bags', 'Cosmetic', 'Domestic Servant', 'Electrical & Electronics', 'Leather', 'Handicraft', 'Carpet Industry',
+                'Toy Making Unit', 'Paper Industry', 'Brick Kilns & Roof tiles units', 'Printing', 'Building and Construction', 'Carpentry',
+                'Paint Making Unit', 'Lock Making', 'Sculpture Making Unit', 'Curtain Making Unit', 'Suitcase Making', 'Cracker Industry',
+                'Umbrela Making Factory'
+            ]
         ]
         var ind_dict = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -261,6 +268,146 @@ var Data = {
         paypar = Object.entries(paypar);
         return paypar
 
+    },
+
+    amountDist: function() {
+        var income = {};
+        var paramt = {};
+        var wage = {};
+
+        for (var i = 0; i < Data.raw.length; i++) {
+
+
+            var inc = Data.raw[i]['income']
+            if (inc != -1)
+                inc = Math.round(inc / 5000) * 5000
+            if (inc in income) {
+                income[inc] += 1
+            } else {
+                income[inc] = 1
+            }
+
+
+            var par = Data.raw[i]['paramt']
+            if (par == "") {
+                var paypar = Data.raw[i]['paypar']
+                if (paypar == 'no')
+                    par = -1
+                else
+                    par = -2
+            } else {
+                par = parseInt((par))
+                par = Math.round(par / 1000) * 1000
+            }
+            if (par in paramt) {
+                paramt[par] += 1
+            } else {
+                paramt[par] = 1
+            }
+
+
+
+            var wg = Data.raw[i]['wage_week']
+            if (wg != -1)
+                wg = Math.round(wg / 50) * 50
+
+            if (wg in wage) {
+                wage[wg] += 1
+            } else {
+                wage[wg] = 1
+            }
+
+        }
+
+        income = Object.entries(income)
+        income.sort(function(a, b) { return a[0] - b[0] })
+
+        paramt = Object.entries(paramt)
+        paramt.sort(function(a, b) { return a[0] - b[0] })
+
+        wage = Object.entries(wage)
+        wage.sort(function(a, b) { return a[0] - b[0] })
+
+        
+
+        return { 'income': income, 'paramt': paramt, 'wage': wage }
+    },
+
+    amountSelDist: function(sel_amt='income',sel_val=5000) {
+        var income = {};
+        var paramt = {};
+        var wage = {};
+        var amt_dict={
+            'income':income
+        }
+
+        for (var i = 0; i < Data.raw.length; i++) {
+
+
+            var inc = Data.raw[i]['income']
+            if (inc != -1)
+                inc = Math.round(inc / 5000) * 5000
+
+            if(inc!=sel_amt)continue
+            if (inc in income) {
+                income[inc] += 1
+            } else {
+                income[inc] = 1
+            }
+
+
+
+            var par = Data.raw[i]['paramt']
+            if (par == "") {
+                var paypar = Data.raw[i]['paypar']
+                if (paypar == 'no')
+                    par = -1
+                else
+                    par = -2
+            } else {
+                par = parseInt((par))
+                par = Math.round(par / 1000) * 1000
+            }
+            if (par in paramt) {
+                paramt[par] += 1
+            } else {
+                paramt[par] = 1
+            }
+
+
+
+            var wg = Data.raw[i]['wage_week']
+            if (wg != -1)
+                wg = Math.round(wg / 50) * 50
+
+            if (wg in wage) {
+                wage[wg] += 1
+            } else {
+                wage[wg] = 1
+            }
+
+        }
+
+        income = Object.entries(income)
+        income.sort(function(a, b) { return a[0] - b[0] })
+
+        paramt = Object.entries(paramt)
+        paramt.sort(function(a, b) { return a[0] - b[0] })
+
+        wage = Object.entries(wage)
+        wage.sort(function(a, b) { return a[0] - b[0] })
+
+
+
+        return { 'income': income, 'paramt': paramt, 'wage': wage }
+
+    },
+
+    amountFilter: function(filter, val) {
+
+        if (filter == 'inc') {
+
+        }
     },
 
     getDict: function(item) {

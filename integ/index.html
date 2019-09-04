@@ -9,8 +9,7 @@
     <script src="js/d3.geo.min.js"></script>
     <script src="js/indiaGeo.json"></script>
     <script src="js/support.js"></script>
-    <script src="js/fin_data.json"></script>
-    <script src="js/s_data.json"></script>
+    <script src="js/u_data.json"></script>
     <link rel="stylesheet" type="text/css" href="assets/main.css">
     <title>Project Raven</title>
 </head>
@@ -41,6 +40,13 @@
         <div id="raid-board" class="viz-board"></div>
         <div class="viz-panel">
             <div id="sub-raid"></div>
+        </div>
+    </div>
+    <div class="page-sec">
+        <div id="amount-board" class="viz-board"></div>
+        <div class="viz-panel">
+            <div id="sub-amount-1"></div>
+            <div id="sub-amount-2"></div>
         </div>
     </div>
 </body>
@@ -252,8 +258,8 @@ function age_plot() {
         .style('background-color', 'white')
         .append('g')
 
-    var age_bins = Data.age_dist();
-    var since_bins = since_age //from s_data
+    var age_bins = Data.age_dist()[0];
+    var since_bins = Data.age_dist()[1];
 
     age_svg.selectAll('text')
         .data(age_bins)
@@ -321,7 +327,7 @@ function age_plot() {
         .attr("x", function(d, i) { return 50 + i * 30 })
         .attr("width", 25)
         .attr("y", function(d, i) { return 420 })
-        .attr("height", function(d, i) { return d / 5; })
+        .attr("height", function(d, i) { return d / 5 })
         .on('mouseover', age_mouseover)
         .on('mouseout', age_mouseout)
         .on('click', age_click)
@@ -837,6 +843,106 @@ function raid_plot() {
 }
 //---------------------
 
+
+
+function amount_plot() {
+    var amt = Data.amountDist();
+    var income = amt['income']
+    var paramt = amt['paramt']
+    var wage = amt['wage']
+
+    amount_svg = d3.select("#amount-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .style('background-color', 'white')
+        .append('g')
+
+    var income_list = Array(40).fill(0)
+    for (var i = 1; i < income.length; i++) {
+        var inc = income[i][0] / 5000;
+        if (inc > 39) inc = 39
+        income_list[inc] += income[i][1]
+    }
+
+    var paramt_list = Array(40).fill(0)
+    for (var i = 1; i < paramt.length; i++) {
+        var inc = paramt[i][0] / 1000;
+        if (inc > 39) inc = 39
+        paramt_list[inc] += paramt[i][1]
+    }
+
+    var wage_list = Array(40).fill(0)
+    for (var i = 1; i < wage.length; i++) {
+        var inc = wage[i][0] / 50;
+        if (inc > 39) inc = 39
+        wage_list[inc] += wage[i][1]
+    }
+
+    var amt_btn=['income','paramt','wage']
+    var amt_dict={
+        'income':income_list,
+        'paramt':paramt_list,
+        'wage':wage_list
+    }
+    var amt_sub_dict={
+        'income':[paramt_list,wage_list],
+        'paramt':[income_list,wage_list],
+        'wage': [income_list,paramt_list]
+    }
+    amount_svg.selectAll("btn")
+        .data(amt_btn).enter()
+        .append("circle")
+        .attr('id',function(d){return 'amt-btn-'+d})
+        .attr("fill", 'white')
+        .attr("stroke", '#80DEEA')
+        .attr("stroke-width", 2)
+        .attr("cx", function(d, i) { return 200 + i * 120 })
+        .attr("width", 80)
+        .attr('rx', 8)
+        .attr('ry', 8)
+        .attr("cy", 600)
+        .attr("r", 20)
+        .attr("height", 30)
+        .attr('opacity', 0.5)
+        .on('click',amt_btn_click)
+
+
+    function update_amount(amt){
+
+        var amt_bar = amount_svg.selectAll('rect')
+            .data(amt)
+
+        var entering = amt_bar.enter()
+            .append("rect");
+
+        amt_bar.merge(entering)
+        .transition().duration(500)
+        .attr("fill", '#42A5F5')
+        .attr("x", function(d, i) { return 50 + i * 15 })
+        .attr("width", 10)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr("y", function(d) { return 500 - d })
+        .attr("height", function(d) { return d })
+        .attr('opacity', 0.5)
+    }
+
+
+    function amt_btn_click(){
+        _id=d3.select(this).attr('id').split('-')[2]
+
+        subplot_amount1(amt_sub_dict[_id][0],_id)
+        subplot_amount2(amt_sub_dict[_id][1],_id)
+        
+        update_amount(amt_dict[_id])
+
+
+    }
+    update_amount(income_list)
+    subplot_amount1(paramt_list)
+    subplot_amount2(wage_list)
+}
 //------------------------------------------------
 
 
@@ -1015,7 +1121,7 @@ function map_controls() {
             .attr('fill', 'white')
 
         map_age = _id;
-        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1045,7 +1151,7 @@ function map_controls() {
             .attr('fill', '#00BCD4')
         map_age = 0;
 
-        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1079,11 +1185,11 @@ function map_controls() {
         .append("rect")
         .attr("fill", "#4FC3F7")
         .attr('id', 'mc-time-r')
-        .attr("x", 27 + map_time[0]*4-1)
-        .datum({ x: 27 + map_time[0]*4-1 })
-        .attr("width", (map_time[1]-map_time[0]+1)*4)
+        .attr("x", 27 + map_time[0] * 4 - 1)
+        .datum({ x: 27 + map_time[0] * 4 - 1 })
+        .attr("width", (map_time[1] - map_time[0] + 1) * 4)
         .attr('opacity', 0.3)
-        .attr("y", 350-7.5)
+        .attr("y", 350 - 7.5)
         .attr("height", 30)
         .style('cursor', 'grab')
         .call(drag)
@@ -1094,11 +1200,11 @@ function map_controls() {
         .attr('id', 'mc-time-r1')
         .attr('rx', 1)
         .attr('ry', 1)
-        .attr("x", 27 + map_time[0]*4 -5)
-        .datum({ x: 27 + map_time[0]*4 -5})
+        .attr("x", 27 + map_time[0] * 4 - 5)
+        .datum({ x: 27 + map_time[0] * 4 - 5 })
         .attr("width", 8)
         .attr('opacity', 1)
-        .attr("y", 350+2.5)
+        .attr("y", 350 + 2.5)
         .attr("height", 10)
         .style('cursor', 'ew-resize')
         .call(drag)
@@ -1109,14 +1215,14 @@ function map_controls() {
         .attr('id', 'mc-time-r2')
         .attr('rx', 1)
         .attr('ry', 1)
-        .attr("x", 27 + map_time[1]*4 -1)
-        .datum({ x: 27 + map_time[1]*4  -1})
+        .attr("x", 27 + map_time[1] * 4 - 1)
+        .datum({ x: 27 + map_time[1] * 4 - 1 })
         .attr("width", 8)
         .attr('opacity', 1)
-        .attr("y", 350+2.5)
+        .attr("y", 350 + 2.5)
         .attr("height", 10)
         .style('cursor', 'ew-resize')
-        .call(drag)   
+        .call(drag)
 
     map_controls_svg
         .append("rect")
@@ -1145,17 +1251,17 @@ function map_controls() {
         d3.select(this).attr('fill', '#80DEEA')
         map_time = [0, 83]
 
-        d3.select('#mc-time-r1').datum().x = 27 + map_time[0] * 4-5;
-        d3.select('#mc-time-r1').attr("x", 27 + map_time[0] * 4-5);
+        d3.select('#mc-time-r1').datum().x = 27 + map_time[0] * 4 - 5;
+        d3.select('#mc-time-r1').attr("x", 27 + map_time[0] * 4 - 5);
 
-        d3.select('#mc-time-r').datum().x = 27 + map_time[0] * 4-5;
-        d3.select('#mc-time-r').attr("x", 27 + map_time[0] * 4 + 4-5);
-        d3.select('#mc-time-r').attr("width", map_time[1] * 4+4);
+        d3.select('#mc-time-r').datum().x = 27 + map_time[0] * 4 - 5;
+        d3.select('#mc-time-r').attr("x", 27 + map_time[0] * 4 + 4 - 5);
+        d3.select('#mc-time-r').attr("width", map_time[1] * 4 + 4);
 
-        d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4-1;
-        d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4-1);
+        d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4 - 1;
+        d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4 - 1);
 
-        var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1170,20 +1276,20 @@ function map_controls() {
         if (_id == "r1") {
             //console.log('r1')
 
-            if (d3.event.x < 27 -1|| d3.event.x > 27 + map_time[1] * 4 -5) return;
+            if (d3.event.x < 27 - 1 || d3.event.x > 27 + map_time[1] * 4 - 5) return;
 
             var anchor = 27 + Math.floor(((d3.event.x - 27) / 4)) * 4;
             //console.log(anchor,d3.event.x)
 
-            map_time[0] = parseInt((anchor - 27) / 4)+1;
+            map_time[0] = parseInt((anchor - 27) / 4) + 1;
 
-            d3.select('#mc-time-r1').attr("x", (d.x = anchor-1));
+            d3.select('#mc-time-r1').attr("x", (d.x = anchor - 1));
 
-            d3.select('#mc-time-r').datum().x = anchor + 4 -1;
-            d3.select('#mc-time-r').attr("x", (anchor + 4 -1));
-            d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4+4);
+            d3.select('#mc-time-r').datum().x = anchor + 4 - 1;
+            d3.select('#mc-time-r').attr("x", (anchor + 4 - 1));
+            d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
 
-            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1194,13 +1300,13 @@ function map_controls() {
 
             if (d3.event.x < 27 + map_time[0] * 4 + 4 || d3.event.x > 359) return;
 
-            var anchor = 27 + Math.ceil(((d3.event.x - 27) / 4)) * 4 -1;
+            var anchor = 27 + Math.ceil(((d3.event.x - 27) / 4)) * 4 - 1;
             //console.log(anchor,d3.event.x)
             d3.select('#mc-time-r2').attr("x", (d.x = anchor));
 
-            map_time[1] = parseInt((anchor - 27) / 4)+1;
-            d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4+4);
-            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+            map_time[1] = parseInt((anchor - 27) / 4) + 1;
+            d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1214,19 +1320,19 @@ function map_controls() {
 
 
             var anchor = 27 + Math.floor(((d3.event.x - 27) / 4)) * 4;
-            d3.select('#mc-time-r').attr("x", (d.x = anchor-1));
+            d3.select('#mc-time-r').attr("x", (d.x = anchor - 1));
 
-            
-            d3.select('#mc-time-r1').datum().x = anchor - 4;-1
-            d3.select('#mc-time-r1').attr("x", (anchor - 4-1));
 
-            d3.select('#mc-time-r2').datum().x = anchor + r * 4-1;
-            d3.select('#mc-time-r2').attr("x", (anchor + r * 4-1));
+            d3.select('#mc-time-r1').datum().x = anchor - 4; - 1
+            d3.select('#mc-time-r1').attr("x", (anchor - 4 - 1));
 
-            map_time[0] = parseInt((anchor - 27 - 4) / 4)+1;
+            d3.select('#mc-time-r2').datum().x = anchor + r * 4 - 1;
+            d3.select('#mc-time-r2').attr("x", (anchor + r * 4 - 1));
+
+            map_time[0] = parseInt((anchor - 27 - 4) / 4) + 1;
             map_time[1] = map_time[0] + r;
 
-            var new_crds = Data.filterPoints(map_age, map_time,map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1243,13 +1349,13 @@ function map_controls() {
     }
 
 
-    var indst_r_list=["Garment","Hotel/Dhaba","Footwear","Handicraft","Jute/Plastic/Rexin/Cloth Bags","Cosmetic","Domestic Servant","Automobile/Transport","Metal","Retail Shop/Office","Electrical & Electronics","Leather","_others",""]
+    var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags", "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office", "Electrical & Electronics", "Leather", "_others", ""]
 
-    var indst_c_list=["Garment","Hotel","Footwear","Handicraft","Cloth Bags","Cosmetic","Servant","Automobile","Metal","Retail Shop","Electronics","Leather","Others","Unknown"]
+    var indst_c_list = ["Garment", "Hotel", "Footwear", "Handicraft", "Cloth Bags", "Cosmetic", "Servant", "Automobile", "Metal", "Retail Shop", "Electronics", "Leather", "Others", "Unknown"]
 
-    var ind_list=[];
-    for(var i=0;i<indst_r_list.length;i++){
-    	ind_list.push([80+parseInt(i/7)*140,490+35*(i%7),indst_c_list[i]])
+    var ind_list = [];
+    for (var i = 0; i < indst_r_list.length; i++) {
+        ind_list.push([80 + parseInt(i / 7) * 140, 490 + 35 * (i % 7), indst_c_list[i]])
     }
 
     map_controls_svg.selectAll('mc-ind-text')
@@ -1257,9 +1363,9 @@ function map_controls() {
         .enter()
         .append("text")
         .attr("fill", "#546E7A")
-        .attr("x", function(d) { return d[0] +35 })
+        .attr("x", function(d) { return d[0] + 35 })
         .attr("y", function(d) { return d[1] })
-        .attr('text-anchor','middle')
+        .attr('text-anchor', 'middle')
         .style("font-size", "12px")
         .style('font-family', 'Arial')
         .text(function(d) { return d[2] })
@@ -1269,155 +1375,156 @@ function map_controls() {
         .data(ind_list)
         .enter()
         .append("rect")
-        .attr('id',function(d,i){return 'mc-ind-'+i})
+        .attr('id', function(d, i) { return 'mc-ind-' + i })
         .attr("fill", "#80DEEA")
-        .attr('stroke','#00ACC1')
-        .attr('stroke-width',1)
-        .attr('rx',11.5)
-        .attr('ry',11.5)
-        .attr("x", function(d) { return d[0] -10 })
-        .attr("y", function(d) { return d[1] -16})
-        .attr('height',23)
-        .attr('width',90)
-        .attr('opacity',0.3)
+        .attr('stroke', '#00ACC1')
+        .attr('stroke-width', 1)
+        .attr('rx', 11.5)
+        .attr('ry', 11.5)
+        .attr("x", function(d) { return d[0] - 10 })
+        .attr("y", function(d) { return d[1] - 16 })
+        .attr('height', 23)
+        .attr('width', 90)
+        .attr('opacity', 0.3)
         .on('mouseover', mc_ind_mouseover)
         .on('mouseout', mc_ind_mouseout)
         .on('click', mc_ind_click)
 
     map_controls_svg.append("rect")
-        .attr('id','mc-ind-all')
+        .attr('id', 'mc-ind-all')
         .attr("fill", "#80DEEA")
-        .attr('stroke','#00ACC1')
-        .attr('stroke-width',1)
-        .attr('rx',11.5)
-        .attr('ry',11.5)
+        .attr('stroke', '#00ACC1')
+        .attr('stroke-width', 1)
+        .attr('rx', 11.5)
+        .attr('ry', 11.5)
         .attr("x", 70)
         .attr("y", 425)
-        .attr('height',23)
-        .attr('width',90)
-        .attr('opacity',0.3)
+        .attr('height', 23)
+        .attr('width', 90)
+        .attr('opacity', 0.3)
         .on('mouseover', mc_ind_all_mouseover)
         .on('mouseout', mc_ind_all_mouseout)
-       	.on('click', mc_ind_all_click)
+        .on('click', mc_ind_all_click)
 
 
     map_controls_svg.append("rect")
-        .attr('id','mc-ind-clear')
+        .attr('id', 'mc-ind-clear')
         .attr("fill", "white")
-        .attr('stroke','#00ACC1')
-        .attr('stroke-width',1)
-        .attr('rx',11.5)
-        .attr('ry',11.5)
+        .attr('stroke', '#00ACC1')
+        .attr('stroke-width', 1)
+        .attr('rx', 11.5)
+        .attr('ry', 11.5)
         .attr("x", 210)
         .attr("y", 425)
-        .attr('height',23)
-        .attr('width',90)
-        .attr('opacity',0.3)
+        .attr('height', 23)
+        .attr('width', 90)
+        .attr('opacity', 0.3)
         .on('mouseover', mc_ind_clear_mouseover)
         .on('mouseout', mc_ind_clear_mouseout)
-       	.on('click', mc_ind_clear_click)
+        .on('click', mc_ind_clear_click)
 
 
 
 
-        function mc_ind_mouseover(){
-        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
-        	if(map_ind.indexOf(_id)!=-1)return;
-        	d3.select('#mc-ind-'+_id).attr('fill','#B2EBF2')
-        }
-        function mc_ind_mouseout(){
-        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
-        	if(map_ind.indexOf(_id)!=-1)return;
-        	d3.select('#mc-ind-'+_id).attr('fill','white')
-        }
-        function mc_ind_click(){
-        	var _id=parseInt(d3.select(this).attr('id').split('-')[2]);
-        	if(map_ind.indexOf(_id)==-1){
+    function mc_ind_mouseover() {
+        var _id = parseInt(d3.select(this).attr('id').split('-')[2]);
+        if (map_ind.indexOf(_id) != -1) return;
+        d3.select('#mc-ind-' + _id).attr('fill', '#B2EBF2')
+    }
+
+    function mc_ind_mouseout() {
+        var _id = parseInt(d3.select(this).attr('id').split('-')[2]);
+        if (map_ind.indexOf(_id) != -1) return;
+        d3.select('#mc-ind-' + _id).attr('fill', 'white')
+    }
+
+    function mc_ind_click() {
+        var _id = parseInt(d3.select(this).attr('id').split('-')[2]);
+        if (map_ind.indexOf(_id) == -1) {
 
 
-        		d3.select('#mc-ind-'+_id).attr('fill','#80DEEA');	
-        		map_ind.push(_id)
+            d3.select('#mc-ind-' + _id).attr('fill', '#80DEEA');
+            map_ind.push(_id)
 
-        		if(map_ind.length==14)d3.select('#mc-ind-all').attr('fill','#80DEEA')
-        		if(map_ind.length!=1)d3.select('#mc-ind-clear').attr('fill','white')
+            if (map_ind.length == 14) d3.select('#mc-ind-all').attr('fill', '#80DEEA')
+            if (map_ind.length != 1) d3.select('#mc-ind-clear').attr('fill', 'white')
 
 
-        		var new_crds = Data.filterPoints(map_age, map_time,map_ind);
-        		map.getSource('heatmap').setData(new_crds)
-        	}
-        	else{
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            map.getSource('heatmap').setData(new_crds)
+        } else {
 
-        		if(map_ind.length==1)return;
-        		d3.select('#mc-ind-all').attr('fill','white')
-        		d3.select('#mc-ind-'+_id).attr('fill','white');	
-        		map_ind.splice(map_ind.indexOf(_id),1)
+            if (map_ind.length == 1) return;
+            d3.select('#mc-ind-all').attr('fill', 'white')
+            d3.select('#mc-ind-' + _id).attr('fill', 'white');
+            map_ind.splice(map_ind.indexOf(_id), 1)
 
-        		if(map_ind.length==1)
-        		d3.select('#mc-ind-clear').attr('fill','#80DEEA')
+            if (map_ind.length == 1)
+                d3.select('#mc-ind-clear').attr('fill', '#80DEEA')
 
-        		var new_crds = Data.filterPoints(map_age, map_time,map_ind);
-        		map.getSource('heatmap').setData(new_crds)
-        	}
-
-        	
-        }
-
-        function mc_ind_all_mouseover(){
-        	if(map_ind.length==14)return
-			d3.select(this).attr('fill','#B2EBF2')
-
-        }
-
-        function mc_ind_all_mouseout(){
-        	if(map_ind.length==14)return
-			d3.select(this).attr('fill','white')
-        }
-
-        function mc_ind_all_click(){
-        	
-			if(map_ind.length==14)return;
-			d3.select(this).attr('fill','#80DEEA')	
-			map_ind=Array(14).fill(0).map((x,i)=>i)
-			d3.select('#mc-ind-clear').attr('fill','white')
-
-			for(var i=0;i<map_ind.length;i++)
-				d3.select('#mc-ind-'+i).attr('fill','#80DEEA')
-			var new_crds = Data.filterPoints(map_age, map_time,map_ind);
-        	map.getSource('heatmap').setData(new_crds)	
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            map.getSource('heatmap').setData(new_crds)
         }
 
 
+    }
 
-        function mc_ind_clear_mouseover(){
-        	if(map_ind.length==1)return
-			d3.select(this).attr('fill','#B2EBF2')
+    function mc_ind_all_mouseover() {
+        if (map_ind.length == 14) return
+        d3.select(this).attr('fill', '#B2EBF2')
 
-        }
+    }
 
-        function mc_ind_clear_mouseout(){
-        	if(map_ind.length==1)return
-			d3.select(this).attr('fill','white')
-        }
+    function mc_ind_all_mouseout() {
+        if (map_ind.length == 14) return
+        d3.select(this).attr('fill', 'white')
+    }
 
-        function mc_ind_clear_click(){
-        	
-			if(map_ind.length==1)return;
-			d3.select(this).attr('fill','#80DEEA')	
+    function mc_ind_all_click() {
 
-			for(var i=0;i<map_ind.length;i++)
-				d3.select('#mc-ind-'+map_ind[i]).attr('fill','white')
+        if (map_ind.length == 14) return;
+        d3.select(this).attr('fill', '#80DEEA')
+        map_ind = Array(14).fill(0).map((x, i) => i)
+        d3.select('#mc-ind-clear').attr('fill', 'white')
 
-			d3.select('#mc-ind-0').attr('fill','#80DEEA')
-			d3.select('#mc-ind-all').attr('fill','white')
+        for (var i = 0; i < map_ind.length; i++)
+            d3.select('#mc-ind-' + i).attr('fill', '#80DEEA')
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        map.getSource('heatmap').setData(new_crds)
+    }
 
-			map_ind=[0]
-			var new_crds = Data.filterPoints(map_age, map_time,map_ind);
-        	map.getSource('heatmap').setData(new_crds)	
-        }
 
-        
-        //DONT UNCHECK ALL OPTION
-        //HAVE UNCHECK ALL BUT ONE
+
+    function mc_ind_clear_mouseover() {
+        if (map_ind.length == 1) return
+        d3.select(this).attr('fill', '#B2EBF2')
+
+    }
+
+    function mc_ind_clear_mouseout() {
+        if (map_ind.length == 1) return
+        d3.select(this).attr('fill', 'white')
+    }
+
+    function mc_ind_clear_click() {
+
+        if (map_ind.length == 1) return;
+        d3.select(this).attr('fill', '#80DEEA')
+
+        for (var i = 0; i < map_ind.length; i++)
+            d3.select('#mc-ind-' + map_ind[i]).attr('fill', 'white')
+
+        d3.select('#mc-ind-0').attr('fill', '#80DEEA')
+        d3.select('#mc-ind-all').attr('fill', 'white')
+
+        map_ind = [0]
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        map.getSource('heatmap').setData(new_crds)
+    }
+
+
+    //DONT UNCHECK ALL OPTION
+    //HAVE UNCHECK ALL BUT ONE
 
 }
 //--------------------
@@ -1647,9 +1754,9 @@ function subplot_raid(month_data) {
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
         .text(function(d) { 
-        	var m=d[3].split('/');
-        	if(m.length==1) return "";
-        	return m[0]+' '+month_dict[parseInt(m[1])-1]+' '+m[2].slice(2,4) 
+            var m=d[3].split('/');
+            if(m.length==1) return "";
+            return m[0]+' '+month_dict[parseInt(m[1])-1]+' '+m[2].slice(2,4) 
         })
     */
 
@@ -1697,12 +1804,6 @@ function subplot_raid(month_data) {
 
 
 
-
-
-
-
-
-
     var sub_raid_line = raid_sub_svg.selectAll("rect")
         .data(raid_cir)
 
@@ -1723,6 +1824,48 @@ function subplot_raid(month_data) {
 }
 //---------------------
 
+// AMOUNT SUB PLOT    ----
+function subplot_amount1(data){
+    var amt_bar = amount1_sub_svg.selectAll('rect')
+            .data(data)
+
+        var entering = amt_bar.enter()
+            .append("rect");
+
+        amt_bar.merge(entering)
+        .transition().duration(500)
+        .attr("fill", '#42A5F5')
+        .attr("x", function(d, i) { return 30 + i * 8 })
+        .attr("width", 7)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr("y", function(d) { return 200 - d/3 })
+        .attr("height", function(d) { return d/3 })
+        .attr('opacity', 0.5)
+
+}
+
+function subplot_amount2(data){
+    var amt_bar = amount2_sub_svg.selectAll('rect')
+            .data(data)
+
+        var entering = amt_bar.enter()
+            .append("rect");
+
+        amt_bar.merge(entering)
+        .transition().duration(500)
+        .attr("fill", '#42A5F5')
+        .attr("x", function(d, i) { return 30 + i * 8 })
+        .attr("width", 7)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr("y", function(d) { return 200 - d/3 })
+        .attr("height", function(d) { return d/3 })
+        .attr('opacity', 0.5)
+
+}
+
+//----------------------
 
 // ------------------------------------------------
 
@@ -1739,9 +1882,9 @@ var map_controls_svg = d3.select("#map-controls")
 var is_hm = 'y'
 var map_age = 0
 var map_time = [3, 8]
-var map_ind=Array(14).fill(0).map((x,i)=>i)
+var map_ind = Array(14).fill(0).map((x, i) => i)
 
-mapHeatmap('native', Data.filterPoints(map_age, map_time,map_ind))
+mapHeatmap('native', Data.filterPoints(map_age, map_time, map_ind))
 
 map_controls()
 
@@ -1800,13 +1943,7 @@ subplot_indst("t_date", 40, traf_indst_svg);
 subplot_map("t_date", 40, "native", traf_map_svg);
 //--------------------
 
-
-
-//------------------------------------------------
-
-
-
-//RAID PLOT INIT ----
+//RAID PLOT INIT -----
 
 var raid_svg_g
 var curr_raid_month
@@ -1819,6 +1956,35 @@ var raid_sub_svg = d3.select('#sub-raid')
     .attr("height", sub_raid_height)
 
 raid_plot()
+//--------------------
+
+//AMOUNT PLOT INIT --
+
+
+
+
+
+var amount1_sub_svg = d3.select('#sub-amount-1')
+.append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+
+var amount2_sub_svg = d3.select('#sub-amount-2')
+.append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+
+amount_plot()
+//subplot_amount1();
+//subplot_amount2();
+
+
+//--------------------
+
+
+//------------------------------------------------
 </script>
 
 </html>

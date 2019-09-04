@@ -53,6 +53,7 @@ for i in ashram:
 
 	else:
 		w=int(w)
+
 		if wx=='No Wage Earned':
 			wage=[0,'n']
 
@@ -69,7 +70,10 @@ for i in ashram:
 			if since==0:
 				wage=[-1,'u']
 			else:
-				wage=[w*since/6,'o']
+				wage=[int(w/(since/6)),'o']
+
+		#if w>10000:
+		#	wage=[-1,'u']
 
 
 	ss=i[34]
@@ -85,14 +89,28 @@ for i in ashram:
 	if not i[0] in ref:
 		continue
 
+	since_age=i[30]
+	if since_age=='':since_age=0
+	since_age=int(since_age)
+	if since_age>20:since_age=0
+	
 
+
+	inc=i[56].split('.')[0]
+	if inc=='':inc=-1
+	inc=int(inc)
+	
 	ash_data[ref[i[0]]]={
 		'bro':nb,
 		'sis':ns,
 		'wage':wage,
 		'school':ss,
-		'class':cl
+		'class':cl,
+		'work_s':since_age,
+		'income':inc
 	}
+
+	
 
 
 empty={
@@ -100,7 +118,10 @@ empty={
 	'sis':-1,
 	'wage':[-1,'u'],
 	'school':'',
-	'class':0
+	'class':0,
+	'work_s':0,
+	'income':-1
+
 }
 
 

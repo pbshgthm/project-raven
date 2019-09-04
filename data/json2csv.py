@@ -7,6 +7,7 @@ data=json.load(open('updated_data.json'))
 master=[[
 		'id',
 		'age',
+		'start_age',
 		'r_date',
 		't_date',
 		'dur',
@@ -17,6 +18,7 @@ master=[[
 		'native_v_add',
 		'native_v_crd',
 		'indst',
+		'income',
 		'wage_week',
 		'wage_type',
 		'paypar',
@@ -44,6 +46,7 @@ for i in data:
 
 	a.append(i['id'])
 	a.append(i['age'])
+	a.append(i['work_s'])
 
 	a.append(i['r_date'])
 	a.append(t)
@@ -58,6 +61,7 @@ for i in data:
 	a.append(str(i['native']['vil']['crd'])[1:-1])
 	
 	a.append(i['indst'])
+	a.append(i['income'])
 	a.append(i['wage'][0])
 	a.append(i['wage'][1])
 	a.append(i['paypar'])
@@ -78,4 +82,4 @@ csvFile.close()
 
 
 
-open('fin_data.json','w').write(json.dumps(master))
+open('fin_data.json','w').write(json.dumps(master,indent=4))
