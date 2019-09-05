@@ -49,6 +49,18 @@
             <div id="sub-amount-2"></div>
         </div>
     </div>
+    <div class="page-sec">
+        <div id="school-board" class="viz-board"></div>
+        <div class="viz-panel">
+            
+        </div>
+    </div>
+    <div class="page-sec">
+        <div id="indst-board" class="viz-board"></div>
+        <div class="viz-panel">
+            
+        </div>
+    </div>
 </body>
 <script type="text/javascript">
 Data.init(raw_data);
@@ -844,13 +856,13 @@ function raid_plot() {
 //---------------------
 
 
-
+// AMOUNT PLOT
 function amount_plot() {
     var amt = Data.amountDist();
     var income = amt['income']
     var paramt = amt['paramt']
     var wage = amt['wage']
-    var clr=['#AB47BC','#673AB7','#42A5F5','#26C6DA']
+    var clr = ['#AB47BC', '#673AB7', '#42A5F5', '#26C6DA']
 
     amount_svg = d3.select("#amount-board")
         .append("svg")
@@ -859,75 +871,75 @@ function amount_plot() {
         .style('background-color', 'white')
         .append('g')
 
-    var inc_dict=[]
-    for(var i=0;i<160;i++){
-        inc_dict.push([Math.floor(i/4),(i%4)+1,0,Math.floor(i/4)*5000])
+    var inc_dict = []
+    for (var i = 0; i < 160; i++) {
+        inc_dict.push([Math.floor(i / 4), (i % 4) + 1, 0, Math.floor(i / 4) * 5000])
     }
-    var inc_data=amt['income_h']
+    var inc_data = amt['income_h']
     console.log(inc_data)
-    for(var i=0;i<inc_data.length;i++){
-        var j=inc_data[i][0]*4
-        var k=inc_data[i][1]-1
-        inc_dict[k+j]=inc_data[i]
+    for (var i = 0; i < inc_data.length; i++) {
+        var j = inc_data[i][0] * 4
+        var k = inc_data[i][1] - 1
+        inc_dict[k + j] = inc_data[i]
     }
     console.log(inc_data)
 
-    var par_dict=[]
-    for(var i=0;i<160;i++){
-        par_dict.push([Math.floor(i/4),(i%4)+1,0,Math.floor(i/4)*1000])
+    var par_dict = []
+    for (var i = 0; i < 160; i++) {
+        par_dict.push([Math.floor(i / 4), (i % 4) + 1, 0, Math.floor(i / 4) * 1000])
     }
-    var par_data=amt['paramt_h']
-    for(var i=0;i<par_data.length;i++){
-        var j=par_data[i][0]*4
-        var k=par_data[i][1]-1
-        par_dict[k+j]=par_data[i]
+    var par_data = amt['paramt_h']
+    for (var i = 0; i < par_data.length; i++) {
+        var j = par_data[i][0] * 4
+        var k = par_data[i][1] - 1
+        par_dict[k + j] = par_data[i]
     }
 
-    var wag_dict=[]
-    for(var i=0;i<160;i++){
-        wag_dict.push([Math.floor(i/4),(i%4)+1,0,Math.floor(i/4)*50])
+    var wag_dict = []
+    for (var i = 0; i < 160; i++) {
+        wag_dict.push([Math.floor(i / 4), (i % 4) + 1, 0, Math.floor(i / 4) * 50])
     }
-    var wag_data=amt['wage_h']
-    for(var i=0;i<wag_data.length;i++){
-        var j=wag_data[i][0]*4
-        var k=wag_data[i][1]-1
-        wag_dict[k+j]=wag_data[i]
+    var wag_data = amt['wage_h']
+    for (var i = 0; i < wag_data.length; i++) {
+        var j = wag_data[i][0] * 4
+        var k = wag_data[i][1] - 1
+        wag_dict[k + j] = wag_data[i]
     }
-    
+
 
     //////////////
     var sample_list = Array(40).fill(0)
 
-    var income_list=sample_list.map(x=>[0,0])
+    var income_list = sample_list.map(x => [0, 0])
     for (var i = 1; i < income.length; i++) {
-        if(income[i][0]<0)continue
+        if (income[i][0] < 0) continue
         var inc = income[i][0] / 5000;
         if (inc > 39) inc = 39
         income_list[inc][0] += income[i][1]
-        income_list[inc][1] = income[i][0]    
+        income_list[inc][1] = income[i][0]
     }
 
-    
-    var paramt_list=sample_list.map(x=>[0,0])
+
+    var paramt_list = sample_list.map(x => [0, 0])
 
     for (var i = 1; i < paramt.length; i++) {
 
-        if(paramt[i][0]<0)continue
+        if (paramt[i][0] < 0) continue
         var inc = paramt[i][0] / 1000;
         if (inc > 39) inc = 39
         paramt_list[inc][0] += paramt[i][1]
-        paramt_list[inc][1] = paramt[i][0]  
+        paramt_list[inc][1] = paramt[i][0]
     }
 
-    
-    var wage_list=sample_list.map(x=>[0,0])
+
+    var wage_list = sample_list.map(x => [0, 0])
     for (var i = 1; i < wage.length; i++) {
-        
-        if(wage[i][0]<0)continue
+
+        if (wage[i][0] < 0) continue
         var inc = wage[i][0] / 50;
         if (inc > 39) inc = 39
         wage_list[inc][0] += wage[i][1]
-        wage_list[inc][1] = wage[i][0] 
+        wage_list[inc][1] = wage[i][0]
     }
 
     var amt_btn = ['income', 'paramt', 'wage']
@@ -945,7 +957,7 @@ function amount_plot() {
         .data(amt_btn).enter()
         .append("circle")
         .attr('id', function(d) { return 'amt-btn-' + d })
-        .attr('class','amtbtn')
+        .attr('class', 'amtbtn')
         .attr("fill", '#CFD8DC')
         .attr("stroke", '#90A4AE')
         .attr("stroke-width", 2)
@@ -968,22 +980,22 @@ function amount_plot() {
         var entering = amt_bar.enter()
             .append("rect");
 
-        var max=amt.reduce((max,x)=>max>x[2]?max:x[2],0)
-        var scale=300/max
+        var max = amt.reduce((max, x) => max > x[2] ? max : x[2], 0)
+        var scale = 300 / max
 
         amt_bar.merge(entering)
             .on('click', amt_bar_click)
             .transition().duration(500)
-            .attr("fill", function(d){return clr[d[1]-1]})
-            .attr('id', function(d) { return 'amtbar-' + _id + '-' + d[3]+'-'+d[0] })
-            .attr('class',function(d){return 'amtbar-'+d[0]})
+            .attr("fill", function(d) { return clr[d[1] - 1] })
+            .attr('id', function(d) { return 'amtbar-' + _id + '-' + d[3] + '-' + d[0] })
+            .attr('class', function(d) { return 'amtbar-' + d[0] })
             .attr("x", function(d, i) { return 50 + d[0] * 15 })
             .attr("width", 10)
             .attr('rx', 2)
             .attr('ry', 2)
-            .attr("y", function(d) { return 500 - d[2]*scale })
-            .attr("height", function(d) { return d[2]*scale })
-            
+            .attr("y", function(d) { return 500 - d[2] * scale })
+            .attr("height", function(d) { return d[2] * scale })
+
     }
 
 
@@ -996,45 +1008,46 @@ function amount_plot() {
         update_amount(amt_h_dict[_id], _id)
 
         d3.selectAll('.amtbtn')
-        .attr("fill", '#CFD8DC')
-        .attr("stroke", '#90A4AE')
+            .attr("fill", '#CFD8DC')
+            .attr("stroke", '#90A4AE')
 
-        d3.select('#amt-btn-'+_id)
-        .attr("fill", '#B3E5FC')
-        .attr("stroke", '#1E88E5')
+        d3.select('#amt-btn-' + _id)
+            .attr("fill", '#B3E5FC')
+            .attr("stroke", '#1E88E5')
 
     }
 
-    var amtsub_dict={
-        'income':['paramt','wage'],
-        'paramt':['income','wage'],
-        'wage':['income','paramt']
+    var amtsub_dict = {
+        'income': ['paramt', 'wage'],
+        'paramt': ['income', 'wage'],
+        'wage': ['income', 'paramt']
     }
 
-    var amt_h_dict={
-        'income':inc_dict,
-        'paramt':par_dict,
-        'wage':wag_dict
+    var amt_h_dict = {
+        'income': inc_dict,
+        'paramt': par_dict,
+        'wage': wag_dict
     }
+
     function amt_bar_click() {
         var _id = d3.select(this).attr('id').split('-');
-        
-        var amt=Data.amountSelDist(_id[1],parseInt(_id[2]))
+
+        var amt = Data.amountSelDist(_id[1], parseInt(_id[2]))
         console.log(amt)
         subplot_amount1(amt[amtsub_dict[_id[1]][0]])
         subplot_amount2(amt[amtsub_dict[_id[1]][1]])
 
         amount_svg.selectAll('rect')
-        .transition().duration(100)
-        .attr('fill','#CFD8DC')
+            .transition().duration(100)
+            .attr('fill', '#CFD8DC')
 
-        d3.selectAll('.amtbar-'+_id[3])
-        .transition().duration(100)
-        .attr("fill", function(d){return clr[d[1]-1]})
+        d3.selectAll('.amtbar-' + _id[3])
+            .transition().duration(100)
+            .attr("fill", function(d) { return clr[d[1] - 1] })
 
-        d3.select('#amt-btn-'+_id[1])
-        .attr("fill", 'white')
-        .attr("stroke", '#1E88E5')
+        d3.select('#amt-btn-' + _id[1])
+            .attr("fill", 'white')
+            .attr("stroke", '#1E88E5')
 
 
     }
@@ -1042,10 +1055,197 @@ function amount_plot() {
     d3.select('#amt-btn-income')
         .attr("fill", '#B3E5FC')
         .attr("stroke", '#1E88E5')
-    update_amount(inc_dict,'income')
+    update_amount(inc_dict, 'income')
     subplot_amount1(paramt_list)
     subplot_amount2(wage_list)
 }
+// ----------------------
+
+
+function school_plot(){
+    school_svg = d3.select("#school-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .style('background-color', 'white')
+        .append('g')
+
+    var sch=Data.getDict('school');
+    var std=Data.getDict('class');
+    std=std.map(x=>[parseInt(x[0]),x[1]])
+    std.sort(function(a,b){return a[0]-b[0]})
+    std.shift()
+    console.log(std)
+
+
+    var color = d3.scaleOrdinal(['#4DD0E1','#AED581','#FFD54F','#984ea3','#e41a1c']);
+    var pie = d3.pie();
+
+    sch=[3168,1040,125]
+    // Generate the arcs
+    var arc = d3.arc()
+                .innerRadius(60)
+                .outerRadius(80);
+
+    //Generate groups
+    var arcs = school_svg.selectAll("arc")
+                .data(pie(sch))
+                .enter()
+                .append("g")
+                .attr("class", "arc")
+                .attr('transform','translate(300,200)')
+
+    //Draw arc paths
+    arcs.append("path")
+        .attr("fill", function(d, i) {
+            return color(i);
+        })
+        .attr("d", arc);
+
+
+    school_svg.selectAll("btn")
+        .data(std).enter()
+        .append("rect")
+        .attr("fill", '#26A69A')
+        .attr("x", function(d, i) { return 200 + i * 35 })
+        .attr("width", 25)
+        .attr('rx', 3)
+        .attr('ry', 3)
+        .attr("y", function(d){return 600-d[1]/3})
+        .attr("height", function(d){return d[1]/3})
+        .attr('opacity', 0.5)
+        
+}
+
+function indust_plot(){
+    indst_svg = d3.select("#indst-board")
+        .append("svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .style('background-color', 'white')
+        .append('g')
+
+
+    var ind = Data.industryDist();
+    var all_ind = [].concat(...ind)
+
+
+    function packer(raw) {
+        data = [{
+            "name": "Root",
+            "id": 0
+        }];
+        for (var i = 0; i < raw.length; i++)
+            data.push({ 'size': raw[i], 'id': i + 1, 'parent': 0 })
+
+        return data
+    }
+
+    var stratify = d3.stratify()
+        .id(function(d) { return d.id; })
+        .parentId(function(d) { return d.parent; });
+
+
+    function getRoot(data) {
+        return stratify(data)
+            .sum(function(d) {
+                return d.size;
+            })
+    }
+
+
+    function packBub(root, b_w) {
+
+        var pack = d3.pack()
+            .size([b_w, b_w])
+            .padding(2);
+
+        var packedNodes = pack(root);
+        var children = packedNodes.leaves();
+        var circles = indst_svg.selectAll('bubInd')
+            .data(children);
+        return circles['_enter'][0].map(x => [x['__data__']['x'],
+            x['__data__']['y'],
+            x['__data__']['r']
+        ])
+
+    }
+
+    function plotIndBub(data) {
+
+        var indBub = indst_svg.selectAll('circle')
+            .data(data)
+
+        var entering = indBub.enter()
+            .append("circle");
+
+        indBub.merge(entering)
+            .transition().duration(500)
+            .attr('id', function(d, i) { return i })
+            .attr('cx', function(d) { return d[0] })
+            .attr('cy', function(d) { return d[1] })
+            .attr('r', function(d) { return d[2] })
+            .attr('fill', function(d) { return d[3] })
+        //.attr('opacity',0.5)
+
+    }
+
+    var ofst = [
+        [10+20, 100 + 40],
+        [380+20, 210 + 40],
+        [520+20, 215 + 40],
+        [650+20, 155 + 40]
+    ];
+    var bubClr = ['#B2EBF2', '#E1BEE7', '#C8E6C9', '#FFCCBC'];
+    var comb_ofst = [
+        [170, 210 + 90],
+        [430, 210 + 90],
+        [565, 210 + 90],
+        [765, 210 + 90]
+    ];
+    var splitBub = [];
+    var combBub = [];
+
+    for (var i = 0; i < ind.length; i++) {
+        var data = packer(ind[i])
+        var cir_data = packBub(getRoot(data), ind[i].reduce((x, i) => x + i, 0) / 17);
+        cir_data = cir_data.map(x => [x[0] + ofst[i][0], x[1] + ofst[i][1], x[2], bubClr[i]])
+        splitBub = splitBub.concat(cir_data);
+
+
+        var comb_r = ind[i].reduce((x, i) => x + i, 0) / 40
+        var comb_cir_data = Array(ind[i].length).fill([comb_ofst[i][0],
+            comb_ofst[i][1],
+            comb_r,
+            bubClr[i]
+        ])
+        combBub = combBub.concat(comb_cir_data)
+    }
+
+
+
+    var lineBub = [];
+    var k = 0;
+    for (var i = 0; i < ind.length; i++) {
+        var x = 150 + 150 * i;
+        var y = 50;
+        for (var j = 0; j < ind[i].length; j++) {
+            var lb = splitBub[k].slice();
+            lb[0] = x;
+            var c = y + lb[2] + 10;
+            y += (2 * lb[2] +5)
+            lb[1] = c
+            lineBub.push(lb)
+            k += 1;
+        }
+    }
+
+    
+    plotIndBub(lineBub)
+    
+
+}
+
 //------------------------------------------------
 
 
@@ -1929,9 +2129,9 @@ function subplot_raid(month_data) {
 
 // AMOUNT SUB PLOT    ----
 function subplot_amount1(data) {
-    var max=data.reduce((max,i)=>max>i[0]?max:i[0],0)
-    var scale=0
-    if(max!=0)scale=100/max
+    var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
+    var scale = 0
+    if (max != 0) scale = 100 / max
     var amt_bar = amount1_sub_svg.selectAll('rect')
         .data(data)
 
@@ -1945,16 +2145,16 @@ function subplot_amount1(data) {
         .attr("width", 7)
         .attr('rx', 0.5)
         .attr('ry', 0.5)
-        .attr("y", function(d) { return 200 - d[0]*scale})
-        .attr("height", function(d) { return d[0]*scale})
+        .attr("y", function(d) { return 200 - d[0] * scale })
+        .attr("height", function(d) { return d[0] * scale })
         .attr('opacity', 0.5)
 
 }
 
 function subplot_amount2(data) {
-    var max=data.reduce((max,i)=>max>i[0]?max:i[0],0)
-    var scale=0
-    if(max!=0)scale=100/max
+    var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
+    var scale = 0
+    if (max != 0) scale = 100 / max
     var amt_bar = amount2_sub_svg.selectAll('rect')
         .data(data)
 
@@ -1968,8 +2168,8 @@ function subplot_amount2(data) {
         .attr("width", 7)
         .attr('rx', 0.5)
         .attr('ry', 0.5)
-        .attr("y", function(d) { return 200 - d[0]*scale})
-        .attr("height", function(d) { return d[0]*scale})
+        .attr("y", function(d) { return 200 - d[0] * scale })
+        .attr("height", function(d) { return d[0] * scale })
         .attr('opacity', 0.5)
 
 }
@@ -2069,10 +2269,6 @@ raid_plot()
 
 //AMOUNT PLOT INIT --
 
-
-
-
-
 var amount1_sub_svg = d3.select('#sub-amount-1')
     .append("svg")
     .attr('display', 'inline-block')
@@ -2092,6 +2288,18 @@ amount_plot()
 
 //--------------------
 
+//SCHOOL PLOT INIT --
+
+var school_svg
+school_plot()
+//
+
+//INDST PLOT INIT ---
+
+var indst_svg
+indust_plot()
+
+// -------------
 
 //------------------------------------------------
 </script>
