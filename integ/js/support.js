@@ -275,6 +275,10 @@ var Data = {
         var paramt = {};
         var wage = {};
 
+        var inc_dict = {};
+        var par_dict = {};
+        var wag_dict = {};
+
         for (var i = 0; i < Data.raw.length; i++) {
 
 
@@ -282,9 +286,36 @@ var Data = {
             if (inc != -1)
                 inc = Math.round(inc / 5000) * 5000
             if (inc in income) {
-                income[inc] += 1
+                income[inc][0] += 1
+                income[inc][1] += 1 / 3
+                income[inc][2] += 1 / 6
             } else {
-                income[inc] = 1
+                income[inc] = [1, 1, 1]
+            }
+
+            if (inc != -1) {
+                var ind = inc / 5000;
+                if (ind > 39) ind = 39;
+
+                var k = ind + '-1';
+                if (k in inc_dict) inc_dict[k] += 1;
+                else inc_dict[k] = 1
+
+                
+                var k = ind + '-2';
+                if (k in inc_dict) inc_dict[k] += 1;
+                else inc_dict[k] = 1
+
+                
+                var k = ind + '-3';
+                if (k in inc_dict) inc_dict[k] += 1;
+                else inc_dict[k] = 1
+
+                
+                var k = ind + '-4';
+                if (k in inc_dict) inc_dict[k] += 1;
+                else inc_dict[k] = 1
+
             }
 
 
@@ -300,45 +331,193 @@ var Data = {
                 par = Math.round(par / 1000) * 1000
             }
             if (par in paramt) {
-                paramt[par] += 1
+                paramt[par][0] += 1
+                paramt[par][1] += 1 / 3
+                paramt[par][2] += 1 / 6
             } else {
-                paramt[par] = 1
+                paramt[par] = [1, 1, 1]
             }
 
+            ///////////////////
+            if (par >= 0) {
+                var ind = par / 1000;
+                if (ind > 39) ind = 39;
+
+                if (paypar == "loan") {
+                    var k = ind + '-1';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-3';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-4';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+                }
+
+                if (paypar == "advance") {
+                    var k = ind + '-1';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-3';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+                }
+
+                if (paypar == "loan&advance") {
+                    var k = ind + '-1';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in par_dict) par_dict[k] += 1;
+                    else par_dict[k] = 1
+
+                }
+
+
+
+
+            }
+
+            ////////////////
 
 
             var wg = Data.raw[i]['wage_week']
+            var wtype = Data.raw[i]['wage_type']
             if (wg != -1)
                 wg = Math.round(wg / 50) * 50
 
             if (wg in wage) {
-                wage[wg] += 1
+                wage[wg][0] += 1
+                wage[wg][1] += 1 / 3
+                wage[wg][2] += 1 / 6
             } else {
-                wage[wg] = 1
+                wage[wg] = [1, 1, 1]
             }
+
+            ////////////////
+            if (wg >= 0) {
+                var ind = wg / 50;
+                if (ind > 39) ind = 39;
+
+                if (wtype == "m") {
+                    var k = ind + '-1';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-3';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-4';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+                }
+                if (wtype == "w") {
+                    var k = ind + '-1';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-3';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+                }
+                if (wtype == "d") {
+                    var k = ind + '-1';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+
+                    var k = ind + '-2';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+                }
+                if (wtype == "o") {
+                    var k = ind + '-1';
+                    if (k in wag_dict) wag_dict[k] += 1;
+                    else wag_dict[k] = 1
+                }
+
+            }
+
+            ///////////////
 
         }
 
         income = Object.entries(income)
+        income = income.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         income.sort(function(a, b) { return a[0] - b[0] })
 
         paramt = Object.entries(paramt)
+        paramt = paramt.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         paramt.sort(function(a, b) { return a[0] - b[0] })
 
         wage = Object.entries(wage)
+        wage = wage.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         wage.sort(function(a, b) { return a[0] - b[0] })
 
-        
 
-        return { 'income': income, 'paramt': paramt, 'wage': wage }
+        inc_dict = Object.entries(inc_dict)
+        inc_dict = inc_dict.map(x => [parseInt(x[0].split('-')[0]),
+            parseInt(x[0].split('-')[1]),
+            x[1],
+            parseInt(x[0].split('-')[0]) * 5000
+        ])
+        inc_dict = inc_dict.sort(function(a, b) { return a[0] - b[0] })
+
+
+        par_dict = Object.entries(par_dict)
+        par_dict = par_dict.map(x => [parseInt(x[0].split('-')[0]),
+            parseInt(x[0].split('-')[1]),
+            x[1],
+            parseInt(x[0].split('-')[0]) * 1000
+        ])
+        par_dict = par_dict.sort(function(a, b) { return a[0] - b[0] })
+
+
+        wag_dict = Object.entries(wag_dict)
+        wag_dict = wag_dict.map(x => [parseInt(x[0].split('-')[0]),
+            parseInt(x[0].split('-')[1]),
+            x[1],
+            parseInt(x[0].split('-')[0]) * 50
+        ])
+        wag_dict = wag_dict.sort(function(a, b) { return a[0] - b[0] })
+
+
+        return { 'income': income, 'paramt': paramt, 'wage': wage,
+                  'income_h':inc_dict, 'paramt_h': par_dict, 'wage_h': wag_dict}
     },
 
-    amountSelDist: function(sel_amt='income',sel_val=5000) {
+    amountSelDist: function(sel_amt, sel_val) {
+
+        console.log(sel_amt, sel_val)
         var income = {};
         var paramt = {};
         var wage = {};
-        var amt_dict={
-            'income':income
+
+        var amt_dict = {
+            'income': 0,
+            'paramt': 0,
+            'wage': 0
         }
 
         for (var i = 0; i < Data.raw.length; i++) {
@@ -347,14 +526,7 @@ var Data = {
             var inc = Data.raw[i]['income']
             if (inc != -1)
                 inc = Math.round(inc / 5000) * 5000
-
-            if(inc!=sel_amt)continue
-            if (inc in income) {
-                income[inc] += 1
-            } else {
-                income[inc] = 1
-            }
-
+            amt_dict['income'] = inc
 
 
             var par = Data.raw[i]['paramt']
@@ -368,6 +540,29 @@ var Data = {
                 par = parseInt((par))
                 par = Math.round(par / 1000) * 1000
             }
+            amt_dict['paramt'] = par
+
+
+
+
+            var wg = Data.raw[i]['wage_week']
+            if (wg != -1)
+                wg = Math.round(wg / 50) * 50
+            amt_dict['wage'] = wg
+
+
+
+            if (amt_dict[sel_amt] != sel_val)
+                continue;
+
+
+            if (inc in income) {
+                income[inc] += 1
+            } else {
+                income[inc] = 1
+            }
+
+
             if (par in paramt) {
                 paramt[par] += 1
             } else {
@@ -375,10 +570,6 @@ var Data = {
             }
 
 
-
-            var wg = Data.raw[i]['wage_week']
-            if (wg != -1)
-                wg = Math.round(wg / 50) * 50
 
             if (wg in wage) {
                 wage[wg] += 1
@@ -388,6 +579,7 @@ var Data = {
 
         }
 
+        var sample_list = Array(40).fill(0)
         income = Object.entries(income)
         income.sort(function(a, b) { return a[0] - b[0] })
 
@@ -398,8 +590,41 @@ var Data = {
         wage.sort(function(a, b) { return a[0] - b[0] })
 
 
+        var income_list = sample_list.map(x => [0, 0])
+        for (var i = 1; i < income.length; i++) {
+            if (income[i][0] < 0) continue
+            var inc = income[i][0] / 5000;
+            if (inc > 39) inc = 39
+            income_list[inc][0] += income[i][1]
+            income_list[inc][1] = income[i][0]
+        }
 
-        return { 'income': income, 'paramt': paramt, 'wage': wage }
+
+        var paramt_list = sample_list.map(x => [0, 0])
+
+        for (var i = 1; i < paramt.length; i++) {
+
+            if (paramt[i][0] < 0) continue
+            var inc = paramt[i][0] / 1000;
+            if (inc > 39) inc = 39
+            paramt_list[inc][0] += paramt[i][1]
+            paramt_list[inc][1] = paramt[i][0]
+        }
+
+
+        var wage_list = sample_list.map(x => [0, 0])
+        for (var i = 1; i < wage.length; i++) {
+
+            if (wage[i][0] < 0) continue
+            var inc = wage[i][0] / 50;
+            if (inc > 39) inc = 39
+            wage_list[inc][0] += wage[i][1]
+            wage_list[inc][1] = wage[i][0]
+        }
+
+
+
+        return { 'income': income_list, 'paramt': paramt_list, 'wage': wage_list }
 
     },
 
