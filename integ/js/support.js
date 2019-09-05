@@ -95,7 +95,7 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time, indst) {
+    filterPoints: function(age, time, indst,loc) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
             "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
             "Electrical & Electronics", "Leather", "_others", ""
@@ -123,7 +123,7 @@ var Data = {
                 continue;
             }
             //console.log('sel',_ind)
-            var crd = this.raw[i]['native_v_crd'].split(',')
+            var crd = this.raw[i][loc+'_v_crd'].split(',')
             if (crd[0] == "") continue;
 
             crds.push(crd)

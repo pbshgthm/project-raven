@@ -1264,6 +1264,44 @@ function map_controls() {
     var age_bars = Array(20).fill(0)
     age_bars = age_bars.map((x, i) => i)
 
+
+
+    map_controls_svg
+        .append("circle")
+        .attr("fill", "#4FC3F7")
+        .attr('class','mc-loc')
+        .attr('id', 'mc-loc-native')
+        .attr("cx", 300)
+        .attr('r',20)
+        .attr("cy", 50)
+        .on('click', mc_loc_click)
+
+    map_controls_svg
+        .append("circle")
+        .attr("fill", "#CFD8DC")
+        .attr('class','mc-loc')
+        .attr('id', 'mc-loc-raid')
+        .attr("cx", 350)
+        .attr('r',20)
+        .attr("cy", 50)
+        .on('click', mc_loc_click)
+
+
+    function mc_loc_click(){
+        var _id=d3.select(this).attr('id').split('-')[2]
+        map_loc=_id
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        map.getSource('heatmap').setData(new_crds)
+
+        d3.selectAll('.mc-loc')
+        .attr('fill','#CFD8DC')
+
+        d3.select(this)
+        .attr('fill','#4FC3F7')
+    }
+
+
+
     map_controls_svg
         .append("rect")
         .attr("fill", "#FFB74D")
@@ -1424,7 +1462,7 @@ function map_controls() {
             .attr('fill', 'white')
 
         map_age = _id;
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1454,7 +1492,7 @@ function map_controls() {
             .attr('fill', '#00BCD4')
         map_age = 0;
 
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1564,7 +1602,7 @@ function map_controls() {
         d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4 - 1;
         d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4 - 1);
 
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1592,7 +1630,7 @@ function map_controls() {
             d3.select('#mc-time-r').attr("x", (anchor + 4 - 1));
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1609,7 +1647,7 @@ function map_controls() {
 
             map_time[1] = parseInt((anchor - 27) / 4) + 1;
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1635,7 +1673,7 @@ function map_controls() {
             map_time[0] = parseInt((anchor - 27 - 4) / 4) + 1;
             map_time[1] = map_time[0] + r;
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1753,7 +1791,7 @@ function map_controls() {
             if (map_ind.length != 1) d3.select('#mc-ind-clear').attr('fill', 'white')
 
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
             map.getSource('heatmap').setData(new_crds)
         } else {
 
@@ -1765,7 +1803,7 @@ function map_controls() {
             if (map_ind.length == 1)
                 d3.select('#mc-ind-clear').attr('fill', '#80DEEA')
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
             map.getSource('heatmap').setData(new_crds)
         }
 
@@ -1792,7 +1830,7 @@ function map_controls() {
 
         for (var i = 0; i < map_ind.length; i++)
             d3.select('#mc-ind-' + i).attr('fill', '#80DEEA')
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
         map.getSource('heatmap').setData(new_crds)
     }
 
@@ -1821,7 +1859,7 @@ function map_controls() {
         d3.select('#mc-ind-all').attr('fill', 'white')
 
         map_ind = [0]
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
         map.getSource('heatmap').setData(new_crds)
     }
 
@@ -2192,8 +2230,9 @@ var is_hm = 'y'
 var map_age = 0
 var map_time = [3, 8]
 var map_ind = Array(14).fill(0).map((x, i) => i)
+var map_loc='native'
 
-mapHeatmap('native', Data.filterPoints(map_age, map_time, map_ind))
+mapHeatmap(map_loc, Data.filterPoints(map_age, map_time, map_ind,map_loc))
 
 map_controls()
 
