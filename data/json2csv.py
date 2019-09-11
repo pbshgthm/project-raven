@@ -13,9 +13,11 @@ master=[[
 		'dur',
 		'raid_v_name',
 		'raid_v_add',
+		'raid_v_area',
 		'raid_v_crd',
 		'native_v_name',
 		'native_v_add',
+		'native_v_area',
 		'native_v_crd',
 		'indst',
 		'income',
@@ -54,10 +56,12 @@ for i in data:
 
 	a.append(i['raid']['vil']['name'])
 	a.append(i['raid']['vil']['add'])
+	a.append(i['raid']['area'])
 	a.append(str(i['raid']['vil']['crd'])[1:-1])
 	
 	a.append(i['native']['vil']['name'])
 	a.append(i['native']['vil']['add'])
+	a.append(i['native']['area'])
 	a.append(str(i['native']['vil']['crd'])[1:-1])
 	
 	a.append(i['indst'])

@@ -15,20 +15,30 @@
 </head>
 
 <body>
-    <div id="nav-pane"></div>
-    <div class="page-sec">
+    <div id="nav-pane">
+        <div id="nav-list">
+            <div class="nav-btn" id="nav-map">Map</div>
+            <div class="nav-btn" id="nav-age">Age</div>
+            <div class="nav-btn" id="nav-traf">Taffick Date</div>
+            <div class="nav-btn" id="nav-raid">Raid date</div>
+            <div class="nav-btn" id="nav-amt">Amount</div>
+            <div class="nav-btn" id="nav-sch">School</div>
+            <div class="nav-btn" id="nav-ind">Industry</div>
+        </div>
+    </div>
+    <div class="page-sec" id="map-sec" style="display: block">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls">
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="age-sec">
         <div id="age-board" class="viz-board"></div>
         <div class="viz-panel">
             <div class="sub-indst" id="age-indst-sub"></div>
             <div class="sub-map" id="age-map-sub"></div>
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="traf-sec">
         <div id="traf-board" class="viz-board"></div>
         <div class="viz-panel">
             <div class="sub-age" id="traf-age-sub"></div>
@@ -36,29 +46,28 @@
             <div class="sub-indst" id="traf-indst-sub"></div>
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="raid-sec">
         <div id="raid-board" class="viz-board"></div>
         <div class="viz-panel">
             <div id="sub-raid"></div>
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="amt-sec">
         <div id="amount-board" class="viz-board"></div>
         <div class="viz-panel">
             <div id="sub-amount-1"></div>
             <div id="sub-amount-2"></div>
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="sch-sec">
         <div id="school-board" class="viz-board"></div>
         <div class="viz-panel">
-            
         </div>
     </div>
-    <div class="page-sec">
+    <div class="page-sec" id="ind-sec">
         <div id="indst-board" class="viz-board"></div>
         <div class="viz-panel">
-            
+            <div id="indst-sub"></div>
         </div>
     </div>
 </body>
@@ -99,14 +108,15 @@ function mapHeatmap(val, data) {
     map = new mapboxgl.Map({
         container: val + '-map',
         style: 'mapbox://styles/mapbox/light-v10',
-        center: [78.5075, 22.2358],
-        zoom: 4,
+        center: [81.590, 23.308],
+        zoom: 3.85,
         maxZoom: 9,
         maxBounds: [
-            [60.929371, 7.41430],
-            [96.08562, 35.64620]
+            [64.871, 6.942],
+            [98.308, 37.891]
         ]
     });
+
 
 
     map.on('load', function() {
@@ -280,7 +290,7 @@ function age_plot() {
         .attr('class', 'age-txt')
         .attr('text-anchor', 'middle')
         .attr("x", function(d, i) { return 62 + i * 30 })
-        .attr("y", 405)
+        .attr("y", 410)
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
@@ -291,59 +301,66 @@ function age_plot() {
         .on('click', age_click)
 
 
-    var age_bars = age_svg.selectAll("bar")
-        .data(age_bins).enter()
-        .append("rect")
-        .attr('id', function(d, i) { return 'age-bar-' + i })
-        .attr('class', 'age-age-bar')
-        .attr("fill", "#FFB74D")
-        .attr('rx', 2)
-        .attr('ry', 2)
-        .attr("x", function(d, i) { return 50 + i * 30 })
-        .attr("width", 25)
-        .attr('opacity', 0.5)
-        .attr("y", function(d, i) { return 400 - d / 8; })
-        .attr("height", function(d, i) { return d / 8; })
-        .on('mouseover', age_mouseover)
-        .on('mouseout', age_mouseout)
-        .on('click', age_click)
+
+    function agebars_plot(data,clr) {
+        
+        var scale=1;
+        var max=data.reduce((max,i)=>max>i?max:i,0)
+        scale=250/max
+        var age_bars = age_svg.selectAll("rect")
+            .data(data)
+
+        var entering = age_bars.enter()
+            .append('rect')
+
+        age_bars.merge(entering)
+            .on('mouseover', age_mouseover)
+            .on('mouseout', age_mouseout)
+            .on('click', age_click)
+            .transition().duration(500)
+            .attr('id', function(d, i) { return 'age-bar-' + i })
+            .attr('class', 'age-age-bar')
+            .attr("fill", clr)
+            .attr('rx', 2)
+            .attr('ry', 2)
+            .attr("x", function(d, i) { return 50 + i * 30 })
+            .attr("width", 25)
+            .attr('opacity', 0.5)
+            .attr("y", function(d, i) { return 400 - d*scale; })
+            .attr("height", function(d, i) { return d*scale; })
+            
+    }
 
 
-    var ref_bars = age_svg.selectAll("age-bar")
-        .data(age_bins).enter()
-        .append("rect")
-        .attr('id', function(d, i) { return 'age-ref-' + i })
-        .attr('class', 'age-ref-bar')
-        .attr("fill", "#ECEFF1")
-        .attr('rx', 0)
-        .attr('ry', 0)
-        .attr("x", function(d, i) { return 50 + i * 30 })
-        .attr("width", 27)
-        .attr('opacity', 0.5)
-        .attr("y", 402)
-        .attr("height", 15)
-        .on('mouseover', age_mouseover)
-        .on('mouseout', age_mouseout)
-        .on('click', age_click)
-    //*/
+    var age_btn = ['age', 'since']
 
-    var since_bars = age_svg.selectAll("bar")
-        .data(since_bins).enter()
-        .append("rect")
-        .attr('id', function(d, i) { return 'since-bar-' + i })
-        .attr('class', 'age-since-bar')
-        .attr("fill", "#42A5F5")
-        .attr('rx', 2)
-        .attr('ry', 2)
-        .attr('opacity', 0.5)
-        .attr("x", function(d, i) { return 50 + i * 30 })
-        .attr("width", 25)
-        .attr("y", function(d, i) { return 420 })
-        .attr("height", function(d, i) { return d / 5 })
-        .on('mouseover', age_mouseover)
-        .on('mouseout', age_mouseout)
-        .on('click', age_click)
+    age_svg.selectAll('age-btns')
+        .data(age_btn)
+        .enter()
+        .append('circle')
+        .attr('id',function(d){return 'ab-'+d})
+        .attr('class','age-btn')
+        .attr('fill', '#CFD8DC')
+        .attr('cx', function(d, i) { return 300 + i * 150 })
+        .attr('cy', 600)
+        .attr('r', 20)
+        .on('click', age_btn_click)
 
+
+    var agedata_dict = {
+        'age': [age_bins,'#FFB74D'],
+        'since': [since_bins,'#4DD0E1']
+    }
+    agebars_plot(age_bins,'#FFB74D');
+    d3.select('#ab-age').attr('fill','#90CAF9');
+
+    function age_btn_click() {
+        var _id = d3.select(this).attr('id').split('-')[1]
+        agebars_plot(agedata_dict[_id][0],agedata_dict[_id][1])
+
+        d3.selectAll('.age-btn').attr('fill','#CFD8DC')
+        d3.select(this).attr('fill','#90CAF9')
+    }
 
     function age_mouseover() {
 
@@ -876,13 +893,12 @@ function amount_plot() {
         inc_dict.push([Math.floor(i / 4), (i % 4) + 1, 0, Math.floor(i / 4) * 5000])
     }
     var inc_data = amt['income_h']
-    console.log(inc_data)
+
     for (var i = 0; i < inc_data.length; i++) {
         var j = inc_data[i][0] * 4
         var k = inc_data[i][1] - 1
         inc_dict[k + j] = inc_data[i]
     }
-    console.log(inc_data)
 
     var par_dict = []
     for (var i = 0; i < 160; i++) {
@@ -1002,8 +1018,8 @@ function amount_plot() {
     function amt_btn_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
 
-        subplot_amount1(amt_sub_dict[_id][0])
-        subplot_amount2(amt_sub_dict[_id][1])
+        subplot_amount(amt_sub_dict[_id][0], amount1_sub_svg)
+        subplot_amount(amt_sub_dict[_id][1], amount2_sub_svg)
 
         update_amount(amt_h_dict[_id], _id)
 
@@ -1033,9 +1049,8 @@ function amount_plot() {
         var _id = d3.select(this).attr('id').split('-');
 
         var amt = Data.amountSelDist(_id[1], parseInt(_id[2]))
-        console.log(amt)
-        subplot_amount1(amt[amtsub_dict[_id[1]][0]])
-        subplot_amount2(amt[amtsub_dict[_id[1]][1]])
+        subplot_amount(amt[amtsub_dict[_id[1]][0]], amount1_sub_svg)
+        subplot_amount(amt[amtsub_dict[_id[1]][1]], amount2_sub_svg)
 
         amount_svg.selectAll('rect')
             .transition().duration(100)
@@ -1056,13 +1071,13 @@ function amount_plot() {
         .attr("fill", '#B3E5FC')
         .attr("stroke", '#1E88E5')
     update_amount(inc_dict, 'income')
-    subplot_amount1(paramt_list)
-    subplot_amount2(wage_list)
+    subplot_amount(paramt_list, amount1_sub_svg)
+    subplot_amount(wage_list, amount2_sub_svg)
 }
 // ----------------------
 
 
-function school_plot(){
+function school_plot() {
     school_svg = d3.select("#school-board")
         .append("svg")
         .attr("width", board_width)
@@ -1070,30 +1085,29 @@ function school_plot(){
         .style('background-color', 'white')
         .append('g')
 
-    var sch=Data.getDict('school');
-    var std=Data.getDict('class');
-    std=std.map(x=>[parseInt(x[0]),x[1]])
-    std.sort(function(a,b){return a[0]-b[0]})
+    var sch = Data.getDict('school');
+    var std = Data.getDict('class');
+    std = std.map(x => [parseInt(x[0]), x[1]])
+    std.sort(function(a, b) { return a[0] - b[0] })
     std.shift()
-    console.log(std)
 
 
-    var color = d3.scaleOrdinal(['#4DD0E1','#AED581','#FFD54F','#984ea3','#e41a1c']);
+    var color = d3.scaleOrdinal(['#4DD0E1', '#AED581', '#FFD54F', '#984ea3', '#e41a1c']);
     var pie = d3.pie();
 
-    sch=[3168,1040,125]
+    sch = [3168, 1040, 125]
     // Generate the arcs
     var arc = d3.arc()
-                .innerRadius(60)
-                .outerRadius(80);
+        .innerRadius(60)
+        .outerRadius(80);
 
     //Generate groups
     var arcs = school_svg.selectAll("arc")
-                .data(pie(sch))
-                .enter()
-                .append("g")
-                .attr("class", "arc")
-                .attr('transform','translate(300,200)')
+        .data(pie(sch))
+        .enter()
+        .append("g")
+        .attr("class", "arc")
+        .attr('transform', 'translate(300,200)')
 
     //Draw arc paths
     arcs.append("path")
@@ -1111,13 +1125,13 @@ function school_plot(){
         .attr("width", 25)
         .attr('rx', 3)
         .attr('ry', 3)
-        .attr("y", function(d){return 600-d[1]/3})
-        .attr("height", function(d){return d[1]/3})
+        .attr("y", function(d) { return 600 - d[1] / 3 })
+        .attr("height", function(d) { return d[1] / 3 })
         .attr('opacity', 0.5)
-        
+
 }
 
-function indust_plot(){
+function indust_plot() {
     indst_svg = d3.select("#indst-board")
         .append("svg")
         .attr("width", board_width)
@@ -1126,123 +1140,91 @@ function indust_plot(){
         .append('g')
 
 
-    var ind = Data.industryDist();
-    var all_ind = [].concat(...ind)
-
-
-    function packer(raw) {
-        data = [{
-            "name": "Root",
-            "id": 0
-        }];
-        for (var i = 0; i < raw.length; i++)
-            data.push({ 'size': raw[i], 'id': i + 1, 'parent': 0 })
-
-        return data
+    ind_dict = {
+        "Abattoirs/Slaughter Houses": "Slaughter Houses",
+        "Agriculture": "Agriculture",
+        "Automobile/Transport": "Automobile",
+        "Bakery": "Bakery",
+        "Brick Kilns & Roof tiles units": "Brick & tiles kilns",
+        "Building and Construction": "Construction",
+        "Carpentry": "Carpentry",
+        "Carpet Industry": "Carpet Industry",
+        "Cosmetic": "Cosmetic",
+        "Cracker Industry": "Cracker Industry",
+        "Curtain Making Unit": "Curtain Making",
+        "Dairy Products": "Dairy Products",
+        "Domestic Servant": "Domestic Servant",
+        "Electrical & Electronics": "Electronics",
+        "Factory": "Factory",
+        "Flour Mill": "Flour Mill",
+        "Footwear": "Footwear",
+        "Garment": "Garment",
+        "Handicraft": "Handicraft",
+        "Hotel/Dhaba": "Hotel",
+        "Jewellery": "Jewellery",
+        "Jute/Plastic/Rexin/Cloth Bags": "Cloth Bags",
+        "Leather": "Leather",
+        "Lock Making": "Lock Making",
+        "Metal": "Metal",
+        "Odd Jobs": "Odd Jobs",
+        "Paint Making Unit": "Paint Making",
+        "Paper Industry": "Paper Industry",
+        "Plastic and Nylon units": "Plastic units",
+        "Printing": "Printing",
+        "Retail Shop/Office": "Retail Shop",
+        "Sculpture Making Unit": "Sculpture Making",
+        "Stone Quarry": "Stone Quarry",
+        "Suitcase Making": "Suitcase Making",
+        "Tobacco & Chewing Tobacco": "Tobacco",
+        "Toy Making Unit": "Toy Making Unit",
+        "Umbrela Making Factory": "Umbrela Factory",
+        "Others": "Others"
     }
 
-    var stratify = d3.stratify()
-        .id(function(d) { return d.id; })
-        .parentId(function(d) { return d.parent; });
+    var ind_cat = Data.industryDist()
+    var ind = []
+    var ind_clrs = ['#FFCC80', '#C5E1A5', '#CE93D8', '#80DEEA', '#CFD8DC']
+
+    for (var i = 0; i < ind_cat.length; i++)
+        for (var j = 0; j < ind_cat[i].length; j++)
+            ind.push([ind_cat[i][j][0], ind_cat[i][j][1], i])
+
+    ind.sort(function(a, b) { return b[0] - a[0] })
+
+    norm_ind = ind.slice(0, 20)
+    norm_ind.push([ind.slice(20).reduce((sum, i) => sum + i[0], 0), 'Others', 4])
+
+    indst_svg.selectAll('rect')
+        .data(norm_ind)
+        .enter()
+        .append('rect')
+        .attr('id', function(d) { return 'ind-bar-' + d[1] })
+        .attr('fill', function(d) { return ind_clrs[d[2]] })
+        .attr('x', 150)
+        .attr('y', function(d, i) { return 100 + 27 * i })
+        .attr('height', 10)
+        .attr('width', function(d) { return d[0] / 8 })
+        .on('click', ind_bar_click)
 
 
-    function getRoot(data) {
-        return stratify(data)
-            .sum(function(d) {
-                return d.size;
-            })
-    }
+    indst_svg.selectAll('text')
+        .data(norm_ind)
+        .enter()
+        .append('text')
+        .attr("x", 140)
+        .attr("y", function(d, i) { return 100 + 27 * i })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('text-anchor', 'end')
+        .attr('fill', '#B0BEC5')
+        .text(function(d) { return ind_dict[d[1]] })
 
-
-    function packBub(root, b_w) {
-
-        var pack = d3.pack()
-            .size([b_w, b_w])
-            .padding(2);
-
-        var packedNodes = pack(root);
-        var children = packedNodes.leaves();
-        var circles = indst_svg.selectAll('bubInd')
-            .data(children);
-        return circles['_enter'][0].map(x => [x['__data__']['x'],
-            x['__data__']['y'],
-            x['__data__']['r']
-        ])
-
-    }
-
-    function plotIndBub(data) {
-
-        var indBub = indst_svg.selectAll('circle')
-            .data(data)
-
-        var entering = indBub.enter()
-            .append("circle");
-
-        indBub.merge(entering)
-            .transition().duration(500)
-            .attr('id', function(d, i) { return i })
-            .attr('cx', function(d) { return d[0] })
-            .attr('cy', function(d) { return d[1] })
-            .attr('r', function(d) { return d[2] })
-            .attr('fill', function(d) { return d[3] })
-        //.attr('opacity',0.5)
+    function ind_bar_click() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+        subplot_indst_loc((_id))
 
     }
-
-    var ofst = [
-        [10+20, 100 + 40],
-        [380+20, 210 + 40],
-        [520+20, 215 + 40],
-        [650+20, 155 + 40]
-    ];
-    var bubClr = ['#B2EBF2', '#E1BEE7', '#C8E6C9', '#FFCCBC'];
-    var comb_ofst = [
-        [170, 210 + 90],
-        [430, 210 + 90],
-        [565, 210 + 90],
-        [765, 210 + 90]
-    ];
-    var splitBub = [];
-    var combBub = [];
-
-    for (var i = 0; i < ind.length; i++) {
-        var data = packer(ind[i])
-        var cir_data = packBub(getRoot(data), ind[i].reduce((x, i) => x + i, 0) / 17);
-        cir_data = cir_data.map(x => [x[0] + ofst[i][0], x[1] + ofst[i][1], x[2], bubClr[i]])
-        splitBub = splitBub.concat(cir_data);
-
-
-        var comb_r = ind[i].reduce((x, i) => x + i, 0) / 40
-        var comb_cir_data = Array(ind[i].length).fill([comb_ofst[i][0],
-            comb_ofst[i][1],
-            comb_r,
-            bubClr[i]
-        ])
-        combBub = combBub.concat(comb_cir_data)
-    }
-
-
-
-    var lineBub = [];
-    var k = 0;
-    for (var i = 0; i < ind.length; i++) {
-        var x = 150 + 150 * i;
-        var y = 50;
-        for (var j = 0; j < ind[i].length; j++) {
-            var lb = splitBub[k].slice();
-            lb[0] = x;
-            var c = y + lb[2] + 10;
-            y += (2 * lb[2] +5)
-            lb[1] = c
-            lineBub.push(lb)
-            k += 1;
-        }
-    }
-
-    
-    plotIndBub(lineBub)
-    
 
 }
 
@@ -1258,7 +1240,31 @@ function indust_plot(){
 //MAP CONTROLS -------
 function map_controls() {
 
+    var heatmap_clrs = {
+        'native': [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0, "rgba(0,0,0,0)",
+            0.10, "#C5E1A5",
+            0.20, "#FFCA28",
+            0.30, "#FFA726",
+            0.99, "#FF7043",
+            1, "#ef5350"
+        ],
+        'raid': [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0, "rgba(0,0,0,0)",
+            0.10, "#80DEEA",
+            0.20, "#81D4FA",
+            0.30, "#90CAF9",
+            0.9999, "#7986CB",
+            1, "#9575CD"
+        ]
 
+    }
 
 
     var age_bars = Array(20).fill(0)
@@ -1269,35 +1275,38 @@ function map_controls() {
     map_controls_svg
         .append("circle")
         .attr("fill", "#4FC3F7")
-        .attr('class','mc-loc')
+        .attr('class', 'mc-loc')
         .attr('id', 'mc-loc-native')
         .attr("cx", 300)
-        .attr('r',20)
+        .attr('r', 20)
         .attr("cy", 50)
         .on('click', mc_loc_click)
 
     map_controls_svg
         .append("circle")
         .attr("fill", "#CFD8DC")
-        .attr('class','mc-loc')
+        .attr('class', 'mc-loc')
         .attr('id', 'mc-loc-raid')
         .attr("cx", 350)
-        .attr('r',20)
+        .attr('r', 20)
         .attr("cy", 50)
         .on('click', mc_loc_click)
 
 
-    function mc_loc_click(){
-        var _id=d3.select(this).attr('id').split('-')[2]
-        map_loc=_id
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+    function mc_loc_click() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+        map_loc = _id
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
 
+        map.setPaintProperty('heatmap-layer', 'heatmap-color', heatmap_clrs[_id])
+
+
         d3.selectAll('.mc-loc')
-        .attr('fill','#CFD8DC')
+            .attr('fill', '#CFD8DC')
 
         d3.select(this)
-        .attr('fill','#4FC3F7')
+            .attr('fill', '#4FC3F7')
     }
 
 
@@ -1462,7 +1471,7 @@ function map_controls() {
             .attr('fill', 'white')
 
         map_age = _id;
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1492,7 +1501,7 @@ function map_controls() {
             .attr('fill', '#00BCD4')
         map_age = 0;
 
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1602,7 +1611,7 @@ function map_controls() {
         d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4 - 1;
         d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4 - 1);
 
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
 
     }
@@ -1615,12 +1624,12 @@ function map_controls() {
 
         var _id = d3.select(this).attr('id').split('-')[2]
         if (_id == "r1") {
-            //console.log('r1')
+
 
             if (d3.event.x < 27 - 1 || d3.event.x > 27 + map_time[1] * 4 - 5) return;
 
             var anchor = 27 + Math.floor(((d3.event.x - 27) / 4)) * 4;
-            //console.log(anchor,d3.event.x)
+
 
             map_time[0] = parseInt((anchor - 27) / 4) + 1;
 
@@ -1630,33 +1639,33 @@ function map_controls() {
             d3.select('#mc-time-r').attr("x", (anchor + 4 - 1));
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
 
 
         if (_id == "r2") {
-            //console.log('r2')
+
 
             if (d3.event.x < 27 + map_time[0] * 4 + 4 || d3.event.x > 359) return;
 
             var anchor = 27 + Math.ceil(((d3.event.x - 27) / 4)) * 4 - 1;
-            //console.log(anchor,d3.event.x)
+
             d3.select('#mc-time-r2').attr("x", (d.x = anchor));
 
             map_time[1] = parseInt((anchor - 27) / 4) + 1;
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
 
         if (_id == "r") {
-            //console.log('r')
+
 
             var r = (map_time[1] - map_time[0]);
-            //console.log(map_time)
+
             if (d3.event.x < 27 || d3.event.x + r * 4 - 4 > 359) return;
 
 
@@ -1673,7 +1682,7 @@ function map_controls() {
             map_time[0] = parseInt((anchor - 27 - 4) / 4) + 1;
             map_time[1] = map_time[0] + r;
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds)
 
         }
@@ -1791,7 +1800,7 @@ function map_controls() {
             if (map_ind.length != 1) d3.select('#mc-ind-clear').attr('fill', 'white')
 
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds)
         } else {
 
@@ -1803,7 +1812,7 @@ function map_controls() {
             if (map_ind.length == 1)
                 d3.select('#mc-ind-clear').attr('fill', '#80DEEA')
 
-            var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds)
         }
 
@@ -1830,7 +1839,7 @@ function map_controls() {
 
         for (var i = 0; i < map_ind.length; i++)
             d3.select('#mc-ind-' + i).attr('fill', '#80DEEA')
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
     }
 
@@ -1859,7 +1868,7 @@ function map_controls() {
         d3.select('#mc-ind-all').attr('fill', 'white')
 
         map_ind = [0]
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind,map_loc);
+        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds)
     }
 
@@ -2047,6 +2056,9 @@ function subplot_age(src, val, board) {
 // RAID MONTH SUB PLOT ----
 function subplot_raid(month_data) {
 
+
+
+
     var month_dict = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     raid_sub_svg.attr("height", 200 + month_data.length * 75)
@@ -2079,28 +2091,6 @@ function subplot_raid(month_data) {
         .attr('opacity', function(d) { return d.length == 5 ? 0.2 : 1 })
 
 
-    /*
-    var sub_raid_date = raid_sub_svg.selectAll("text")
-        .data(raid_cir.concat(raid_dots))
-
-    var entering_t = sub_raid_date.enter()
-        .append("text");
-
-    sub_raid_date.merge(entering_t)
-        .transition().duration(500)
-        .attr("x", 145)
-        .attr("y", function(d,i) { return d[1] -20})
-        .attr("dy", "10px")
-        .style("font-size", "15px")
-        .style('font-family', 'Arial')
-        .attr('fill', '#B0BEC5')
-        .text(function(d) { 
-            var m=d[3].split('/');
-            if(m.length==1) return "";
-            return m[0]+' '+month_dict[parseInt(m[1])-1]+' '+m[2].slice(2,4) 
-        })
-    */
-
     raid_sub_svg.selectAll("text").remove();
 
     var sub_raid_date = raid_sub_svg.selectAll("text")
@@ -2109,12 +2099,12 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
-        .attr("x", 145)
-        .attr("y", function(d, i) { return d[1] - 20 })
+        .attr("x", 150)
+        .attr("y", function(d, i) { return d[1] - 5 })
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
-        .attr('fill', '#B0BEC5')
+        .attr('fill', '#607D8B')
         .attr('opacity', 0)
         .text(function(d) {
             var m = d[3].split('/');
@@ -2127,8 +2117,8 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
-        .attr("x", 145)
-        .attr("y", function(d, i) { return d[1] + 10 })
+        .attr("x", 150)
+        .attr("y", function(d, i) { return d[1] + 20 })
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
@@ -2139,6 +2129,36 @@ function subplot_raid(month_data) {
             if (m.length == 1) return "";
             return m[0] //+'\n'+m[1] 
         })
+        .transition().duration(500)
+        .attr('opacity', 1)
+
+    sub_raid_date
+        .append("text")
+        .attr("x", 150)
+        .attr("y", function(d, i) { return d[1] + 37 })
+        .attr("dy", "10px")
+        .style("font-size", "12px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .attr('opacity', 0)
+        .text(function(d) {
+            var m = d[4].split('&');
+            if (m.length == 1) return "";
+            return m[1].slice(0, -5) //+'\n'+m[1] 
+        })
+        .transition().duration(500)
+        .attr('opacity', 1)
+
+    sub_raid_date
+        .append("text")
+        .attr("x", 100)
+        .attr("y", function(d, i) { return d[1] + 20 })
+        .attr("dy", "10px")
+        .style("font-size", "20px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .attr('opacity', 0)
+        .text(function(d) { return (d[2] == 0 || d.length == 6) ? "" : d[2] })
         .transition().duration(500)
         .attr('opacity', 1)
 
@@ -2156,7 +2176,7 @@ function subplot_raid(month_data) {
         .attr('fill', '#B0BEC5')
         .attr('stroke', 'none')
         .attr("x", function(d) { return 50 + d[2] })
-        .attr("width", function(d) { return d[2] == 0 ? 0 : 100 - d[2] })
+        .attr("width", function(d) { return d[2] == 0 ? 0 : 95 - d[2] })
         .attr("y", function(d, i) { return d[1] })
         .attr("height", 1)
         .attr('opacity', 0.5)
@@ -2165,12 +2185,12 @@ function subplot_raid(month_data) {
 }
 //---------------------
 
-// AMOUNT SUB PLOT    ----
-function subplot_amount1(data) {
+// AMOUNT SUB PLOT---------
+function subplot_amount(data, svg) {
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 100 / max
-    var amt_bar = amount1_sub_svg.selectAll('rect')
+    var amt_bar = svg.selectAll('rect')
         .data(data)
 
     var entering = amt_bar.enter()
@@ -2189,30 +2209,77 @@ function subplot_amount1(data) {
 
 }
 
-function subplot_amount2(data) {
-    var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
-    var scale = 0
-    if (max != 0) scale = 100 / max
-    var amt_bar = amount2_sub_svg.selectAll('rect')
-        .data(data)
 
-    var entering = amt_bar.enter()
-        .append("rect");
 
-    amt_bar.merge(entering)
+//INDST SUB PLOT---------
+function subplot_indst_loc(indst) {
+    var loc = Data.industryLoc(indst)
+    var native_loc = []
+    var raid_loc = []
+
+
+    for (var i = 0; i < loc['native'].length; i++) {
+        var v = loc['native'][i][0].split(',')
+        if (v.indexOf("") != -1) continue
+        if (v.indexOf(" ") != -1) continue
+
+        native_loc.push(loc['native'][i])
+    }
+    for (var i = 0; i < loc['raid'].length; i++) {
+        var v = loc['raid'][i][0].split(',')
+        if (v.indexOf("") != -1) continue
+        if (v.indexOf(" ") != -1) continue
+
+        raid_loc.push(loc['raid'][i])
+    }
+
+    native_loc = native_loc.slice(0, 10)
+    raid_loc = raid_loc.slice(0, 10)
+
+
+    indst_sub_svg.selectAll("text").remove();
+    var native_text = indst_sub_svg.selectAll("native")
+        .data(native_loc)
+        .enter()
+
+    native_text
+        .append("text")
+        .attr("x", 25)
+        .attr("y", function(d, i) { return 30 + i * 20 })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .attr('opacity', 0)
+        .text(function(d) { return d[0].slice(0, -7) })
         .transition().duration(500)
-        .attr("fill", '#80DEEA')
-        .attr("x", function(d, i) { return 30 + i * 8 })
-        .attr("width", 7)
-        .attr('rx', 0.5)
-        .attr('ry', 0.5)
-        .attr("y", function(d) { return 200 - d[0] * scale })
-        .attr("height", function(d) { return d[0] * scale })
-        .attr('opacity', 0.5)
+        .attr('opacity', 1)
+
+    var raid_text = indst_sub_svg.selectAll("native")
+        .data(raid_loc)
+        .enter()
+
+    raid_text
+        .append("text")
+        .attr("x", 25)
+        .attr("y", function(d, i) { return 270 + i * 20 })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .attr('opacity', 0)
+        .text(function(d) { return d[0].slice(0, -7) })
+        .transition().duration(500)
+        .attr('opacity', 1)
+
+
+    subplot_amount(loc['wage'], indst_wage_svg)
+
 
 }
-
 //----------------------
+
+
 
 // ------------------------------------------------
 
@@ -2230,9 +2297,9 @@ var is_hm = 'y'
 var map_age = 0
 var map_time = [3, 8]
 var map_ind = Array(14).fill(0).map((x, i) => i)
-var map_loc='native'
+var map_loc = 'native'
 
-mapHeatmap(map_loc, Data.filterPoints(map_age, map_time, map_ind,map_loc))
+mapHeatmap(map_loc, Data.filterPoints(map_age, map_time, map_ind, map_loc))
 
 map_controls()
 
@@ -2321,8 +2388,6 @@ var amount2_sub_svg = d3.select('#sub-amount-2')
     .attr("height", sub_age_height)
 
 amount_plot()
-//subplot_amount1();
-//subplot_amount2();
 
 
 //--------------------
@@ -2335,12 +2400,49 @@ school_plot()
 
 //INDST PLOT INIT ---
 
-var indst_svg
+var indst_svg;
+var indst_sub_svg = d3.select("#indst-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height * 2)
+
+var indst_wage_svg = d3.select('#indst-sub')
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+
+
 indust_plot()
+subplot_indst_loc('Garment')
 
 // -------------
 
+
 //------------------------------------------------
+
+d3.selectAll('.nav-btn').on('click', function() {
+    var _id = '#' + d3.select(this).attr('id').split('-')[1]
+    d3.selectAll('.page-sec').style('display', 'none')
+    d3.select(_id + '-sec').style('display', 'block')
+
+    d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
+    d3.select(this).classed('nav-btn-sel', true)
+})
+d3.select('#map-sec').style('display', 'block')
+d3.select('#nav-map').classed('nav-btn-sel', true)
+</script>
+<script type="text/javascript">
+map.on('load', function() {
+
+    var adminLayers = ['admin-0-boundary', 'admin-0-boundary-disputed'];
+    adminLayers.forEach(function(adminLayer) {
+        map.setFilter(adminLayer, ["match", ["get", "worldview"],
+            ["all", "IN"], true, false
+        ]);
+    });
+});
 </script>
 
 </html>

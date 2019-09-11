@@ -95,7 +95,7 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time, indst,loc) {
+    filterPoints: function(age, time, indst, loc,line=false) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
             "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
             "Electrical & Electronics", "Leather", "_others", ""
@@ -118,15 +118,21 @@ var Data = {
             }
 
             var _ind = this.raw[i]['indst']
-            //console.log(_ind,indst)
+
             if (indst.indexOf(_ind) == -1 && indst != '_others') {
                 continue;
             }
-            //console.log('sel',_ind)
-            var crd = this.raw[i][loc+'_v_crd'].split(',')
+
+            if(line){
+                
+            }
+            else{
+            var crd = this.raw[i][loc + '_v_crd'].split(',')
             if (crd[0] == "") continue;
 
             crds.push(crd)
+            }
+
         }
         return this.toGeojson(crds)
     },
@@ -231,6 +237,8 @@ var Data = {
                 'Umbrela Making Factory'
             ]
         ]
+
+
         var ind_dict = {}
         for (var i = 0; i < this.raw.length; i++) {
             var ind = this.raw[i]['indst'];
@@ -243,11 +251,70 @@ var Data = {
         }
         for (var i = 0; i < indCat.length; i++) {
             for (var j = 0; j < indCat[i].length; j++)
-                indCat[i][j] = ind_dict[indCat[i][j]]
+                indCat[i][j] = [ind_dict[indCat[i][j]], indCat[i][j]]
             indCat[i].sort(function(a, b) { return b - a })
         }
 
-        return indCat;
+        return indCat
+    },
+
+    industryLoc: function(indst) {
+        var raid_loc = {}
+        var native_loc = {}
+        var wage={}
+
+
+
+        for (var i = 0; i < this.raw.length; i++) {
+
+            if (indst != this.raw[i]['indst']) continue;
+
+            var r_crd = this.raw[i]['raid_v_area']
+            if (r_crd in raid_loc)
+                raid_loc[r_crd] += 1
+            else
+                raid_loc[r_crd] = 1
+
+            var n_crd = this.raw[i]['native_v_area']
+            if (n_crd in native_loc)
+                native_loc[n_crd] += 1
+            else
+                native_loc[n_crd] = 1
+
+            var wg = Data.raw[i]['wage_week']
+            if (wg != -1)
+                wg = Math.round(wg / 50) * 50
+
+            if (wg in wage) wage[wg] += 1
+            else wage[wg] = 1
+
+        }
+
+
+        raid_loc = Object.entries(raid_loc)
+        raid_loc.sort(function(a, b) { return b[1] - a[1] })
+        native_loc = Object.entries(native_loc)
+        native_loc.sort(function(a, b) { return b[1] - a[1] })
+
+
+        wage = Object.entries(wage)
+        wage.sort(function(a, b) { return a[0] - b[0] })
+
+
+        var wage_list = Array(40).fill(0).map((x,i)=>[0,50*i])
+        for (var i = 1; i < wage.length; i++) {
+
+            if (wage[i][0] < 0) continue
+            var inc = wage[i][0] / 50;
+            if (inc > 39) inc = 39
+            wage_list[inc][0] += wage[i][1]
+            wage_list[inc][1] = wage[i][0]
+        }
+
+
+
+
+        return { 'raid': raid_loc, 'native': native_loc, "wage":wage_list }
     },
 
     parPay: function() {
@@ -301,17 +368,17 @@ var Data = {
                 if (k in inc_dict) inc_dict[k] += 1;
                 else inc_dict[k] = 1
 
-                
+
                 var k = ind + '-2';
                 if (k in inc_dict) inc_dict[k] += 1;
                 else inc_dict[k] = 1
 
-                
+
                 var k = ind + '-3';
                 if (k in inc_dict) inc_dict[k] += 1;
                 else inc_dict[k] = 1
 
-                
+
                 var k = ind + '-4';
                 if (k in inc_dict) inc_dict[k] += 1;
                 else inc_dict[k] = 1
@@ -503,13 +570,18 @@ var Data = {
         wag_dict = wag_dict.sort(function(a, b) { return a[0] - b[0] })
 
 
-        return { 'income': income, 'paramt': paramt, 'wage': wage,
-                  'income_h':inc_dict, 'paramt_h': par_dict, 'wage_h': wag_dict}
+        return {
+            'income': income,
+            'paramt': paramt,
+            'wage': wage,
+            'income_h': inc_dict,
+            'paramt_h': par_dict,
+            'wage_h': wag_dict
+        }
     },
 
     amountSelDist: function(sel_amt, sel_val) {
 
-        console.log(sel_amt, sel_val)
         var income = {};
         var paramt = {};
         var wage = {};
@@ -628,13 +700,6 @@ var Data = {
 
     },
 
-    amountFilter: function(filter, val) {
-
-        if (filter == 'inc') {
-
-        }
-    },
-
     getDict: function(item) {
         var gen_dict = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -689,6 +754,7 @@ var Data = {
             var r_date = this.raw[i]['r_date']
             var r_place = this.raw[i]['raid_v_name'] + '&' + this.raw[i]['raid_v_add']
             var r_indst = this.raw[i]['indst']
+
             if (r_date == "") continue;
             if (r_place == "") continue;
             var _key = r_date + '--' + r_place;
@@ -704,6 +770,7 @@ var Data = {
         month_data = month_data.map(x => x[0].split('--').concat(x[1]))
         month_data.sort(function(a, b) { return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0]) })
         month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
+        console.log(month_data)
         return month_data
 
     }

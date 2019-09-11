@@ -7,9 +7,9 @@ body,html{
 	position: fixed;
 	top: 5vh;
 	left: 2vw;
-	width: 15vw;
+	width: 12vw;
 	height: 90vh;
-	background-color: white;
+	background-color: #ECEFF1;
 }
 
 .page-sec{
@@ -18,25 +18,30 @@ body,html{
 	padding-top: 5vh;
 	padding-left: 19vw;
 	border-bottom: 3px solid white;
-	background-color: #ECEFF1;
+	background-color: white;
+	display: none;
 	
 }
 
 .viz-board{
-	position: absolute;
-	left: 19vw;
+	position: fixed;
+	left: 16vw;
 	width: 50vw;
 	height: 90vh;
 	background-color: white;
+
 
 }
 
 .viz-panel{
 	position: absolute;
-	left: 71vw;
+	left: 68vw;
 	width: 27vw;
 	height: 90vh;
 	background-color: white;
+	padding-left: 3vw;
+	border-left: 2px solid #CFD8DC;
+	
 }
 
 .sub-indst{
@@ -63,4 +68,19 @@ body,html{
 	height: 90vh;
 	overflow-y: scroll;
 }
-
+#nav-list{
+	margin-top: 100px;
+	font-size: 20px;
+}
+.nav-btn{
+	margin-bottom: 20px;
+	margin-left: 15px;
+	color: #90A4AE;
+	cursor: pointer;
+}
+.nav-btn:hover{
+	color: #2196F3;
+}
+.nav-btn-sel{
+	color:#2196F3;
+}

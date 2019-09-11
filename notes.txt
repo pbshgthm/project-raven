@@ -1,4 +1,38 @@
- RAID MAP
+MAP
+	color scheme
+	hide other countries
+	add a color scale
+
+AGE
+	toggle between two charts
+
+RAID
+	color code in indst
+	more details of raids
+
+INDST
+Top 10 source/and factory district
+wage
+
+map lines - selectable by state
+small map widget
+
+
+
+
+
+
+
+
+
+
+
+=================
+
+
+
+
+RAID MAP
 	profile card
 	native line
 
