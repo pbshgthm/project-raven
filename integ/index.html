@@ -117,13 +117,19 @@ function mapHeatmap(val, data) {
         ]
     });
 
-
+    console.log(data)
 
     map.on('load', function() {
 
         map.addSource('heatmap', {
             "type": "geojson",
-            "data": data
+            "data": data['point']
+        });
+
+        map.addSource('linemap', {
+                  "type": "geojson",
+                  'lineMetrics': true,
+                  "data": data['line']
         });
 
 
@@ -257,6 +263,32 @@ function mapHeatmap(val, data) {
                 ],
             }
         }, 'waterway-label');
+
+              
+              //line init
+              map.addLayer({
+                    "id": "line-layer",
+                    "type": "line",
+                    "source": "linemap",
+                    "paint": {
+                        'line-width': [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
+                            4, 1,
+                            9, 2
+                            ],
+                        'line-color': '#FF7043',
+                        'line-opacity':0.05,
+                        'line-gradient': [
+                            'interpolate',
+                            ['linear'],
+                            ['line-progress'],
+                            0, "#FFD54F",
+                            1, "#FF7043"
+                            ]
+                    }
+              }, 'waterway-label');
         //*/
 
     })
@@ -1277,7 +1309,7 @@ function map_controls() {
         .attr("fill", "#4FC3F7")
         .attr('class', 'mc-loc')
         .attr('id', 'mc-loc-native')
-        .attr("cx", 300)
+        .attr("cx", 250)
         .attr('r', 20)
         .attr("cy", 50)
         .on('click', mc_loc_click)
@@ -1287,6 +1319,16 @@ function map_controls() {
         .attr("fill", "#CFD8DC")
         .attr('class', 'mc-loc')
         .attr('id', 'mc-loc-raid')
+        .attr("cx", 300)
+        .attr('r', 20)
+        .attr("cy", 50)
+        .on('click', mc_loc_click)
+
+    map_controls_svg
+        .append("circle")
+        .attr("fill", "#CFD8DC")
+        .attr('class', 'mc-loc')
+        .attr('id', 'mc-loc-line')
         .attr("cx", 350)
         .attr('r', 20)
         .attr("cy", 50)
@@ -1296,11 +1338,38 @@ function map_controls() {
     function mc_loc_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
         map_loc = _id
-        var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        
+        
 
-        map.setPaintProperty('heatmap-layer', 'heatmap-color', heatmap_clrs[_id])
+        
 
+        if(_id=='line'){
+
+            map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
+            map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
+            map.setLayoutProperty('circle-layer', 'visibility', 'none');
+            map.setLayoutProperty('line-layer','visibility','visible')
+        }
+        else{
+            var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line']);
+
+            map.setPaintProperty('heatmap-layer', 'heatmap-color', heatmap_clrs[_id])
+            map.setLayoutProperty('line-layer','visibility','none')
+            if(is_hm=='y'){
+                map.setLayoutProperty('heatmap-layer', 'visibility', 'visible');
+                map.setLayoutProperty('hm-circle-layer', 'visibility', 'visible');
+                map.setLayoutProperty('circle-layer', 'visibility', 'none');
+            }
+            else{
+                map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
+                map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
+                map.setLayoutProperty('circle-layer', 'visibility', 'visible');
+            }
+            
+            
+        }
 
         d3.selectAll('.mc-loc')
             .attr('fill', '#CFD8DC')
@@ -1317,7 +1386,7 @@ function map_controls() {
         .attr('id', 'mc-heatmap-y')
         .attr('rx', 15)
         .attr('ry', 15)
-        .attr("x", 50)
+        .attr("x", 10)
         .attr("width", 80)
         .attr('opacity', 0.5)
         .attr("y", 50)
@@ -1332,7 +1401,7 @@ function map_controls() {
         .attr('id', 'mc-heatmap-n')
         .attr('rx', 15)
         .attr('ry', 15)
-        .attr("x", 150)
+        .attr("x", 110)
         .attr("width", 80)
         .attr('opacity', 0.5)
         .attr("y", 50)
@@ -1472,7 +1541,8 @@ function map_controls() {
 
         map_age = _id;
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        map.getSource('heatmap').setData(new_crds['point']);
+        map.getSource('linemap').setData(new_crds['line'])
 
     }
 
@@ -1502,7 +1572,8 @@ function map_controls() {
         map_age = 0;
 
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        map.getSource('heatmap').setData(new_crds['point']);
+        map.getSource('linemap').setData(new_crds['line'])
 
     }
 
@@ -1612,7 +1683,8 @@ function map_controls() {
         d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4 - 1);
 
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        map.getSource('heatmap').setData(new_crds['point']);
+        map.getSource('linemap').setData(new_crds['line'])
 
     }
 
@@ -1640,7 +1712,8 @@ function map_controls() {
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
 
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-            map.getSource('heatmap').setData(new_crds)
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line'])
 
         }
 
@@ -1657,7 +1730,8 @@ function map_controls() {
             map_time[1] = parseInt((anchor - 27) / 4) + 1;
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-            map.getSource('heatmap').setData(new_crds)
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line'])
 
         }
 
@@ -1683,14 +1757,15 @@ function map_controls() {
             map_time[1] = map_time[0] + r;
 
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-            map.getSource('heatmap').setData(new_crds)
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line'])
 
         }
 
 
 
         //var new_crds = Data.filterPoints(map_age, map_time)
-        //map.getSource('heatmap').setData(new_crds)
+        //map.getSource('heatmap').setData(new_crds['point']);map.getSource('linemap').setData(new_crds['line'])
 
     }
 
@@ -1801,7 +1876,8 @@ function map_controls() {
 
 
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-            map.getSource('heatmap').setData(new_crds)
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line'])
         } else {
 
             if (map_ind.length == 1) return;
@@ -1813,7 +1889,8 @@ function map_controls() {
                 d3.select('#mc-ind-clear').attr('fill', '#80DEEA')
 
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-            map.getSource('heatmap').setData(new_crds)
+            map.getSource('heatmap').setData(new_crds['point']);
+            map.getSource('linemap').setData(new_crds['line'])
         }
 
 
@@ -1840,7 +1917,8 @@ function map_controls() {
         for (var i = 0; i < map_ind.length; i++)
             d3.select('#mc-ind-' + i).attr('fill', '#80DEEA')
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        map.getSource('heatmap').setData(new_crds['point']);
+        map.getSource('linemap').setData(new_crds['line'])
     }
 
 
@@ -1869,7 +1947,8 @@ function map_controls() {
 
         map_ind = [0]
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
-        map.getSource('heatmap').setData(new_crds)
+        map.getSource('heatmap').setData(new_crds['point']);
+        map.getSource('linemap').setData(new_crds['line'])
     }
 
 

@@ -95,13 +95,14 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time, indst, loc,line=false) {
+    filterPoints: function(age, time, indst, loc) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
             "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
             "Electrical & Electronics", "Leather", "_others", ""
         ]
         indst = indst.map(x => indst_r_list[x])
         var crds = []
+        var l_crds=[]
         for (var i = 0; i < this.raw.length; i++) {
             if (age != this.raw[i]['age']) {
                 if (age != 0) continue;
@@ -123,18 +124,23 @@ var Data = {
                 continue;
             }
 
-            if(line){
-                
-            }
-            else{
+            
+                var r=this.raw[i]['native_v_crd'].split(',')
+                var n=this.raw[i]['raid_v_crd'].split(',')
+                if(r==""||n=="")continue;
+                l_crds.push([r,n])
+
+            
             var crd = this.raw[i][loc + '_v_crd'].split(',')
             if (crd[0] == "") continue;
 
             crds.push(crd)
-            }
+            
 
         }
-        return this.toGeojson(crds)
+        
+        return {'point':this.toGeojson(crds),'line':this.toGeojson(l_crds,"LineString")}
+        
     },
 
     age_dist: function() {
