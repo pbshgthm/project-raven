@@ -143,6 +143,38 @@ var Data = {
         
     },
 
+    stateStats: function(state){
+        var nat_state={}
+        var fac_state={}
+        for(var i=0;i<this.raw.length;i++){
+            var n=this.raw[i]['native_v_area'].split(',').slice(-2,-1)[0]
+            var r=this.raw[i]['raid_v_area'].split(',').slice(-2,-1)[0]
+
+            if(n!="")n=n.substr(1)
+            if(r!="")r=r.substr(1)
+            
+            if(state==n&&r!=""){
+                if(r in fac_state)
+                    fac_state[r]+=1
+                else
+                    fac_state[r]=1
+            }
+            if(state==r&&n!=""){
+                if(n in nat_state)
+                    nat_state[n]+=1
+                else
+                    nat_state[n]=1
+            }
+        }
+        nat_state=Object.entries(nat_state)
+        fac_state=Object.entries(fac_state)
+
+        nat_state.sort(function(a,b){return b[1]-a[1]})
+        fac_state.sort(function(a,b){return b[1]-a[1]})
+
+        return {'from':nat_state,'to':fac_state}
+    },
+
     age_dist: function() {
         var age = Array(21).fill(0)
         var start_age = Array(21).fill(0)
@@ -677,7 +709,6 @@ var Data = {
             income_list[inc][1] = income[i][0]
         }
 
-
         var paramt_list = sample_list.map(x => [0, 0])
 
         for (var i = 1; i < paramt.length; i++) {
@@ -689,7 +720,6 @@ var Data = {
             paramt_list[inc][1] = paramt[i][0]
         }
 
-
         var wage_list = sample_list.map(x => [0, 0])
         for (var i = 1; i < wage.length; i++) {
 
@@ -699,8 +729,6 @@ var Data = {
             wage_list[inc][0] += wage[i][1]
             wage_list[inc][1] = wage[i][0]
         }
-
-
 
         return { 'income': income_list, 'paramt': paramt_list, 'wage': wage_list }
 
@@ -719,6 +747,7 @@ var Data = {
     },
 
     subPlot: function(filter, val, key) {
+        console.log(filter,val,key)
         var dist = {}
         for (var i = 0; i < this.raw.length; i++) {
             var f = this.raw[i][filter];
@@ -728,11 +757,20 @@ var Data = {
                 f = (f[2] - 2010) * 6 + parseInt(parseInt(f[1]) / 2)
             }
 
+            if(filter.split('_')[2] == "area"){
+                f=f.split(',').slice(-2,-1)[0]
+                if(f!="")f=f.substr(1)
+            }
+
             if (f != val) continue;
             var k = this.raw[i][key];
             if (k == "") continue;
             if (key.slice(-3) == "add")
                 k = k.split(',')[2].substring(1)
+            if (key=='paramt'){
+                k = parseInt(k)
+                k = Math.round(k / 1000) * 1000
+            }
 
             if (k in dist) {
                 dist[k] += 1;
@@ -742,7 +780,22 @@ var Data = {
         }
 
         dist = Object.entries(dist);
-        dist.sort(function(a, b) { return b[1] - a[1] })
+        dist.sort(function(a, b) { return b[0] - a[0] })
+
+        if(key=='paramt'){
+
+            var paramt_list = Array(40).fill(0).map((x,i)=>[0,1000*i])
+            for (var i = 1; i < dist.length; i++) {
+
+                if (dist[i][0] < 0) continue
+                var inc = dist[i][0] / 1000;
+                if (inc > 39) inc = 39
+                paramt_list[inc][0] += dist[i][1]
+                paramt_list[inc][1] = dist[i][0]
+            }
+            return paramt_list;
+        }
+
         return dist;
     },
 

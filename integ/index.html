@@ -10,6 +10,7 @@
     <script src="js/indiaGeo.json"></script>
     <script src="js/support.js"></script>
     <script src="js/u_data.json"></script>
+    <script src="js/d3-chromatic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="assets/main.css">
     <title>Project Raven</title>
 </head>
@@ -18,6 +19,7 @@
     <div id="nav-pane">
         <div id="nav-list">
             <div class="nav-btn" id="nav-map">Map</div>
+            <div class="nav-btn" id="nav-state">State stats</div>
             <div class="nav-btn" id="nav-age">Age</div>
             <div class="nav-btn" id="nav-traf">Taffick Date</div>
             <div class="nav-btn" id="nav-raid">Raid date</div>
@@ -29,6 +31,14 @@
     <div class="page-sec" id="map-sec" style="display: block">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls">
+        </div>
+    </div>
+    <div class="page-sec" id="state-sec" style="display: block">
+        <div id="state-map" class="viz-board"></div>
+        <div class="viz-panel" id="state-sub">
+            <div class="sub-age" id="state-age-sub"></div>
+            <div class="sub-indst" id="state-indst-sub"></div>
+            <div id="state-paramt-sub"></div>
         </div>
     </div>
     <div class="page-sec" id="age-sec">
@@ -116,8 +126,6 @@ function mapHeatmap(val, data) {
             [98.308, 37.891]
         ]
     });
-
-    console.log(data)
 
     map.on('load', function() {
 
@@ -299,6 +307,178 @@ function mapHeatmap(val, data) {
 
 //------------------------------------------------
 
+function map_state(){
+    state_svg=d3.select("#state-map").append("svg:svg")
+    .attr("width", board_width)
+    .attr("height",  board_height)
+    .append("svg:g")
+    
+
+
+    var proj = d3.geo.mercator();
+    var path = d3.geo.path().projection(proj);
+
+    proj.scale(7500);
+    proj.translate([-1400, 800]);
+
+
+
+
+    var st_type=['from','to']
+
+    state_svg.selectAll('circle')
+    .data(st_type)
+    .enter()
+    .append('circle')
+    .attr('fill','#CFD8DC')
+    .attr('class','st-btn')
+    .attr('id',function(d){return 'st-btn-'+d})
+    .attr('cx',function(d,i){return 200+100*i})
+    .attr('cy',700)
+    .attr('r',20)
+    .on('click',st_type_click)
+
+    curr_st='from'
+
+    d3.select('#st-btn-from').attr('fill','#B39DDB')
+    function st_type_click(){
+        var _id=d3.select(this).attr('id').split('-')[2]
+        curr_st=_id
+        plot_st_data(sel_state)
+
+        d3.selectAll('.st-btn').attr('fill','#CFD8DC')
+        d3.select(this).attr('fill','#B39DDB')
+    }
+
+    var state_map = state_svg.selectAll("path")
+        .data(india_geo.features)
+
+    var entering = state_map.enter()
+        .append("path");
+
+    state_map.merge(entering)
+        .attr('d',path)
+        .attr('id',function(d){return 'state-'+d.id.replace(' ','_')})
+        .attr('class','statemap-states')
+        .on('click',state_map_click)
+        .transition().duration(500)
+        .style('stroke', 'white')
+        .style('stroke-width', 1)
+        .style("fill", '#CFD8DC')
+        .style("opacity", 0.7)
+        
+    
+    var curr_st_dict={
+        'from':'raid',
+        'to':'native'
+    }
+
+    function state_map_click(){
+
+        var _id=d3.select(this).attr('id').split('-')[1].replace('_',' ')
+        sel_state=_id
+        plot_st_data(sel_state)
+        
+    }
+
+
+    function plot_st_data(st){
+
+
+        subplot_age(curr_st_dict[curr_st]+'_v_area', sel_state, state_age_svg)
+        subplot_indst(curr_st_dict[curr_st]+'_v_area', sel_state, state_indst_svg)
+        subplot_amount(Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'), state_paramt_svg)
+
+
+        d3.selectAll('.statemap-states').style('fill','#CFD8DC')
+        
+        var data=Data.stateStats(st)
+        
+        var st_data=data[curr_st]
+        var f_max=st_data.reduce((max,x)=>max>x[1]?max:x[1],0)
+        
+
+        for(var i=0;i<st_data.length;i++){
+            
+            var s=st_data[i][0].replace(' ','_')
+            var clr_dict={
+                'from':d3.interpolateOranges(0.2+0.5*(st_data[i][1]/f_max)),
+                'to':d3.interpolateBlues(0.3+0.5*(st_data[i][1]/f_max))
+            }
+
+            d3.select('#state-'+s).style('fill',clr_dict[curr_st]) 
+
+        }
+
+        d3.selectAll(".state-text-name").remove();
+        d3.selectAll(".state-text-count").remove();
+
+        state_svg.selectAll("name")
+        .data(st_data)
+        .enter()
+        .append('text')
+        .attr('class','state-text-name')
+        .attr("x", 500)
+        .attr("y", function(d, i) { return 420 + 20 * i })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .text(function(d) { return d[0]; });
+
+
+        state_svg.selectAll("count")
+        .data(st_data)
+        .enter()
+        .append('text')
+        .attr('class','state-text-count')
+        .attr('text-anchor','end')
+        .attr("x", 490)
+        .attr("y", function(d, i) { return 420 + 20 * i })
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#607D8B')
+        .text(function(d) { return d[1]; });
+
+
+        d3.select('#state-'+st.replace(' ','_')).style('fill','#607D8B')
+        
+    }
+
+    /*
+    var crds=Data.filterPoints(map_age, [0,50], map_ind, map_loc)['line']['features']
+    var line_data=crds.map(x=>x['geometry']['coordinates'])
+    
+
+    function crd2xy(crd,type){
+        crd=parseFloat(crd)
+        if(type=='lat'){
+            crd=Math.log(Math.tan(Math.PI/4 + crd/2))
+            crd=5*crd-400
+            return crd
+        }
+        crd=5*crd - 100
+        return crd
+    }
+    
+    for (var i = 0; i < line_data.length; i++) {
+        if (line_data[i][1] == undefined) continue
+
+        state_svg
+            .append('line')
+            .attr("x1", crd2xy(line_data[i][0][0],'lng'))
+            .attr("x2", crd2xy(line_data[i][1][0],'lng'))
+            .attr("y1", crd2xy(line_data[i][0][1],'lat'))
+            .attr("y2", crd2xy(line_data[i][1][1],'lat'))
+            .style("stroke", "#F4511E")
+            .attr('opacity', 0.3)
+            .style("stroke-linecap", "round")
+            .style("stroke-width", 1);
+    }
+    */
+    
+}
 
 //MAIN PLOTS -------------------------------------
 
@@ -450,8 +630,6 @@ function age_plot() {
 
 }
 //---------------------
-
-
 //TRAF PLOT -----------
 function traf_plot() {
 
@@ -636,11 +814,8 @@ function traf_plot() {
             .attr('opacity', 1)
 
     }
-
 }
 //---------------------
-
-
 //RAID PLOT -----------
 
 function raid_plot() {
@@ -899,11 +1074,8 @@ function raid_plot() {
         d3.select('#raid-months-' + _id)
             .style('fill', '#CFD8DC')
     }
-
-
 }
 //---------------------
-
 
 // AMOUNT PLOT
 function amount_plot() {
@@ -1108,7 +1280,6 @@ function amount_plot() {
 }
 // ----------------------
 
-
 function school_plot() {
     school_svg = d3.select("#school-board")
         .append("svg")
@@ -1160,7 +1331,6 @@ function school_plot() {
         .attr("y", function(d) { return 600 - d[1] / 3 })
         .attr("height", function(d) { return d[1] / 3 })
         .attr('opacity', 0.5)
-
 }
 
 function indust_plot() {
@@ -1257,7 +1427,6 @@ function indust_plot() {
         subplot_indst_loc((_id))
 
     }
-
 }
 
 //------------------------------------------------
@@ -1684,7 +1853,7 @@ function map_controls() {
 
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds['point']);
-        map.getSource('linemap').setData(new_crds['line'])
+        map.getSource('linemap').setData(new_crds['line']);
 
     }
 
@@ -1958,6 +2127,14 @@ function map_controls() {
 }
 //--------------------
 
+function subplot_state(){
+
+    
+
+
+
+
+}
 //INDST SUB PLOT -----
 function subplot_indst(src, val, board) {
 
@@ -1976,7 +2153,8 @@ function subplot_indst(src, val, board) {
         bar_ratio[ind] = data[i][1]
     }
 
-    bar_ratio = bar_ratio.map(x => x / sum)
+    if(data.length!=0)
+        bar_ratio = bar_ratio.map(x => x / sum)
 
     board.selectAll('text')
         .data(s_ind_clean)
@@ -2090,6 +2268,7 @@ function subplot_map(src, val, loc, board) {
 
 // AGE SUB PLOT -------
 function subplot_age(src, val, board) {
+    
     var data = Data.subPlot(src, val, "age");
     var num_data = Array(20).fill(0)
     for (var i = 0; i < data.length; i++)
@@ -2097,7 +2276,8 @@ function subplot_age(src, val, board) {
 
     var sum = num_data.reduce((sum, i) => sum + i, 0)
 
-    num_data = num_data.map(x => x / sum)
+    if(data.length!=0)
+        num_data = num_data.map(x => x / sum)
 
     board.selectAll('text')
         .data(num_data)
@@ -2266,6 +2446,7 @@ function subplot_raid(month_data) {
 
 // AMOUNT SUB PLOT---------
 function subplot_amount(data, svg) {
+    console.log(data)
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 100 / max
@@ -2381,6 +2562,39 @@ var map_loc = 'native'
 mapHeatmap(map_loc, Data.filterPoints(map_age, map_time, map_ind, map_loc))
 
 map_controls()
+
+
+// STATE INIT --------------------
+
+var state_svg
+var curr_st
+var sel_state
+
+
+var state_age_svg= d3.select("#state-age-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+    
+
+var state_indst_svg = d3.select("#state-indst-sub")
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_indst_width)
+    .attr("height", sub_indst_height)
+
+var state_paramt_svg = d3.select('#state-paramt-sub')
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+
+map_state();
+subplot_age('native_v_area', 'Bihar', state_age_svg)
+subplot_indst('native_v_area', 'Bihar', state_indst_svg)
+subplot_amount(Data.subPlot('native_v_area','Bihar','paramt'), state_paramt_svg)
+
 
 //-------------------------------------------------
 
@@ -2512,6 +2726,7 @@ d3.selectAll('.nav-btn').on('click', function() {
 d3.select('#map-sec').style('display', 'block')
 d3.select('#nav-map').classed('nav-btn-sel', true)
 </script>
+
 <script type="text/javascript">
 map.on('load', function() {
 
