@@ -387,7 +387,9 @@ function map_state(){
 
         subplot_age(curr_st_dict[curr_st]+'_v_area', sel_state, state_age_svg)
         subplot_indst(curr_st_dict[curr_st]+'_v_area', sel_state, state_indst_svg)
-        subplot_amount(Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'), state_paramt_svg)
+        subplot_amount(
+            Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'),
+            state_paramt_svg)
 
 
         d3.selectAll('.statemap-states').style('fill','#CFD8DC')
@@ -851,7 +853,7 @@ function raid_plot() {
         var x = 10 + i * 14;
         var y = undefined
         for (var j = 0; j < r_data[i].length; j++) {
-            y = j * 13;
+            y = j * 8;
             cir_data.push([x, y, r_data[i][j]])
         }
         line_data.push([x, y])
@@ -881,7 +883,7 @@ function raid_plot() {
         .append('circle')
         .attr('cx', function(d) { return -1300 + d[0] })
         .attr('cy', function(d) { return 370 - d[1] })
-        .attr('r', function(d) { return 2 + d[2] / 6 })
+        .attr('r', function(d) { return 3 + d[2] / 6 })
         .attr('fill', 'white')
         .attr('opacity', 1)
 
@@ -894,10 +896,10 @@ function raid_plot() {
         .attr('cx', function(d) { return -1300 + d[0] })
         .attr('cy', function(d) { return 370 - d[1] })
         .attr('r', function(d) { return 2 + d[2] / 6 })
-        .attr('fill', '#F4511E')
+        .attr('fill', '#EF6C00')
         .attr('opacity', 0.3)
         .attr('stroke', '#FFCC80')
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 0)
         .on('mouseover', raid_dot_mouseover)
         .on('mouseout', raid_dot_mouseout)
 
@@ -928,7 +930,7 @@ function raid_plot() {
         .attr('cx', function(d) { return 130 + (d[0]) / 5 })
         .attr('cy', function(d) { return 60 + (300 - d[1]) / 5 })
         .attr('r', function(d) { return (3 + d[2] / 7) / 5 })
-        .attr('fill', '#F4511E')
+        .attr('fill', '#EF6C00')
         .attr('opacity', 0.7)
 
 
@@ -1013,7 +1015,7 @@ function raid_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
         if (_id == curr_raid_month) return;
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#FF5722')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.8)
 
         d3.select('#raid-months-' + _id)
@@ -1025,7 +1027,7 @@ function raid_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
         if (_id == curr_raid_month) return;
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#F4511E')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.3)
         d3.select('#raid-months-' + _id)
             .style('fill', '#CFD8DC')
@@ -1034,7 +1036,7 @@ function raid_plot() {
     function raid_month_click() {
         var _id = curr_raid_month;
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#F4511E')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.3)
         d3.select('#raid-months-' + _id)
             .style('fill', '#CFD8DC')
@@ -1043,7 +1045,7 @@ function raid_plot() {
         curr_raid_month = _id
 
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#FF5722')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.8)
 
         d3.select('#raid-months-' + _id)
@@ -1058,7 +1060,7 @@ function raid_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
 
         d3.select(this)
-            .attr('fill', '#FF5722')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.8)
 
         d3.select('#raid-months-' + _id)
@@ -1069,7 +1071,7 @@ function raid_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
         if (_id == curr_raid_month) return;
         d3.select(this)
-            .attr('fill', '#F4511E')
+            .attr('fill', '#EF6C00')
             .attr('opacity', 0.3)
         d3.select('#raid-months-' + _id)
             .style('fill', '#CFD8DC')
@@ -1341,47 +1343,6 @@ function indust_plot() {
         .style('background-color', 'white')
         .append('g')
 
-
-    ind_dict = {
-        "Abattoirs/Slaughter Houses": "Slaughter Houses",
-        "Agriculture": "Agriculture",
-        "Automobile/Transport": "Automobile",
-        "Bakery": "Bakery",
-        "Brick Kilns & Roof tiles units": "Brick & tiles kilns",
-        "Building and Construction": "Construction",
-        "Carpentry": "Carpentry",
-        "Carpet Industry": "Carpet Industry",
-        "Cosmetic": "Cosmetic",
-        "Cracker Industry": "Cracker Industry",
-        "Curtain Making Unit": "Curtain Making",
-        "Dairy Products": "Dairy Products",
-        "Domestic Servant": "Domestic Servant",
-        "Electrical & Electronics": "Electronics",
-        "Factory": "Factory",
-        "Flour Mill": "Flour Mill",
-        "Footwear": "Footwear",
-        "Garment": "Garment",
-        "Handicraft": "Handicraft",
-        "Hotel/Dhaba": "Hotel",
-        "Jewellery": "Jewellery",
-        "Jute/Plastic/Rexin/Cloth Bags": "Cloth Bags",
-        "Leather": "Leather",
-        "Lock Making": "Lock Making",
-        "Metal": "Metal",
-        "Odd Jobs": "Odd Jobs",
-        "Paint Making Unit": "Paint Making",
-        "Paper Industry": "Paper Industry",
-        "Plastic and Nylon units": "Plastic units",
-        "Printing": "Printing",
-        "Retail Shop/Office": "Retail Shop",
-        "Sculpture Making Unit": "Sculpture Making",
-        "Stone Quarry": "Stone Quarry",
-        "Suitcase Making": "Suitcase Making",
-        "Tobacco & Chewing Tobacco": "Tobacco",
-        "Toy Making Unit": "Toy Making Unit",
-        "Umbrela Making Factory": "Umbrela Factory",
-        "Others": "Others"
-    }
 
     var ind_cat = Data.industryDist()
     var ind = []
@@ -2127,14 +2088,6 @@ function map_controls() {
 }
 //--------------------
 
-function subplot_state(){
-
-    
-
-
-
-
-}
 //INDST SUB PLOT -----
 function subplot_indst(src, val, board) {
 
@@ -2323,18 +2276,20 @@ function subplot_raid(month_data) {
     raid_sub_svg.attr("height", 200 + month_data.length * 75)
     var raid_cir = []
     for (var i = 0; i < month_data.length; i++) {
-        var r = 5 + month_data[i][2].reduce((sum, i) => sum + i[1], 0)
+        var r = 5 + month_data[i][3]
         var y = 100 + 20 + i * 75;
-        raid_cir.push([50, y, r, month_data[i][0], month_data[i][1]])
+        raid_cir.push([50, y, r, month_data[i][0], month_data[i][1],month_data[i][2]])
     }
-    var padd = Array(27 - month_data.length).fill([50, raid_cir[month_data.length - 1][1], 0, '', ''])
 
+    var padd = Array(40 - month_data.length).fill([50, raid_cir[month_data.length - 1][1], 0, '', '',''])
+    
     raid_cir = raid_cir.concat(padd)
+    //need handling for no data
     var last_c = raid_cir[month_data.length - 1][1]
-    raid_cir = raid_cir.map(x => [x[0], x[1], x[2], x[3], x[4]])
+    raid_cir = raid_cir.map(x => [x[0], x[1], x[2], x[3], x[4],x[5]])
 
 
-    raid_dots = raid_cir.map(x => [x[0], x[1], x[2] == 0 ? 0 : 3, x[3], x[4], 1])
+    raid_dots = raid_cir.map(x => [x[0], x[1], x[2] == 0 ? 0 : 3, x[3], x[4], 1,''])
     var sub_raid_circle = raid_sub_svg.selectAll("circle")
         .data(raid_cir.concat(raid_dots))
 
@@ -2347,7 +2302,7 @@ function subplot_raid(month_data) {
         .attr('r', function(d) { return d[2] })
         .attr("cx", function(d) { return d[0] })
         .attr("cy", function(d) { return d[1] })
-        .attr('opacity', function(d) { return d.length == 5 ? 0.2 : 1 })
+        .attr('opacity', function(d) { return d.length == 6 ? 0.2 : 1 })
 
 
     raid_sub_svg.selectAll("text").remove();
@@ -2410,6 +2365,19 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
+        .attr("x", 230)
+        .attr("y", function(d, i) { return d[1] -6})
+        .attr("dy", "10px")
+        .style("font-size", "14px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#78909C')
+        .attr('opacity', 0)
+        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : '('+ind_dict[d[5]]+')'})
+        .transition().duration(500)
+        .attr('opacity', 1)
+
+    sub_raid_date
+        .append("text")
         .attr("x", 100)
         .attr("y", function(d, i) { return d[1] + 20 })
         .attr("dy", "10px")
@@ -2417,9 +2385,11 @@ function subplot_raid(month_data) {
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
         .attr('opacity', 0)
-        .text(function(d) { return (d[2] == 0 || d.length == 6) ? "" : d[2] })
+        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : d[2] })
         .transition().duration(500)
         .attr('opacity', 1)
+
+
 
 
 
@@ -2446,7 +2416,6 @@ function subplot_raid(month_data) {
 
 // AMOUNT SUB PLOT---------
 function subplot_amount(data, svg) {
-    console.log(data)
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 100 / max
@@ -2542,6 +2511,52 @@ function subplot_indst_loc(indst) {
 
 
 // ------------------------------------------------
+
+
+//DICTS
+
+ind_dict = {
+        "Abattoirs/Slaughter Houses": "Slaughter Houses",
+        "Agriculture": "Agriculture",
+        "Automobile/Transport": "Automobile",
+        "Bakery": "Bakery",
+        "Brick Kilns & Roof tiles units": "Brick & tiles kilns",
+        "Building and Construction": "Construction",
+        "Carpentry": "Carpentry",
+        "Carpet Industry": "Carpet Industry",
+        "Cosmetic": "Cosmetic",
+        "Cracker Industry": "Cracker Industry",
+        "Curtain Making Unit": "Curtain Making",
+        "Dairy Products": "Dairy Products",
+        "Domestic Servant": "Domestic Servant",
+        "Electrical & Electronics": "Electronics",
+        "Factory": "Factory",
+        "Flour Mill": "Flour Mill",
+        "Footwear": "Footwear",
+        "Garment": "Garment",
+        "Handicraft": "Handicraft",
+        "Hotel/Dhaba": "Hotel",
+        "Jewellery": "Jewellery",
+        "Jute/Plastic/Rexin/Cloth Bags": "Cloth Bags",
+        "Leather": "Leather",
+        "Lock Making": "Lock Making",
+        "Metal": "Metal",
+        "Odd Jobs": "Odd Jobs",
+        "Paint Making Unit": "Paint Making",
+        "Paper Industry": "Paper Industry",
+        "Plastic and Nylon units": "Plastic units",
+        "Printing": "Printing",
+        "Retail Shop/Office": "Retail Shop",
+        "Sculpture Making Unit": "Sculpture Making",
+        "Stone Quarry": "Stone Quarry",
+        "Suitcase Making": "Suitcase Making",
+        "Tobacco & Chewing Tobacco": "Tobacco",
+        "Toy Making Unit": "Toy Making Unit",
+        "Umbrela Making Factory": "Umbrela Factory",
+        "Others": "Others"
+    }
+
+//---------------
 
 // MAP INITS --------------------------------------
 

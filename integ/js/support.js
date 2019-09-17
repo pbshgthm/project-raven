@@ -224,9 +224,10 @@ var Data = {
         for (var i = 0; i < this.raw.length; i++) {
             var r_date = this.raw[i]['r_date']
             var r_place = this.raw[i]['raid_v_name']
+            var r_indst=this.raw[i]['indst']
             if (r_date == "") continue;
             if (r_place == "") continue;
-            var _key = r_date + '--' + r_place;
+            var _key = r_date + '--' + r_place+ '--'+r_indst
             if (_key in r_data) r_data[_key] += 1
             else r_data[_key] = 1
         }
@@ -747,7 +748,6 @@ var Data = {
     },
 
     subPlot: function(filter, val, key) {
-        console.log(filter,val,key)
         var dist = {}
         for (var i = 0; i < this.raw.length; i++) {
             var f = this.raw[i][filter];
@@ -816,20 +816,17 @@ var Data = {
 
             if (r_date == "") continue;
             if (r_place == "") continue;
-            var _key = r_date + '--' + r_place;
-            if (_key in r_data) {
-                if (r_indst in r_data[_key])
-                    r_data[_key][r_indst] += 1
-                else
-                    r_data[_key][r_indst] = 1
-            } else r_data[_key] = { r_indst: 1 }
+            var _key = r_date + '--' + r_place+'--'+r_indst;
+
+            if (_key in r_data) r_data[_key] += 1
+            else r_data[_key] = 1
 
         }
         month_data = Object.entries(r_data)
         month_data = month_data.map(x => x[0].split('--').concat(x[1]))
         month_data.sort(function(a, b) { return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0]) })
-        month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
-        console.log(month_data)
+        //month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
+        //console.log(month_data)
         return month_data
 
     }
