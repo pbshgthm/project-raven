@@ -28,7 +28,7 @@
             <div class="nav-btn" id="nav-ind">Industry</div>
         </div>
     </div>
-    <div class="page-sec" id="map-sec">
+    <div class="page-sec" id="map-sec" style="display: block;">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
     </div>
@@ -378,7 +378,7 @@ function map_state(){
     function plot_st_data(st){
 
 
-        subplot_age(curr_st_dict[curr_st]+'_v_area', sel_state, state_age_svg)
+        subplot_age(curr_st_dict[curr_st]+'_v_area', sel_state, state_age_svg,'Children from Maharashtra')
         subplot_indst(curr_st_dict[curr_st]+'_v_area', sel_state, state_indst_svg)
         subplot_amount(
             Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'),
@@ -2138,6 +2138,24 @@ function subplot_indst(src, val, board) {
     var s_ind_clean = ["Garment", "Hotel", "Footwear", "Cloth Bags", "Handicraft", "Domestic Servant", "Cosmetic", "Stone Quarry", "Odd Jobs", "Transport"]
 
 
+
+    d3.select('#svg'+board.attr('id')).remove();
+
+    board
+        .append('text')
+        .attr("x", sub_indst_width/2)
+        .attr("y", 10)
+        .attr('id','svg'+board.attr('id'))
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .attr('text-anchor','middle')
+        .style('font-family', 'Arial')
+        .attr('fill', '#607D8B')
+        .text('Industry distribution');
+
+    
+
+
     var data = Data.subPlot(src, val, "indst");
     var sum = data.reduce((sum, i) => sum + i[1], 0);
 
@@ -2151,7 +2169,7 @@ function subplot_indst(src, val, board) {
     if(data.length!=0)
         bar_ratio = bar_ratio.map(x => x / sum)
 
-    board.selectAll('text')
+    board.selectAll('text-ind')
         .data(s_ind_clean)
         .enter().append('text')
         .attr('text-anchor', 'end')
@@ -2264,6 +2282,7 @@ function subplot_map(src, val, loc, board) {
 // AGE SUB PLOT -------
 function subplot_age(src, val, board) {
     
+
     var data = Data.subPlot(src, val, "age");
     var num_data = Array(20).fill(0)
     for (var i = 0; i < data.length; i++)
@@ -2274,12 +2293,28 @@ function subplot_age(src, val, board) {
     if(data.length!=0)
         num_data = num_data.map(x => x / sum)
 
+    d3.selectAll('#svg'+board.attr('id')).remove();
+
+    board
+        .append('text')
+        .attr('id','svg'+board.attr('id'))
+        .attr("x", sub_age_width/2)
+        .attr("y", 10)
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('text-anchor','middle')
+        .attr('fill', '#607D8B')
+        .text('Age distribution');
+
+
+
     board.selectAll('text')
         .data(num_data)
         .enter().append('text')
         .attr('text-anchor', 'end')
         .attr("x", function(d, i) { return 35 + 17 * i })
-        .attr("y", 205)
+        .attr("y", 215)
         .attr("dy", "10px")
         .style("font-size", "10px")
         .style('font-family', 'Arial')
@@ -2300,7 +2335,7 @@ function subplot_age(src, val, board) {
         .attr('opacity', 1)
         .attr("x", function(d, i) { return 25 + 17 * i })
         .attr("width", 10)
-        .attr("y", function(d) { return 200 - Math.min(190, 700 * d) })
+        .attr("y", function(d) { return 210 - Math.min(190, 700 * d) })
         .attr("height", function(d) { return 1 + Math.min(190, 700 * d) });
 
 }
@@ -2457,12 +2492,27 @@ function subplot_raid(month_data) {
 //---------------------
 
 // AMOUNT SUB PLOT---------
-function subplot_amount(data, svg) {
+function subplot_amount(data, board,title="Paramt") {
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 100 / max
-    var amt_bar = svg.selectAll('rect')
+    var amt_bar = board.selectAll('rect')
         .data(data)
+
+    d3.selectAll('#svg'+board.attr('id')).remove();
+
+    board
+        .append('text')
+        .attr('id','svg'+board.attr('id'))
+        .attr("x", sub_age_width/2)
+        .attr("y", 10)
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('text-anchor','middle')
+        .attr('fill', '#607D8B')
+        .text(title+' distribution');
+
 
     var entering = amt_bar.enter()
         .append("rect");
@@ -2631,21 +2681,27 @@ var sel_state='from'
 var state_age_svg= d3.select("#state-age-sub")
     .append("svg")
     .attr('display', 'inline-block')
+    .attr('id','state_age_svg')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
+    .style('background-color','#FBE9E7')
     
 
 var state_indst_svg = d3.select("#state-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
+    .attr('id','state_indst_svg')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
+    .style('background-color','#E3F2FD')
 
 var state_paramt_svg = d3.select('#state-paramt-sub')
     .append("svg")
     .attr('display', 'inline-block')
+    .attr('id','state_paramt_svg')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
+    .style('background-color','#F9FBE7')
 
 map_state();
 subplot_age('native_v_area', 'Bihar', state_age_svg)
@@ -2667,6 +2723,8 @@ var age_indst_svg = d3.select("#age-indst-sub")
     .attr('display', 'inline-block')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
+    
+
 var age_map_svg = d3.select("#age-map-sub").append("svg:svg")
     .attr("width", sub_map_width)
     .attr("height", sub_map_height)
@@ -2780,8 +2838,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#state-sec').style('display', 'block')
-d3.select('#nav-state').classed('nav-btn-sel', true)
+d3.select('#map-sec').style('display', 'block')
+d3.select('#nav-map').classed('nav-btn-sel', true)
 </script>
 
 <script type="text/javascript">
