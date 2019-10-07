@@ -110,7 +110,7 @@ var Data = {
 
             if (time != -1) {
                 var t = this.raw[i]['t_date'].split("/")
-                t = (t[2] - 2010) * 12 + (parseInt(t[1]))
+                t = (t[2] - 2011) * 12 + (parseInt(t[1]))
 
                 if (t < time[0] || t > time[1]) continue
                 if (isNaN(t)) continue;
@@ -130,11 +130,11 @@ var Data = {
                 if(r==""||n=="")continue;
                 l_crds.push([r,n])
 
-            
+            if(loc!='line'){
             var crd = this.raw[i][loc + '_v_crd'].split(',')
             if (crd[0] == "") continue;
-
             crds.push(crd)
+        }
             
 
         }

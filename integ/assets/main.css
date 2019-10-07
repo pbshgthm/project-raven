@@ -36,10 +36,10 @@ body,html{
 .viz-panel{
 	position: absolute;
 	left: 68vw;
-	width: 27vw;
+	width: 28vw;
 	height: 90vh;
 	background-color: white;
-	padding-left: 3vw;
+	padding-left: 2vw;
 	border-left: 2px solid #CFD8DC;
 	
 }

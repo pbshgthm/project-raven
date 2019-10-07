@@ -28,12 +28,11 @@
             <div class="nav-btn" id="nav-ind">Industry</div>
         </div>
     </div>
-    <div class="page-sec" id="map-sec" style="display: block">
+    <div class="page-sec" id="map-sec">
         <div id="native-map" class="viz-board"></div>
-        <div class="viz-panel" id="map-controls">
-        </div>
+        <div class="viz-panel" id="map-controls"></div>
     </div>
-    <div class="page-sec" id="state-sec" style="display: block">
+    <div class="page-sec" id="state-sec">
         <div id="state-map" class="viz-board"></div>
         <div class="viz-panel" id="state-sub">
             <div class="sub-age" id="state-age-sub"></div>
@@ -205,6 +204,9 @@ function mapHeatmap(val, data) {
             "id": "hm-circle-layer",
             "type": "circle",
             "source": "heatmap",
+            "layout":{
+                "visibility":"none"
+            },
             "paint": {
 
 
@@ -235,44 +237,6 @@ function mapHeatmap(val, data) {
         }, 'waterway-label');
 
 
-
-        //circle init
-        ///*
-        map.addLayer({
-            "id": "circle-layer",
-            "type": "circle",
-            "source": "heatmap",
-            "layout": { "visibility": "none" },
-            "paint": {
-
-
-                "circle-color": '#E64A19',
-
-                "circle-stroke-color": 'white',
-
-                "circle-stroke-width": 0,
-
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 2.5,
-                    7, 4,
-                    9, 5
-                ],
-
-                "circle-opacity": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    4, 0.5,
-                    7, 0.8,
-                    9, 0.8
-                ],
-            }
-        }, 'waterway-label');
-
-              
               //line init
               map.addLayer({
                     "id": "line-layer",
@@ -301,9 +265,7 @@ function mapHeatmap(val, data) {
 
     })
 
-
 }
-
 
 //------------------------------------------------
 
@@ -325,29 +287,60 @@ function map_state(){
 
 
     var st_type=['from','to']
+    var st_btn_txt={'from':'Factory','to':'Native'}
 
-    state_svg.selectAll('circle')
+    
+
+    state_svg.selectAll('state-btns')
     .data(st_type)
     .enter()
-    .append('circle')
+    .append('rect')
     .attr('fill','#CFD8DC')
     .attr('class','st-btn')
     .attr('id',function(d){return 'st-btn-'+d})
-    .attr('cx',function(d,i){return 200+100*i})
-    .attr('cy',700)
-    .attr('r',20)
+    .attr('x',function(d,i){return 200+100*i})
+    .attr('y',670)
+    .attr('height',30)
+    .attr('width',70)
+    .attr('rx',15)
+    .attr('ry',15)
+    .attr('cursor','pointer')
     .on('click',st_type_click)
+
+
+    state_svg.selectAll('state-btns-txt')
+    .data(st_type)
+    .enter()
+    .append('text')
+    .attr('x',function(d,i){return 200+100*i+35})
+    .attr('y',670+10)
+    .attr('class','st-btnt')
+    .attr('id',function(d){return 'st-btnt-'+d})
+    .attr("dy", "10px")
+    .attr('text-anchor','middle')
+    .attr('fill','#546E7A')
+    .style("font-size", "14px")
+    .style('font-family', 'Arial')
+    .text(function(d){return st_btn_txt[d]})
+    .attr('cursor','pointer')
+    .on('click',st_type_click)
+
 
     curr_st='from'
 
-    d3.select('#st-btn-from').attr('fill','#B39DDB')
+    d3.select('#st-btn-from').attr('fill','#4FC3F7')
+    d3.select('#st-btnt-from').attr('fill','white')
+
     function st_type_click(){
         var _id=d3.select(this).attr('id').split('-')[2]
         curr_st=_id
         plot_st_data(sel_state)
 
         d3.selectAll('.st-btn').attr('fill','#CFD8DC')
-        d3.select(this).attr('fill','#B39DDB')
+        d3.select('#st-btn-'+_id).attr('fill','#4FC3F7')
+
+        d3.selectAll('.st-btnt').attr('fill','#546E7A')
+        d3.select('#st-btnt-'+_id).attr('fill','white')
     }
 
     var state_map = state_svg.selectAll("path")
@@ -415,6 +408,41 @@ function map_state(){
         d3.selectAll(".state-text-name").remove();
         d3.selectAll(".state-text-count").remove();
 
+        d3.selectAll(".state-title").remove();
+        d3.selectAll(".state-title-desc").remove();
+
+
+        if(curr_st=='to')
+            curr_st_list=['From','To']
+        else
+            curr_st_list=['To','From']
+
+        state_svg.selectAll("state-title")
+        .data(curr_st_list)
+        .enter()
+        .append('text')
+        .attr('class','state-title-desc')
+        .attr("x", 500)
+        .attr("y", function(d,i){return 350+50*i})
+        .attr("dy", "10px")
+        .style("font-size", "16px")
+        .style('fill','#78909C')
+        .style('font-style','italic')
+        .style('font-family', 'Arial')
+        .text(function(d){return d});
+
+        state_svg
+        .append('text')
+        .attr("x", 500)
+        .attr("y", 370)
+        .attr("class","state-title")
+        .attr("dy", "10px")
+        .style("font-size", "18px")
+        .style('fill','#2196F3')
+        .style('font-family', 'Arial')
+        .text(sel_state);
+
+
         state_svg.selectAll("name")
         .data(st_data)
         .enter()
@@ -435,7 +463,7 @@ function map_state(){
         .append('text')
         .attr('class','state-text-count')
         .attr('text-anchor','end')
-        .attr("x", 490)
+        .attr("x", 650)
         .attr("y", function(d, i) { return 420 + 20 * i })
         .attr("dy", "10px")
         .style("font-size", "15px")
@@ -447,38 +475,8 @@ function map_state(){
         d3.select('#state-'+st.replace(' ','_')).style('fill','#607D8B')
         
     }
+    plot_st_data(sel_state)
 
-    /*
-    var crds=Data.filterPoints(map_age, [0,50], map_ind, map_loc)['line']['features']
-    var line_data=crds.map(x=>x['geometry']['coordinates'])
-    
-
-    function crd2xy(crd,type){
-        crd=parseFloat(crd)
-        if(type=='lat'){
-            crd=Math.log(Math.tan(Math.PI/4 + crd/2))
-            crd=5*crd-400
-            return crd
-        }
-        crd=5*crd - 100
-        return crd
-    }
-    
-    for (var i = 0; i < line_data.length; i++) {
-        if (line_data[i][1] == undefined) continue
-
-        state_svg
-            .append('line')
-            .attr("x1", crd2xy(line_data[i][0][0],'lng'))
-            .attr("x2", crd2xy(line_data[i][1][0],'lng'))
-            .attr("y1", crd2xy(line_data[i][0][1],'lat'))
-            .attr("y2", crd2xy(line_data[i][1][1],'lat'))
-            .style("stroke", "#F4511E")
-            .attr('opacity', 0.3)
-            .style("stroke-linecap", "round")
-            .style("stroke-width", 1);
-    }
-    */
     
 }
 
@@ -1402,6 +1400,9 @@ function indust_plot() {
 //MAP CONTROLS -------
 function map_controls() {
 
+    map.on('load', function(){
+        map.setLayoutProperty('line-layer','visibility','none')    
+    });
     var heatmap_clrs = {
         'native': [
             "interpolate",
@@ -1433,51 +1434,61 @@ function map_controls() {
     age_bars = age_bars.map((x, i) => i)
 
 
+    var loc_dict=['native','raid','line']
 
-    map_controls_svg
-        .append("circle")
-        .attr("fill", "#4FC3F7")
+
+    map_controls_svg.selectAll('loc-btn')
+        .data(loc_dict)
+        .enter()
+        .append("rect")
+        .attr("fill", "#ECEFF1")
         .attr('class', 'mc-loc')
-        .attr('id', 'mc-loc-native')
-        .attr("cx", 250)
-        .attr('r', 20)
-        .attr("cy", 50)
+        .attr('id', function(d){return 'mc-loc-'+d})
+        .attr("x", function(d,i){return 10+100*i})
+        .attr('width',80)
+        .attr('height',30)
+        .attr('rx',15)
+        .attr('ry',15)
+        .attr("y", 50)
+        .attr('cursor','pointer')
+        .on('click', mc_loc_click)
+
+    map_controls_svg.selectAll('loc-text')
+        .data(loc_dict)
+        .enter()
+        .append("text")
+        .attr("fill", "#78909C")
+        .attr('class', 'mc-loct')
+        .attr('id', function(d){return 'mc-loct-'+d})
+        .attr("x", function(d,i){return 10+100*i+40})
+        .style('font-family', 'Arial')
+        .style("font-size", "15px")
+        .attr('text-anchor','middle')
+        .attr("y", 50+20)
+        .text(function(d){return d.charAt(0).toUpperCase() + 
+           d.slice(1); })
+        .attr('cursor','pointer')
         .on('click', mc_loc_click)
 
     map_controls_svg
-        .append("circle")
-        .attr("fill", "#CFD8DC")
-        .attr('class', 'mc-loc')
-        .attr('id', 'mc-loc-raid')
-        .attr("cx", 300)
-        .attr('r', 20)
-        .attr("cy", 50)
-        .on('click', mc_loc_click)
+        .append("text")
+        .attr("x",10)
+        .attr("y", 30)
+        .style("font-size", "17px")
+        .style('fill','#039BE5')
+        .style('font-family', 'Arial')
+        .text('Location type')
 
-    map_controls_svg
-        .append("circle")
-        .attr("fill", "#CFD8DC")
-        .attr('class', 'mc-loc')
-        .attr('id', 'mc-loc-line')
-        .attr("cx", 350)
-        .attr('r', 20)
-        .attr("cy", 50)
-        .on('click', mc_loc_click)
-
+    
 
     function mc_loc_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
         map_loc = _id
         
-        
-
-        
-
         if(_id=='line'){
 
             map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
             map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
-            map.setLayoutProperty('circle-layer', 'visibility', 'none');
             map.setLayoutProperty('line-layer','visibility','visible')
         }
         else{
@@ -1490,103 +1501,50 @@ function map_controls() {
             if(is_hm=='y'){
                 map.setLayoutProperty('heatmap-layer', 'visibility', 'visible');
                 map.setLayoutProperty('hm-circle-layer', 'visibility', 'visible');
-                map.setLayoutProperty('circle-layer', 'visibility', 'none');
             }
             else{
                 map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
                 map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
-                map.setLayoutProperty('circle-layer', 'visibility', 'visible');
             }
             
             
         }
 
         d3.selectAll('.mc-loc')
-            .attr('fill', '#CFD8DC')
+            .attr('fill', '#ECEFF1')
 
-        d3.select(this)
+        d3.select('#mc-loc-'+_id)
             .attr('fill', '#4FC3F7')
+
+        d3.selectAll('.mc-loct')
+            .attr('fill', '#78909C')
+
+        d3.select('#mc-loct-'+_id)
+            .attr('fill', 'white')
     }
 
 
+
+    
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#90A4AE")
+        .attr("x", 8)
+        .attr("y", 155)
+        .style("font-size", "17px")
+        .style('fill','#039BE5')
+        .style('font-family', 'Arial')
+        .text('Age')
 
     map_controls_svg
-        .append("rect")
-        .attr("fill", "#FFB74D")
-        .attr('id', 'mc-heatmap-y')
-        .attr('rx', 15)
-        .attr('ry', 15)
-        .attr("x", 10)
-        .attr("width", 80)
-        .attr('opacity', 0.5)
-        .attr("y", 50)
-        .attr("height", 30)
-        .on('mouseover', mc_heatmap_mouseover)
-        .on('mouseout', mc_heatmap_mouseout)
-        .on('click', mc_heatmap_click)
-
-    map_controls_svg
-        .append("rect")
-        .attr("fill", "#CFD8DC")
-        .attr('id', 'mc-heatmap-n')
-        .attr('rx', 15)
-        .attr('ry', 15)
-        .attr("x", 110)
-        .attr("width", 80)
-        .attr('opacity', 0.5)
-        .attr("y", 50)
-        .attr("height", 30)
-        .on('mouseover', mc_heatmap_mouseover)
-        .on('mouseout', mc_heatmap_mouseout)
-        .on('click', mc_heatmap_click)
-
-
-    function mc_heatmap_mouseover() {
-        var _id = d3.select(this).attr('id').split('-')[2]
-        d3.select('#mc-heatmap-' + _id)
-            .attr('fill', '#FFB74D')
-
-    }
-
-    function mc_heatmap_mouseout() {
-
-        var _id = d3.select(this).attr('id').split('-')[2]
-        if (_id == is_hm) return
-        d3.select('#mc-heatmap-' + _id)
-            .attr('fill', '#CFD8DC')
-    }
-
-    function mc_heatmap_click() {
-
-        var _id = d3.select(this).attr('id').split('-')[2]
-        if (_id == 'y') {
-            d3.select('#mc-heatmap-y')
-                .attr('fill', '#FFB74D')
-            d3.select('#mc-heatmap-n')
-                .attr('fill', '#CFD8DC')
-
-            map.setLayoutProperty('heatmap-layer', 'visibility', 'visible');
-            map.setLayoutProperty('hm-circle-layer', 'visibility', 'visible');
-            map.setLayoutProperty('circle-layer', 'visibility', 'none');
-
-            is_hm = 'y'
-
-        } else {
-            d3.select('#mc-heatmap-y')
-                .attr('fill', '#CFD8DC')
-            d3.select('#mc-heatmap-n')
-                .attr('fill', '#FFB74D')
-
-            map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
-            map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
-            map.setLayoutProperty('circle-layer', 'visibility', 'visible');
-
-            is_hm = 'n'
-        }
-
-    }
-
-
+        .append("text")
+        .attr("fill", "#546E7A")
+        .attr("x", 23)
+        .style("font-size", "11px")
+        .attr('text-anchor', 'middle')
+        .style('font-family', 'Arial')
+        .attr("y", 200)
+        .text('All')
 
     map_controls_svg.selectAll('mc-age-text')
         .data(age_bars)
@@ -1594,7 +1552,7 @@ function map_controls() {
         .append("text")
         .attr("fill", "#546E7A")
         .attr("x", function(d) { return 43 + d * 17 + 8.5 })
-        .attr("y", 170)
+        .attr("y", 200)
         .style("font-size", "9px")
         .attr('text-anchor', 'middle')
         .style('font-family', 'Arial')
@@ -1613,11 +1571,12 @@ function map_controls() {
         .attr("x", function(d) { return 43 + d * 17 })
         .attr("width", 17)
         .attr('opacity', 0.5)
-        .attr("y", 150)
+        .attr("y", 180)
         .attr("height", 30)
         .on('mouseover', mc_age_mouseover)
         .on('mouseout', mc_age_mouseout)
         .on('click', mc_age_click)
+        .attr('cursor','pointer')
 
 
     map_controls_svg
@@ -1629,11 +1588,14 @@ function map_controls() {
         .attr("x", 10)
         .attr("width", 30)
         .attr('opacity', 0.5)
-        .attr("y", 151)
+        .attr("y", 180)
         .attr("height", 28)
         .on('mouseover', mc_age_all_mouseover)
         .on('mouseout', mc_age_all_mouseout)
         .on('click', mc_age_all_click)
+        .attr('cursor','pointer')
+
+    
 
 
 
@@ -1707,8 +1669,43 @@ function map_controls() {
 
     }
 
-    var time_bars = Array(84).fill(0)
+
+    /*
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#546E7A")
+        .attr("x",15)
+        .attr("y", 320)
+        .attr('font-size','12px')
+        .text('All')
+    */
+
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#90A4AE")
+        .attr("x", 8)
+        .attr("y", 295)
+        .style("font-size", "17px")
+        .style('fill','#039BE5')
+        .style('font-family', 'Arial')
+        .text('Raid Month')
+
+    var time_bars = Array(97).fill(0)
     time_bars = time_bars.map((x, i) => i)
+
+    
+
+    map_controls_svg.selectAll('time-text')
+        .data(time_bars)
+        .enter()
+        .append("text")
+        .attr("fill", "#90A4AE")
+        .attr("x", function(d,i){return 10+d*4})
+        .attr("y", 370)
+        .attr('text-anchor','middle')
+        .attr('font-size','9px')
+        .text(function(d){return d%12==0?2011+d/12:""})
+
 
     map_controls_svg.selectAll('mc-time-rect')
         .data(time_bars)
@@ -1718,12 +1715,21 @@ function map_controls() {
         .attr('id', function(d) { return 'mc-time-' + (d + 1) })
         .attr('rx', 1)
         .attr('ry', 1)
-        .attr("x", function(d) { return 27 + d * 4 })
+        .attr("x", function(d) { return 10 + d * 4 })
         .attr("width", 2)
         .attr('opacity', 0.8)
-        .attr("y", 350)
+        .attr("y", 330)
         .attr("height", 15)
 
+    map_controls_svg.selectAll('time-t-rect')
+        .data(time_bars.concat([96]))
+        .enter()
+        .append("rect")
+        .attr("fill", "#CFD8DC")
+        .attr("x", function(d,i){return 10+d*4+0.5})
+        .attr("y", 330)
+        .attr('height',function(d){return d%12==0?25:0})
+        .attr('width',1)
 
     var drag = d3.drag().subject(function(d) {
             return d == null ? { x: d3.event.x, y: d3.event.y } : d;
@@ -1736,11 +1742,11 @@ function map_controls() {
         .append("rect")
         .attr("fill", "#4FC3F7")
         .attr('id', 'mc-time-r')
-        .attr("x", 27 + map_time[0] * 4 - 1)
-        .datum({ x: 27 + map_time[0] * 4 - 1 })
+        .attr("x", 10 + map_time[0] * 4 - 1)
+        .datum({ x: 10 + map_time[0] * 4 - 1 })
         .attr("width", (map_time[1] - map_time[0] + 1) * 4)
         .attr('opacity', 0.3)
-        .attr("y", 350 - 7.5)
+        .attr("y", 330 - 7.5)
         .attr("height", 30)
         .style('cursor', 'grab')
         .call(drag)
@@ -1751,11 +1757,11 @@ function map_controls() {
         .attr('id', 'mc-time-r1')
         .attr('rx', 1)
         .attr('ry', 1)
-        .attr("x", 27 + map_time[0] * 4 - 5)
-        .datum({ x: 27 + map_time[0] * 4 - 5 })
+        .attr("x", 10 + map_time[0] * 4 - 5)
+        .datum({ x: 10 + map_time[0] * 4 - 5 })
         .attr("width", 8)
         .attr('opacity', 1)
-        .attr("y", 350 + 2.5)
+        .attr("y", 330 + 2.5)
         .attr("height", 10)
         .style('cursor', 'ew-resize')
         .call(drag)
@@ -1766,29 +1772,31 @@ function map_controls() {
         .attr('id', 'mc-time-r2')
         .attr('rx', 1)
         .attr('ry', 1)
-        .attr("x", 27 + map_time[1] * 4 - 1)
-        .datum({ x: 27 + map_time[1] * 4 - 1 })
+        .attr("x", 10 + map_time[1] * 4 - 1)
+        .datum({ x: 10 + map_time[1] * 4 - 1 })
         .attr("width", 8)
         .attr('opacity', 1)
-        .attr("y", 350 + 2.5)
+        .attr("y", 330 + 2.5)
         .attr("height", 10)
         .style('cursor', 'ew-resize')
         .call(drag)
 
+    /*
     map_controls_svg
         .append("rect")
         .attr("fill", "#CFD8DC")
         .attr('id', 'mc-time-all')
         .attr('rx', 7)
         .attr('ry', 7)
-        .attr("x", 30)
-        .attr("width", 50)
+        .attr("x", 10)
+        .attr("width", 30)
         .attr('opacity', 0.5)
         .attr("y", 300)
         .attr("height", 30)
         .on('mouseover', mc_time_all_mouseover)
         .on('mouseout', mc_time_all_mouseout)
         .on('click', mc_time_all_click)
+    */
 
     function mc_time_all_mouseover() {
         d3.select(this).attr('fill', '#80DEEA')
@@ -1800,17 +1808,17 @@ function map_controls() {
 
     function mc_time_all_click() {
         d3.select(this).attr('fill', '#80DEEA')
-        map_time = [0, 83]
+        map_time = [0, 95]
 
-        d3.select('#mc-time-r1').datum().x = 27 + map_time[0] * 4 - 5;
-        d3.select('#mc-time-r1').attr("x", 27 + map_time[0] * 4 - 5);
+        d3.select('#mc-time-r1').datum().x = 10 + map_time[0] * 4 - 5;
+        d3.select('#mc-time-r1').attr("x", 10 + map_time[0] * 4 - 5);
 
-        d3.select('#mc-time-r').datum().x = 27 + map_time[0] * 4 - 5;
-        d3.select('#mc-time-r').attr("x", 27 + map_time[0] * 4 + 4 - 5);
+        d3.select('#mc-time-r').datum().x = 10 + map_time[0] * 4 - 5;
+        d3.select('#mc-time-r').attr("x", 10 + map_time[0] * 4 + 4 - 5);
         d3.select('#mc-time-r').attr("width", map_time[1] * 4 + 4);
 
-        d3.select('#mc-time-r2').datum().x = 27 + map_time[1] * 4 - 1;
-        d3.select('#mc-time-r2').attr("x", 27 + map_time[1] * 4 - 1);
+        d3.select('#mc-time-r2').datum().x = 10 + map_time[1] * 4 - 1;
+        d3.select('#mc-time-r2').attr("x", 10 + map_time[1] * 4 - 1);
 
         var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
         map.getSource('heatmap').setData(new_crds['point']);
@@ -1828,12 +1836,12 @@ function map_controls() {
         if (_id == "r1") {
 
 
-            if (d3.event.x < 27 - 1 || d3.event.x > 27 + map_time[1] * 4 - 5) return;
+            if (d3.event.x < 10 - 1 || d3.event.x > 10 + map_time[1] * 4 - 5) return;
 
-            var anchor = 27 + Math.floor(((d3.event.x - 27) / 4)) * 4;
+            var anchor = 10 + Math.floor(((d3.event.x - 10) / 4)) * 4;
 
 
-            map_time[0] = parseInt((anchor - 27) / 4) + 1;
+            map_time[0] = parseInt((anchor - 10) / 4) + 1;
 
             d3.select('#mc-time-r1').attr("x", (d.x = anchor - 1));
 
@@ -1851,13 +1859,13 @@ function map_controls() {
         if (_id == "r2") {
 
 
-            if (d3.event.x < 27 + map_time[0] * 4 + 4 || d3.event.x > 359) return;
+            if (d3.event.x < 10 + map_time[0] * 4 + 4 || d3.event.x > 390) return;
 
-            var anchor = 27 + Math.ceil(((d3.event.x - 27) / 4)) * 4 - 1;
+            var anchor = 10 + Math.ceil(((d3.event.x - 10) / 4)) * 4 - 1;
 
             d3.select('#mc-time-r2').attr("x", (d.x = anchor));
 
-            map_time[1] = parseInt((anchor - 27) / 4) + 1;
+            map_time[1] = parseInt((anchor - 10) / 4) + 1;
             d3.select('#mc-time-r').attr("width", (map_time[1] - map_time[0]) * 4 + 4);
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds['point']);
@@ -1870,10 +1878,10 @@ function map_controls() {
 
             var r = (map_time[1] - map_time[0]);
 
-            if (d3.event.x < 27 || d3.event.x + r * 4 - 4 > 359) return;
+            if (d3.event.x < 10 || d3.event.x + r * 4 - 4 > 390) return;
 
 
-            var anchor = 27 + Math.floor(((d3.event.x - 27) / 4)) * 4;
+            var anchor = 10 + Math.floor(((d3.event.x - 10) / 4)) * 4;
             d3.select('#mc-time-r').attr("x", (d.x = anchor - 1));
 
 
@@ -1883,7 +1891,7 @@ function map_controls() {
             d3.select('#mc-time-r2').datum().x = anchor + r * 4 - 1;
             d3.select('#mc-time-r2').attr("x", (anchor + r * 4 - 1));
 
-            map_time[0] = parseInt((anchor - 27 - 4) / 4) + 1;
+            map_time[0] = parseInt((anchor - 10 - 4) / 4) + 1;
             map_time[1] = map_time[0] + r;
 
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
@@ -1904,13 +1912,24 @@ function map_controls() {
     }
 
 
-    var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags", "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office", "Electrical & Electronics", "Leather", "_others", ""]
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#90A4AE")
+        .attr("x", 8)
+        .attr("y", 450)
+        .style("font-size", "17px")
+        .style('fill','#039BE5')
+        .style('font-family', 'Arial')
+        .text('Industries')
 
-    var indst_c_list = ["Garment", "Hotel", "Footwear", "Handicraft", "Cloth Bags", "Cosmetic", "Servant", "Automobile", "Metal", "Retail Shop", "Electronics", "Leather", "Others", "Unknown"]
+
+    var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags", "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office", "Electrical & Electronics", "Leather", "Jewellery","_others", ""]
+
+    var indst_c_list = ["Garment", "Hotel", "Footwear", "Handicraft", "Cloth Bags", "Cosmetic", "Servant", "Automobile", "Metal", "Retail Shop", "Electronics", "Leather","Jewellery","Others", "Unknown"]
 
     var ind_list = [];
     for (var i = 0; i < indst_r_list.length; i++) {
-        ind_list.push([80 + parseInt(i / 7) * 140, 490 + 35 * (i % 7), indst_c_list[i]])
+        ind_list.push([18 + parseInt(i / 5) * 120, 530 + 40 * (i % 5), indst_c_list[i]])
     }
 
     map_controls_svg.selectAll('mc-ind-text')
@@ -1919,7 +1938,7 @@ function map_controls() {
         .append("text")
         .attr("fill", "#546E7A")
         .attr("x", function(d) { return d[0] + 35 })
-        .attr("y", function(d) { return d[1] })
+        .attr("y", function(d) { return d[1] +2})
         .attr('text-anchor', 'middle')
         .style("font-size", "12px")
         .style('font-family', 'Arial')
@@ -1934,16 +1953,28 @@ function map_controls() {
         .attr("fill", "#80DEEA")
         .attr('stroke', '#00ACC1')
         .attr('stroke-width', 1)
-        .attr('rx', 11.5)
-        .attr('ry', 11.5)
+        .attr('rx', 13)
+        .attr('ry', 13)
         .attr("x", function(d) { return d[0] - 10 })
         .attr("y", function(d) { return d[1] - 16 })
-        .attr('height', 23)
+        .attr('height', 26)
         .attr('width', 90)
         .attr('opacity', 0.3)
         .on('mouseover', mc_ind_mouseover)
         .on('mouseout', mc_ind_mouseout)
         .on('click', mc_ind_click)
+
+
+
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#546E7A")
+        .attr("x", 53)
+        .attr("y", 475 +16)
+        .attr('text-anchor', 'middle')
+        .style("font-size", "12px")
+        .style('font-family', 'Arial')
+        .text('All')
 
     map_controls_svg.append("rect")
         .attr('id', 'mc-ind-all')
@@ -1952,14 +1983,25 @@ function map_controls() {
         .attr('stroke-width', 1)
         .attr('rx', 11.5)
         .attr('ry', 11.5)
-        .attr("x", 70)
-        .attr("y", 425)
+        .attr("x", 8)
+        .attr("y", 475)
         .attr('height', 23)
         .attr('width', 90)
         .attr('opacity', 0.3)
         .on('mouseover', mc_ind_all_mouseover)
         .on('mouseout', mc_ind_all_mouseout)
         .on('click', mc_ind_all_click)
+
+
+    map_controls_svg
+        .append("text")
+        .attr("fill", "#546E7A")
+        .attr("x", 293)
+        .attr("y", 475 +16)
+        .attr('text-anchor', 'middle')
+        .style("font-size", "12px")
+        .style('font-family', 'Arial')
+        .text('Clear')
 
 
     map_controls_svg.append("rect")
@@ -1969,8 +2011,8 @@ function map_controls() {
         .attr('stroke-width', 1)
         .attr('rx', 11.5)
         .attr('ry', 11.5)
-        .attr("x", 210)
-        .attr("y", 425)
+        .attr("x", 248)
+        .attr("y", 475)
         .attr('height', 23)
         .attr('width', 90)
         .attr('opacity', 0.3)
@@ -2001,7 +2043,7 @@ function map_controls() {
             d3.select('#mc-ind-' + _id).attr('fill', '#80DEEA');
             map_ind.push(_id)
 
-            if (map_ind.length == 14) d3.select('#mc-ind-all').attr('fill', '#80DEEA')
+            if (map_ind.length == 15) d3.select('#mc-ind-all').attr('fill', '#80DEEA')
             if (map_ind.length != 1) d3.select('#mc-ind-clear').attr('fill', 'white')
 
 
@@ -2027,19 +2069,19 @@ function map_controls() {
     }
 
     function mc_ind_all_mouseover() {
-        if (map_ind.length == 14) return
+        if (map_ind.length == 15) return
         d3.select(this).attr('fill', '#B2EBF2')
 
     }
 
     function mc_ind_all_mouseout() {
-        if (map_ind.length == 14) return
+        if (map_ind.length == 15) return
         d3.select(this).attr('fill', 'white')
     }
 
     function mc_ind_all_click() {
 
-        if (map_ind.length == 14) return;
+        if (map_ind.length == 15) return;
         d3.select(this).attr('fill', '#80DEEA')
         map_ind = Array(14).fill(0).map((x, i) => i)
         d3.select('#mc-ind-clear').attr('fill', 'white')
@@ -2565,25 +2607,25 @@ var map;
 var map_controls_svg = d3.select("#map-controls")
     .append("svg")
     .attr('display', 'inline-block')
-    .attr("width", map_controls_width)
+    .attr("width", map_controls_width+50)
     .attr("height", map_controls_height)
+    .style('background-color','white')
 
 var is_hm = 'y'
 var map_age = 0
 var map_time = [3, 8]
-var map_ind = Array(14).fill(0).map((x, i) => i)
+var map_ind = Array(15).fill(0).map((x, i) => i)
 var map_loc = 'native'
 
 mapHeatmap(map_loc, Data.filterPoints(map_age, map_time, map_ind, map_loc))
-
 map_controls()
 
 
 // STATE INIT --------------------
 
 var state_svg
-var curr_st
-var sel_state
+var curr_st='Maharashtra'
+var sel_state='from'
 
 
 var state_age_svg= d3.select("#state-age-sub")
@@ -2738,8 +2780,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#map-sec').style('display', 'block')
-d3.select('#nav-map').classed('nav-btn-sel', true)
+d3.select('#state-sec').style('display', 'block')
+d3.select('#nav-state').classed('nav-btn-sel', true)
 </script>
 
 <script type="text/javascript">
