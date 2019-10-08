@@ -1,5 +1,14 @@
 
 
+in age plot, the subplot filter only based on rescue age
+
+
+
+
+
+
+
+
 //BUGS
 *Map_loc undefined if click lines directly
 *AP/Telungana confusion

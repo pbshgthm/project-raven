@@ -382,7 +382,7 @@ function map_state(){
         subplot_indst(curr_st_dict[curr_st]+'_v_area', sel_state, state_indst_svg)
         subplot_amount(
             Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'),
-            state_paramt_svg)
+            state_paramt_svg,'Traffick price')
 
 
         d3.selectAll('.statemap-states').style('fill','#CFD8DC')
@@ -508,6 +508,7 @@ function age_plot() {
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
         .text(function(d, i) { return i + 1; })
+        .attr('cursor','pointer')
         .on('mouseover', age_mouseover)
         .on('mouseout', age_mouseout)
         .on('click', age_click)
@@ -546,17 +547,36 @@ function age_plot() {
 
     var age_btn = ['since','age']
 
+    for(var k=0;k<10;k++){
     age_svg.selectAll('age-btns')
         .data(age_btn)
         .enter()
         .append('circle')
-        .attr('id',function(d){return 'ab-'+d})
-        .attr('class','age-btn')
+        .attr('class',function(d){return 'age-btn '+'ab-'+d})
         .attr('fill', '#CFD8DC')
-        .attr('cx', function(d, i) { return 300 + i * 150 })
+        .attr('cx', function(d, i) { return 7*k+300 + i * 150 })
         .attr('cy', 600)
-        .attr('r', 20)
+        .attr('r', 17)
+        .attr('cursor','pointer')
         .on('click', age_btn_click)
+    }
+
+    var ag_btn_t=[['since','Trafficked'],['age','Rescued']]
+    age_svg.selectAll('btn-txt')
+        .data(ag_btn_t)
+        .enter().append('text')
+        .attr('class', function(d, i) { return 'age-btnt '+'abt-'+d[0] })
+        .attr('text-anchor', 'middle')
+        .attr("x", function(d, i) { return 332.5 + i * 150 })
+        .attr("y", 596)
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#78909C')
+        .attr('cursor','pointer')
+        .text(function(d, i) { return d[1]})
+        .on('click', age_btn_click)
+        
 
 
     var agedata_dict = {
@@ -564,14 +584,20 @@ function age_plot() {
         'since': [since_bins,'#4DD0E1']
     }
     agebars_plot(age_bins,'#FFB74D');
-    d3.select('#ab-age').attr('fill','#90CAF9');
+    d3.selectAll('.ab-age').attr('fill','#90CAF9');
+    d3.selectAll('.abt-age').attr('fill','white');
 
     function age_btn_click() {
-        var _id = d3.select(this).attr('id').split('-')[1]
+
+        var _id = d3.select(this).attr('class').split('-')[2]
+        console.log(_id)
         agebars_plot(agedata_dict[_id][0],agedata_dict[_id][1])
 
         d3.selectAll('.age-btn').attr('fill','#CFD8DC')
-        d3.select(this).attr('fill','#90CAF9')
+        d3.selectAll('.ab-'+_id).attr('fill','#90CAF9')
+
+        d3.selectAll('.age-btnt').attr('fill','#78909C')
+        d3.selectAll('.abt-'+_id).attr('fill','white')
     }
 
     function age_mouseover() {
@@ -641,10 +667,10 @@ function traf_plot() {
         .attr("width", board_width)
         .attr("height", board_height)
         .style('background-color', 'white')
-        .call(d3.zoom().on("zoom", function() {
-            traf_svg.attr("transform", d3.event.transform)
-        }))
-        .append("g")
+        //.call(d3.zoom().on("zoom", function() {
+        //    traf_svg.attr("transform", d3.event.transform)
+        //}))
+        //.append("g")
 
 
 
@@ -653,8 +679,37 @@ function traf_plot() {
         .interpolator(d3.interpolateInferno);
 
 
+    var scale = d3.scaleLinear()
+                  .domain([-250, 250])
+                  .range([500, 0]);
+
+    var y_axis = d3.axisLeft()
+                  .scale(scale)
+                  .ticks(10)
 
 
+    function customYAxis(g) {
+        g.call(y_axis);
+        
+        g.selectAll("path")
+        .attr("opacity", "0")
+
+        g.selectAll("line")
+        .attr("stroke", "#90A4AE")
+
+
+        g.selectAll("text")
+        .attr("fill", "#90A4AE")
+        .text(function(d){return d<0?-d:d})
+    }
+
+
+        traf_svg.append('g')
+        .attr('class','y axis')
+        .attr("transform", "translate(30, 50)")
+        .call(customYAxis);
+
+    
 
 
     var traf_box = traf_svg.selectAll("traf-box")
@@ -662,7 +717,7 @@ function traf_plot() {
         .append("rect")
         .attr('id', function(d, i) { return 'traf-box-' + i })
         .attr("fill", 'white')
-        .attr("x", function(d, i) { return -30 + d[0] * 13 - 50 + 6.5 })
+        .attr("x", function(d, i) { return 0 + d[0] * 13 - 50 + 6.5 })
         .attr("width", 100)
         .attr('stroke', function(d) { return colorise(d[1]) })
         .attr('stroke-width', 2)
@@ -680,7 +735,7 @@ function traf_plot() {
         .append("text")
         .attr('id', function(d, i) { return 'traf-label-' + i })
         .attr('text-anchor', 'middle')
-        .attr("x", function(d, i) { return -30 + d[0] * 13 + 6.5 })
+        .attr("x", function(d, i) { return 0 + d[0] * 13 + 6.5 })
         .attr("y", 295)
         .attr("dy", "10px")
         .style("font-size", "15px")
@@ -695,7 +750,7 @@ function traf_plot() {
         .append("rect")
         .attr('id', function(d, i) { return 'traf-bar-' + i })
         .attr("fill", function(d) { return colorise(d[1]) })
-        .attr("x", function(d, i) { return -30 + d[0] * 13 })
+        .attr("x", function(d, i) { return 0 + d[0] * 13 })
         .attr("width", 13)
         .attr('stroke', 'white')
         .attr('stroke-width', 5)
@@ -726,7 +781,7 @@ function traf_plot() {
     var central_marks = traf_svg.selectAll('central-marks')
         .data(month_data).enter()
         .append('rect')
-        .attr("x", function(d, i) { return -30 + d[0] * 13 - 1 })
+        .attr("x", function(d, i) { return 0 + d[0] * 13 - 1 })
         .attr("width", 2)
         .attr('fill', '#607D8B')
         .attr("y", function(d, i) { return 300 - 5 })
@@ -737,7 +792,7 @@ function traf_plot() {
         .data(month_data).enter()
         .append("text")
         .attr('text-anchor', 'middle')
-        .attr("x", function(d, i) { return -30 + d[0] * 13 + 13 })
+        .attr("x", function(d, i) { return 0 + d[0] * 13 + 13 })
         .attr("y", 295)
         .attr("dy", "10px")
         .style("font-size", function(d, i) { return (d[0] % 6 == 2) ? "12px" : '0px' })
@@ -797,7 +852,7 @@ function traf_plot() {
 
 
 
-        var d = (30 + parseInt(d3.select(this).attr('x'))) / 13
+        var d = (0 + parseInt(d3.select(this).attr('x'))) / 13
         subplot_age('t_date', d, traf_age_svg)
         subplot_indst("t_date", d, traf_indst_svg);
         subplot_map("t_date", d, "native", traf_map_svg);
@@ -2271,6 +2326,11 @@ function subplot_map(src, val, loc, board) {
     var clr_data = Data.subPlot(src, val, loc + '_v_add')
     var max_val = clr_data.reduce((max, x) => x[1] > max ? x[1] : max, 0)
 
+
+    clr_data.sort(function(a,b){return b[1]-a[1]})
+    var txt_data=clr_data.map(x => [code_to_state[x[0]], x[1]])
+    
+
     var colorise = d3.scaleSequential().domain([2 * max_val, -max_val / 5])
         .interpolator(d3.interpolateInferno);
 
@@ -2278,6 +2338,21 @@ function subplot_map(src, val, loc, board) {
     var clr_dict = {}
     for (var i = 0; i < clr_data.length; i++)
         clr_dict[clr_data[i][0]] = clr_data[i][1]
+
+
+    d3.select('#title'+board.attr('id')).remove();
+    board
+        .append('text')
+        .attr("x", sub_indst_width/2)
+        .attr("y", 10)
+        .attr('id','title'+board.attr('id'))
+        .attr("dy", "10px")
+        .style("font-size", "15px")
+        .attr('text-anchor','middle')
+        .style('font-family', 'Arial')
+        .attr('fill', '#607D8B')
+        .text('Native state distribution');
+
 
 
     var sub_map = board.selectAll("path")
@@ -2302,21 +2377,34 @@ function subplot_map(src, val, loc, board) {
 
     if (clr_data.length < 5)
         clr_data = clr_data.concat(Array(5 - clr_data.length).fill(['', 'none']))
-    var map_top_states = board.selectAll('text')
-        .data(clr_data.slice(0, 5))
-
-    var entering_txt = map_top_states.enter()
+    
+    d3.selectAll('.submap'+board.attr('id')).remove()
+    board.selectAll('map-text')
+        .data(txt_data.slice(0, 5))
+        .enter()
         .append('text')
-
-    map_top_states.merge(entering_txt)
-        .transition().duration(500)
+        .attr('class','submap'+board.attr('id'))
         .attr("x", 230)
         .attr("y", function(d, i) { return 130 + 17 * i })
         .attr("dy", "10px")
-        .style("font-size", "15px")
+        .style("font-size", "13px")
         .style('font-family', 'Arial')
-        .attr('fill', function(d) { return d[1]; })
-        .text(function(d, i) { return (i + 1) + '. ' + d[0]; });
+        .attr('fill', '#78909C')
+        .text(function(d, i) { return d[0]; });
+
+    board.selectAll('map-text')
+        .data(txt_data.slice(0, 5))
+        .enter()
+        .append('text')
+        .attr('class','submap'+board.attr('id'))
+        .attr("x", 350)
+        .attr('text-anchor','end')
+        .attr("y", function(d, i) { return 130 + 17 * i })
+        .attr("dy", "10px")
+        .style("font-size", "13px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+        .text(function(d, i) { return d[1]});
 
 }
 //---------------------
@@ -2577,13 +2665,11 @@ function subplot_raid(month_data) {
 //---------------------
 
 // AMOUNT SUB PLOT---------
-function subplot_amount(data, board,title="Traffick price") {
+function subplot_amount(data, board,title="") {
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 150 / max
     var bar_data=data.map(x=>x[0]*scale)
-
-    console.log(data)
 
     var Yscale = d3.scaleLinear()
                   .domain([0, max])
@@ -2879,15 +2965,18 @@ var curr_age
 var age_indst_svg = d3.select("#age-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
+    .attr('id','age_indst_svg')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
+    .style('background-color','#E3F2FD')
     
 
 var age_map_svg = d3.select("#age-map-sub").append("svg:svg")
     .attr("width", sub_map_width)
     .attr("height", sub_map_height)
-    //.style('background-color','red')
+    .style('background-color','#FFF3E0')
     .append("svg:g")
+    .attr('id','age_map_svg')
 
 
 age_plot();
@@ -2907,15 +2996,24 @@ var traf_age_svg = d3.select("#traf-age-sub")
     .attr('display', 'inline-block')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
+    .style('background-color','#FBE9E7')
+    .attr('id','traf_age_svg')
+
 var traf_indst_svg = d3.select("#traf-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
+    .attr('id','traf_indst_svg')
+    .style('background-color','#E3F2FD')
+
 var traf_map_svg = d3.select("#traf-map-sub").append("svg:svg")
     .attr("width", sub_map_width)
     .attr("height", sub_map_height)
+    .style('background-color','#FFF3E0')
     .append("svg:g")
+    .attr('id','traf_map_svg')
+
 
 
 traf_plot()
@@ -2996,8 +3094,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#state-sec').style('display', 'block')
-d3.select('#nav-state').classed('nav-btn-sel', true)
+d3.select('#traf-sec').style('display', 'block')
+d3.select('#nav-traf').classed('nav-btn-sel', true)
 </script>
 
 <script type="text/javascript">
