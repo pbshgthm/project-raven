@@ -911,7 +911,9 @@ function raid_plot() {
         }
         line_data.push([x, y])
     }
-
+    
+    var m_data=r_data.map((x,i)=>((i%12)+1)+','+(Math.floor(i/12)+2005))
+    console.log(m_data)
 
     var a = Array(170).fill(0).map((d, i) => i)
 
@@ -953,8 +955,8 @@ function raid_plot() {
         .attr('opacity', 0.3)
         .attr('stroke', '#FFCC80')
         .attr('stroke-width', 0)
-        .on('mouseover', raid_dot_mouseover)
-        .on('mouseout', raid_dot_mouseout)
+        //.on('mouseover', raid_dot_mouseover)
+        //.on('mouseout', raid_dot_mouseout)
 
     //months
     for (var i = 0; i < line_data.length; i++) {
@@ -1109,6 +1111,7 @@ function raid_plot() {
         subplot_raid(month_data)
     }
 
+    /*
     function raid_dot_mouseover() {
         var _id = d3.select(this).attr('id').split('-')[2]
 
@@ -1129,6 +1132,7 @@ function raid_plot() {
         d3.select('#raid-months-' + _id)
             .style('fill', '#CFD8DC')
     }
+    */
 }
 //---------------------
 
@@ -3094,8 +3098,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#traf-sec').style('display', 'block')
-d3.select('#nav-traf').classed('nav-btn-sel', true)
+d3.select('#raid-sec').style('display', 'block')
+d3.select('#nav-raid').classed('nav-btn-sel', true)
 </script>
 
 <script type="text/javascript">
