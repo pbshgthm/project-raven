@@ -28,7 +28,7 @@
             <div class="nav-btn" id="nav-ind">Industry</div>
         </div>
     </div>
-    <div class="page-sec" id="map-sec">
+    <div class="page-sec" id="map-sec" style="display: block">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
     </div>
@@ -3098,8 +3098,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#raid-sec').style('display', 'block')
-d3.select('#nav-raid').classed('nav-btn-sel', true)
+d3.select('#map-sec').style('display', 'block')
+d3.select('#nav-map').classed('nav-btn-sel', true)
 </script>
 
 <script type="text/javascript">
