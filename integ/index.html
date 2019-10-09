@@ -134,9 +134,9 @@ function mapHeatmap(val, data) {
         });
 
         map.addSource('linemap', {
-                  "type": "geojson",
-                  'lineMetrics': true,
-                  "data": data['line']
+            "type": "geojson",
+            'lineMetrics': true,
+            "data": data['line']
         });
 
 
@@ -204,8 +204,8 @@ function mapHeatmap(val, data) {
             "id": "hm-circle-layer",
             "type": "circle",
             "source": "heatmap",
-            "layout":{
-                "visibility":"none"
+            "layout": {
+                "visibility": "none"
             },
             "paint": {
 
@@ -237,30 +237,30 @@ function mapHeatmap(val, data) {
         }, 'waterway-label');
 
 
-              //line init
-              map.addLayer({
-                    "id": "line-layer",
-                    "type": "line",
-                    "source": "linemap",
-                    "paint": {
-                        'line-width': [
-                            "interpolate",
-                            ["linear"],
-                            ["zoom"],
-                            4, 1,
-                            9, 2
-                            ],
-                        'line-color': '#FF7043',
-                        'line-opacity':0.05,
-                        'line-gradient': [
-                            'interpolate',
-                            ['linear'],
-                            ['line-progress'],
-                            0, "#FFD54F",
-                            1, "#FF7043"
-                            ]
-                    }
-              }, 'waterway-label');
+        //line init
+        map.addLayer({
+            "id": "line-layer",
+            "type": "line",
+            "source": "linemap",
+            "paint": {
+                'line-width': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    4, 1,
+                    9, 2
+                ],
+                'line-color': '#FF7043',
+                'line-opacity': 0.05,
+                'line-gradient': [
+                    'interpolate',
+                    ['linear'],
+                    ['line-progress'],
+                    0, "#FFD54F",
+                    1, "#FF7043"
+                ]
+            }
+        }, 'waterway-label');
         //*/
 
     })
@@ -269,12 +269,12 @@ function mapHeatmap(val, data) {
 
 //------------------------------------------------
 
-function map_state(){
-    state_svg=d3.select("#state-map").append("svg:svg")
-    .attr("width", board_width)
-    .attr("height",  board_height)
-    .append("svg:g")
-    
+function map_state() {
+    state_svg = d3.select("#state-map").append("svg:svg")
+        .attr("width", board_width)
+        .attr("height", board_height)
+        .append("svg:g")
+
 
 
     var proj = d3.geo.mercator();
@@ -286,61 +286,61 @@ function map_state(){
 
 
 
-    var st_type=['from','to']
-    var st_btn_txt={'from':'Factory','to':'Native'}
+    var st_type = ['from', 'to']
+    var st_btn_txt = { 'from': 'Factory', 'to': 'Native' }
 
-    
+
 
     state_svg.selectAll('state-btns')
-    .data(st_type)
-    .enter()
-    .append('rect')
-    .attr('fill','#CFD8DC')
-    .attr('class','st-btn')
-    .attr('id',function(d){return 'st-btn-'+d})
-    .attr('x',function(d,i){return 200+100*i})
-    .attr('y',670)
-    .attr('height',30)
-    .attr('width',70)
-    .attr('rx',15)
-    .attr('ry',15)
-    .attr('cursor','pointer')
-    .on('click',st_type_click)
+        .data(st_type)
+        .enter()
+        .append('rect')
+        .attr('fill', '#CFD8DC')
+        .attr('class', 'st-btn')
+        .attr('id', function(d) { return 'st-btn-' + d })
+        .attr('x', function(d, i) { return 200 + 100 * i })
+        .attr('y', 670)
+        .attr('height', 30)
+        .attr('width', 70)
+        .attr('rx', 15)
+        .attr('ry', 15)
+        .attr('cursor', 'pointer')
+        .on('click', st_type_click)
 
 
     state_svg.selectAll('state-btns-txt')
-    .data(st_type)
-    .enter()
-    .append('text')
-    .attr('x',function(d,i){return 200+100*i+35})
-    .attr('y',670+10)
-    .attr('class','st-btnt')
-    .attr('id',function(d){return 'st-btnt-'+d})
-    .attr("dy", "10px")
-    .attr('text-anchor','middle')
-    .attr('fill','#546E7A')
-    .style("font-size", "14px")
-    .style('font-family', 'Arial')
-    .text(function(d){return st_btn_txt[d]})
-    .attr('cursor','pointer')
-    .on('click',st_type_click)
+        .data(st_type)
+        .enter()
+        .append('text')
+        .attr('x', function(d, i) { return 200 + 100 * i + 35 })
+        .attr('y', 670 + 10)
+        .attr('class', 'st-btnt')
+        .attr('id', function(d) { return 'st-btnt-' + d })
+        .attr("dy", "10px")
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#546E7A')
+        .style("font-size", "14px")
+        .style('font-family', 'Arial')
+        .text(function(d) { return st_btn_txt[d] })
+        .attr('cursor', 'pointer')
+        .on('click', st_type_click)
 
 
-    curr_st='from'
+    curr_st = 'from'
 
-    d3.select('#st-btn-from').attr('fill','#4FC3F7')
-    d3.select('#st-btnt-from').attr('fill','white')
+    d3.select('#st-btn-from').attr('fill', '#4FC3F7')
+    d3.select('#st-btnt-from').attr('fill', 'white')
 
-    function st_type_click(){
-        var _id=d3.select(this).attr('id').split('-')[2]
-        curr_st=_id
+    function st_type_click() {
+        var _id = d3.select(this).attr('id').split('-')[2]
+        curr_st = _id
         plot_st_data(sel_state)
 
-        d3.selectAll('.st-btn').attr('fill','#CFD8DC')
-        d3.select('#st-btn-'+_id).attr('fill','#4FC3F7')
+        d3.selectAll('.st-btn').attr('fill', '#CFD8DC')
+        d3.select('#st-btn-' + _id).attr('fill', '#4FC3F7')
 
-        d3.selectAll('.st-btnt').attr('fill','#546E7A')
-        d3.select('#st-btnt-'+_id).attr('fill','white')
+        d3.selectAll('.st-btnt').attr('fill', '#546E7A')
+        d3.select('#st-btnt-' + _id).attr('fill', 'white')
     }
 
     var state_map = state_svg.selectAll("path")
@@ -350,58 +350,58 @@ function map_state(){
         .append("path");
 
     state_map.merge(entering)
-        .attr('d',path)
-        .attr('id',function(d){return 'state-'+d.id.replace(' ','_')})
-        .attr('class','statemap-states')
-        .on('click',state_map_click)
+        .attr('d', path)
+        .attr('id', function(d) { return 'state-' + d.id.replace(' ', '_') })
+        .attr('class', 'statemap-states')
+        .on('click', state_map_click)
         .transition().duration(500)
         .style('stroke', 'white')
         .style('stroke-width', 1)
         .style("fill", '#CFD8DC')
         .style("opacity", 0.7)
-        
-    
-    var curr_st_dict={
-        'from':'raid',
-        'to':'native'
+
+
+    var curr_st_dict = {
+        'from': 'raid',
+        'to': 'native'
     }
 
-    function state_map_click(){
+    function state_map_click() {
 
-        var _id=d3.select(this).attr('id').split('-')[1].replace('_',' ')
-        sel_state=_id
+        var _id = d3.select(this).attr('id').split('-')[1].replace('_', ' ')
+        sel_state = _id
         plot_st_data(sel_state)
-        
+
     }
 
 
-    function plot_st_data(st){
+    function plot_st_data(st) {
 
 
-        subplot_age(curr_st_dict[curr_st]+'_v_area', sel_state, state_age_svg,'Children from Maharashtra')
-        subplot_indst(curr_st_dict[curr_st]+'_v_area', sel_state, state_indst_svg)
+        subplot_age(curr_st_dict[curr_st] + '_v_area', sel_state, state_age_svg, 'Children from Maharashtra')
+        subplot_indst(curr_st_dict[curr_st] + '_v_area', sel_state, state_indst_svg)
         subplot_amount(
-            Data.subPlot(curr_st_dict[curr_st]+'_v_area',sel_state,'paramt'),
-            state_paramt_svg,'Traffick price')
+            Data.subPlot(curr_st_dict[curr_st] + '_v_area', sel_state, 'paramt'),
+            state_paramt_svg, 'Traffick price')
 
 
-        d3.selectAll('.statemap-states').style('fill','#CFD8DC')
-        
-        var data=Data.stateStats(st)
-        
-        var st_data=data[curr_st]
-        var f_max=st_data.reduce((max,x)=>max>x[1]?max:x[1],0)
-        
+        d3.selectAll('.statemap-states').style('fill', '#CFD8DC')
 
-        for(var i=0;i<st_data.length;i++){
-            
-            var s=st_data[i][0].replace(' ','_')
-            var clr_dict={
-                'from':d3.interpolateOranges(0.2+0.5*(st_data[i][1]/f_max)),
-                'to':d3.interpolateBlues(0.3+0.5*(st_data[i][1]/f_max))
+        var data = Data.stateStats(st)
+
+        var st_data = data[curr_st]
+        var f_max = st_data.reduce((max, x) => max > x[1] ? max : x[1], 0)
+
+
+        for (var i = 0; i < st_data.length; i++) {
+
+            var s = st_data[i][0].replace(' ', '_')
+            var clr_dict = {
+                'from': d3.interpolateOranges(0.2 + 0.5 * (st_data[i][1] / f_max)),
+                'to': d3.interpolateBlues(0.3 + 0.5 * (st_data[i][1] / f_max))
             }
 
-            d3.select('#state-'+s).style('fill',clr_dict[curr_st]) 
+            d3.select('#state-' + s).style('fill', clr_dict[curr_st])
 
         }
 
@@ -412,72 +412,72 @@ function map_state(){
         d3.selectAll(".state-title-desc").remove();
 
 
-        if(curr_st=='to')
-            curr_st_list=['From','To']
+        if (curr_st == 'to')
+            curr_st_list = ['From', 'To']
         else
-            curr_st_list=['To','From']
+            curr_st_list = ['To', 'From']
 
         state_svg.selectAll("state-title")
-        .data(curr_st_list)
-        .enter()
-        .append('text')
-        .attr('class','state-title-desc')
-        .attr("x", 500)
-        .attr("y", function(d,i){return 350+50*i})
-        .attr("dy", "10px")
-        .style("font-size", "16px")
-        .style('fill','#78909C')
-        .style('font-style','italic')
-        .style('font-family', 'Arial')
-        .text(function(d){return d});
+            .data(curr_st_list)
+            .enter()
+            .append('text')
+            .attr('class', 'state-title-desc')
+            .attr("x", 500)
+            .attr("y", function(d, i) { return 350 + 50 * i })
+            .attr("dy", "10px")
+            .style("font-size", "16px")
+            .style('fill', '#78909C')
+            .style('font-style', 'italic')
+            .style('font-family', 'Arial')
+            .text(function(d) { return d });
 
         state_svg
-        .append('text')
-        .attr("x", 500)
-        .attr("y", 370)
-        .attr("class","state-title")
-        .attr("dy", "10px")
-        .style("font-size", "18px")
-        .style('fill','#2196F3')
-        .style('font-family', 'Arial')
-        .text(sel_state);
+            .append('text')
+            .attr("x", 500)
+            .attr("y", 370)
+            .attr("class", "state-title")
+            .attr("dy", "10px")
+            .style("font-size", "18px")
+            .style('fill', '#2196F3')
+            .style('font-family', 'Arial')
+            .text(sel_state);
 
 
         state_svg.selectAll("name")
-        .data(st_data)
-        .enter()
-        .append('text')
-        .attr('class','state-text-name')
-        .attr("x", 500)
-        .attr("y", function(d, i) { return 420 + 20 * i })
-        .attr("dy", "10px")
-        .style("font-size", "15px")
-        .style('font-family', 'Arial')
-        .attr('fill', '#B0BEC5')
-        .text(function(d) { return d[0]; });
+            .data(st_data)
+            .enter()
+            .append('text')
+            .attr('class', 'state-text-name')
+            .attr("x", 500)
+            .attr("y", function(d, i) { return 420 + 20 * i })
+            .attr("dy", "10px")
+            .style("font-size", "15px")
+            .style('font-family', 'Arial')
+            .attr('fill', '#B0BEC5')
+            .text(function(d) { return d[0]; });
 
 
         state_svg.selectAll("count")
-        .data(st_data)
-        .enter()
-        .append('text')
-        .attr('class','state-text-count')
-        .attr('text-anchor','end')
-        .attr("x", 650)
-        .attr("y", function(d, i) { return 420 + 20 * i })
-        .attr("dy", "10px")
-        .style("font-size", "15px")
-        .style('font-family', 'Arial')
-        .attr('fill', '#607D8B')
-        .text(function(d) { return d[1]; });
+            .data(st_data)
+            .enter()
+            .append('text')
+            .attr('class', 'state-text-count')
+            .attr('text-anchor', 'end')
+            .attr("x", 650)
+            .attr("y", function(d, i) { return 420 + 20 * i })
+            .attr("dy", "10px")
+            .style("font-size", "15px")
+            .style('font-family', 'Arial')
+            .attr('fill', '#607D8B')
+            .text(function(d) { return d[1]; });
 
 
-        d3.select('#state-'+st.replace(' ','_')).style('fill','#607D8B')
-        
+        d3.select('#state-' + st.replace(' ', '_')).style('fill', '#607D8B')
+
     }
     plot_st_data(sel_state)
 
-    
+
 }
 
 //MAIN PLOTS -------------------------------------
@@ -508,18 +508,18 @@ function age_plot() {
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
         .text(function(d, i) { return i + 1; })
-        .attr('cursor','pointer')
+        .attr('cursor', 'pointer')
         .on('mouseover', age_mouseover)
         .on('mouseout', age_mouseout)
         .on('click', age_click)
 
 
 
-    function agebars_plot(data,clr) {
-        
-        var scale=1;
-        var max=data.reduce((max,i)=>max>i?max:i,0)
-        scale=250/max
+    function agebars_plot(data, clr) {
+
+        var scale = 1;
+        var max = data.reduce((max, i) => max > i ? max : i, 0)
+        scale = 250 / max
         var age_bars = age_svg.selectAll("rect")
             .data(data)
 
@@ -539,33 +539,36 @@ function age_plot() {
             .attr("x", function(d, i) { return 50 + i * 30 })
             .attr("width", 25)
             .attr('opacity', 0.5)
-            .attr("y", function(d, i) { return 400 - d*scale; })
-            .attr("height", function(d, i) { return d*scale; })
-            
+            .attr("y", function(d, i) { return 400 - d * scale; })
+            .attr("height", function(d, i) { return d * scale; })
+
     }
 
 
-    var age_btn = ['since','age']
+    var age_btn = ['since', 'age']
 
-    for(var k=0;k<10;k++){
-    age_svg.selectAll('age-btns')
-        .data(age_btn)
-        .enter()
-        .append('circle')
-        .attr('class',function(d){return 'age-btn '+'ab-'+d})
-        .attr('fill', '#CFD8DC')
-        .attr('cx', function(d, i) { return 7*k+300 + i * 150 })
-        .attr('cy', 600)
-        .attr('r', 17)
-        .attr('cursor','pointer')
-        .on('click', age_btn_click)
+    for (var k = 0; k < 10; k++) {
+        age_svg.selectAll('age-btns')
+            .data(age_btn)
+            .enter()
+            .append('circle')
+            .attr('class', function(d) { return 'age-btn ' + 'ab-' + d })
+            .attr('fill', '#CFD8DC')
+            .attr('cx', function(d, i) { return 7 * k + 300 + i * 150 })
+            .attr('cy', 600)
+            .attr('r', 17)
+            .attr('cursor', 'pointer')
+            .on('click', age_btn_click)
     }
 
-    var ag_btn_t=[['since','Trafficked'],['age','Rescued']]
+    var ag_btn_t = [
+        ['since', 'Trafficked'],
+        ['age', 'Rescued']
+    ]
     age_svg.selectAll('btn-txt')
         .data(ag_btn_t)
         .enter().append('text')
-        .attr('class', function(d, i) { return 'age-btnt '+'abt-'+d[0] })
+        .attr('class', function(d, i) { return 'age-btnt ' + 'abt-' + d[0] })
         .attr('text-anchor', 'middle')
         .attr("x", function(d, i) { return 332.5 + i * 150 })
         .attr("y", 596)
@@ -573,31 +576,31 @@ function age_plot() {
         .style("font-size", "15px")
         .style('font-family', 'Arial')
         .attr('fill', '#78909C')
-        .attr('cursor','pointer')
-        .text(function(d, i) { return d[1]})
+        .attr('cursor', 'pointer')
+        .text(function(d, i) { return d[1] })
         .on('click', age_btn_click)
-        
+
 
 
     var agedata_dict = {
-        'age': [age_bins,'#FFB74D'],
-        'since': [since_bins,'#4DD0E1']
+        'age': [age_bins, '#FFB74D'],
+        'since': [since_bins, '#4DD0E1']
     }
-    agebars_plot(age_bins,'#FFB74D');
-    d3.selectAll('.ab-age').attr('fill','#90CAF9');
-    d3.selectAll('.abt-age').attr('fill','white');
+    agebars_plot(age_bins, '#FFB74D');
+    d3.selectAll('.ab-age').attr('fill', '#90CAF9');
+    d3.selectAll('.abt-age').attr('fill', 'white');
 
     function age_btn_click() {
 
         var _id = d3.select(this).attr('class').split('-')[2]
         console.log(_id)
-        agebars_plot(agedata_dict[_id][0],agedata_dict[_id][1])
+        agebars_plot(agedata_dict[_id][0], agedata_dict[_id][1])
 
-        d3.selectAll('.age-btn').attr('fill','#CFD8DC')
-        d3.selectAll('.ab-'+_id).attr('fill','#90CAF9')
+        d3.selectAll('.age-btn').attr('fill', '#CFD8DC')
+        d3.selectAll('.ab-' + _id).attr('fill', '#90CAF9')
 
-        d3.selectAll('.age-btnt').attr('fill','#78909C')
-        d3.selectAll('.abt-'+_id).attr('fill','white')
+        d3.selectAll('.age-btnt').attr('fill', '#78909C')
+        d3.selectAll('.abt-' + _id).attr('fill', 'white')
     }
 
     function age_mouseover() {
@@ -667,10 +670,10 @@ function traf_plot() {
         .attr("width", board_width)
         .attr("height", board_height)
         .style('background-color', 'white')
-        //.call(d3.zoom().on("zoom", function() {
-        //    traf_svg.attr("transform", d3.event.transform)
-        //}))
-        //.append("g")
+    //.call(d3.zoom().on("zoom", function() {
+    //    traf_svg.attr("transform", d3.event.transform)
+    //}))
+    //.append("g")
 
 
 
@@ -680,36 +683,36 @@ function traf_plot() {
 
 
     var scale = d3.scaleLinear()
-                  .domain([-250, 250])
-                  .range([500, 0]);
+        .domain([-250, 250])
+        .range([500, 0]);
 
     var y_axis = d3.axisLeft()
-                  .scale(scale)
-                  .ticks(10)
+        .scale(scale)
+        .ticks(10)
 
 
     function customYAxis(g) {
         g.call(y_axis);
-        
+
         g.selectAll("path")
-        .attr("opacity", "0")
+            .attr("opacity", "0")
 
         g.selectAll("line")
-        .attr("stroke", "#90A4AE")
+            .attr("stroke", "#90A4AE")
 
 
         g.selectAll("text")
-        .attr("fill", "#90A4AE")
-        .text(function(d){return d<0?-d:d})
+            .attr("fill", "#90A4AE")
+            .text(function(d) { return d < 0 ? -d : d })
     }
 
 
-        traf_svg.append('g')
-        .attr('class','y axis')
+    traf_svg.append('g')
+        .attr('class', 'y axis')
         .attr("transform", "translate(30, 50)")
         .call(customYAxis);
 
-    
+
 
 
     var traf_box = traf_svg.selectAll("traf-box")
@@ -911,9 +914,11 @@ function raid_plot() {
         }
         line_data.push([x, y])
     }
-    
-    var m_data=r_data.map((x,i)=>((i%12)+1)+','+(Math.floor(i/12)+2005))
-    console.log(m_data)
+
+    var m_data = r_data.map((x, i) => [(i % 12) + 1, Math.floor(i / 12) + 2005])
+
+
+
 
     var a = Array(170).fill(0).map((d, i) => i)
 
@@ -955,8 +960,8 @@ function raid_plot() {
         .attr('opacity', 0.3)
         .attr('stroke', '#FFCC80')
         .attr('stroke-width', 0)
-        //.on('mouseover', raid_dot_mouseover)
-        //.on('mouseout', raid_dot_mouseout)
+    //.on('mouseover', raid_dot_mouseover)
+    //.on('mouseout', raid_dot_mouseout)
 
     //months
     for (var i = 0; i < line_data.length; i++) {
@@ -968,8 +973,8 @@ function raid_plot() {
             .attr('rx', 6.5)
             .attr('ry', 6.5)
             .attr('width', 14)
-            .attr('height', 30)
-            .attr('fill', '#CFD8DC')
+            .attr('height', (i - 1) % 12 == 0 ? 37 : 30)
+            .attr('fill', (i - 1) % 12 == 0 ? '#B0BEC5' : '#CFD8DC')
             .style("stroke", "white")
             .style("stroke-width", 3)
             .attr('opacity', 0.6)
@@ -1111,28 +1116,16 @@ function raid_plot() {
         subplot_raid(month_data)
     }
 
-    /*
-    function raid_dot_mouseover() {
-        var _id = d3.select(this).attr('id').split('-')[2]
+    raid_svg.selectAll('r_month-marker')
+        .data(m_data)
+        .enter()
+        .append('text')
+        .attr('x', function(d, i) { return -1300 + 10 + 14 * (i + 1) })
+        .attr('y', 440)
+        .attr('fill', '#90A4AE')
+        .attr('text-anchor', 'middle')
+        .text(function(d, i) { return i % 12 == 0 ? d[1] : "" })
 
-        d3.select(this)
-            .attr('fill', '#EF6C00')
-            .attr('opacity', 0.8)
-
-        d3.select('#raid-months-' + _id)
-            .style('fill', '#FFC107')
-    }
-
-    function raid_dot_mouseout() {
-        var _id = d3.select(this).attr('id').split('-')[2]
-        if (_id == curr_raid_month) return;
-        d3.select(this)
-            .attr('fill', '#EF6C00')
-            .attr('opacity', 0.3)
-        d3.select('#raid-months-' + _id)
-            .style('fill', '#CFD8DC')
-    }
-    */
 }
 //---------------------
 
@@ -1459,8 +1452,8 @@ function indust_plot() {
 //MAP CONTROLS -------
 function map_controls() {
 
-    map.on('load', function(){
-        map.setLayoutProperty('line-layer','visibility','none')    
+    map.on('load', function() {
+        map.setLayoutProperty('line-layer', 'visibility', 'none')
     });
     var heatmap_clrs = {
         'native': [
@@ -1493,7 +1486,7 @@ function map_controls() {
     age_bars = age_bars.map((x, i) => i)
 
 
-    var loc_dict=['native','raid','line']
+    var loc_dict = ['native', 'raid', 'line']
 
 
     map_controls_svg.selectAll('loc-btn')
@@ -1502,14 +1495,14 @@ function map_controls() {
         .append("rect")
         .attr("fill", "#ECEFF1")
         .attr('class', 'mc-loc')
-        .attr('id', function(d){return 'mc-loc-'+d})
-        .attr("x", function(d,i){return 10+100*i})
-        .attr('width',80)
-        .attr('height',30)
-        .attr('rx',15)
-        .attr('ry',15)
+        .attr('id', function(d) { return 'mc-loc-' + d })
+        .attr("x", function(d, i) { return 10 + 100 * i })
+        .attr('width', 80)
+        .attr('height', 30)
+        .attr('rx', 15)
+        .attr('ry', 15)
         .attr("y", 50)
-        .attr('cursor','pointer')
+        .attr('cursor', 'pointer')
         .on('click', mc_loc_click)
 
     map_controls_svg.selectAll('loc-text')
@@ -1518,80 +1511,80 @@ function map_controls() {
         .append("text")
         .attr("fill", "#78909C")
         .attr('class', 'mc-loct')
-        .attr('id', function(d){return 'mc-loct-'+d})
-        .attr("x", function(d,i){return 10+100*i+40})
+        .attr('id', function(d) { return 'mc-loct-' + d })
+        .attr("x", function(d, i) { return 10 + 100 * i + 40 })
         .style('font-family', 'Arial')
         .style("font-size", "15px")
-        .attr('text-anchor','middle')
-        .attr("y", 50+20)
-        .text(function(d){return d.charAt(0).toUpperCase() + 
-           d.slice(1); })
-        .attr('cursor','pointer')
+        .attr('text-anchor', 'middle')
+        .attr("y", 50 + 20)
+        .text(function(d) {
+            return d.charAt(0).toUpperCase() +
+                d.slice(1);
+        })
+        .attr('cursor', 'pointer')
         .on('click', mc_loc_click)
 
     map_controls_svg
         .append("text")
-        .attr("x",10)
+        .attr("x", 10)
         .attr("y", 30)
         .style("font-size", "17px")
-        .style('fill','#039BE5')
+        .style('fill', '#039BE5')
         .style('font-family', 'Arial')
         .text('Location type')
 
-    
+
 
     function mc_loc_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
         map_loc = _id
-        
-        if(_id=='line'){
+
+        if (_id == 'line') {
 
             map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
             map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
-            map.setLayoutProperty('line-layer','visibility','visible')
-        }
-        else{
+            map.setLayoutProperty('line-layer', 'visibility', 'visible')
+        } else {
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds['point']);
             map.getSource('linemap').setData(new_crds['line']);
 
             map.setPaintProperty('heatmap-layer', 'heatmap-color', heatmap_clrs[_id])
-            map.setLayoutProperty('line-layer','visibility','none')
-            if(is_hm=='y'){
+            map.setLayoutProperty('line-layer', 'visibility', 'none')
+            if (is_hm == 'y') {
                 map.setLayoutProperty('heatmap-layer', 'visibility', 'visible');
                 map.setLayoutProperty('hm-circle-layer', 'visibility', 'visible');
-            }
-            else{
+            } else {
                 map.setLayoutProperty('heatmap-layer', 'visibility', 'none');
                 map.setLayoutProperty('hm-circle-layer', 'visibility', 'none');
             }
-            
-            
+
+
         }
 
         d3.selectAll('.mc-loc')
             .attr('fill', '#ECEFF1')
 
-        d3.select('#mc-loc-'+_id)
+        d3.select('#mc-loc-' + _id)
             .attr('fill', '#4FC3F7')
 
         d3.selectAll('.mc-loct')
             .attr('fill', '#78909C')
 
-        d3.select('#mc-loct-'+_id)
+        d3.select('#mc-loct-' + _id)
             .attr('fill', 'white')
     }
 
 
 
-    
+
     map_controls_svg
         .append("text")
         .attr("fill", "#90A4AE")
         .attr("x", 8)
         .attr("y", 155)
         .style("font-size", "17px")
-        .style('fill','#039BE5')
+        .style('fill', '#039BE5')
         .style('font-family', 'Arial')
         .text('Age')
 
@@ -1635,7 +1628,7 @@ function map_controls() {
         .on('mouseover', mc_age_mouseover)
         .on('mouseout', mc_age_mouseout)
         .on('click', mc_age_click)
-        .attr('cursor','pointer')
+        .attr('cursor', 'pointer')
 
 
     map_controls_svg
@@ -1652,9 +1645,9 @@ function map_controls() {
         .on('mouseover', mc_age_all_mouseover)
         .on('mouseout', mc_age_all_mouseout)
         .on('click', mc_age_all_click)
-        .attr('cursor','pointer')
+        .attr('cursor', 'pointer')
 
-    
+
 
 
 
@@ -1745,25 +1738,25 @@ function map_controls() {
         .attr("x", 8)
         .attr("y", 295)
         .style("font-size", "17px")
-        .style('fill','#039BE5')
+        .style('fill', '#039BE5')
         .style('font-family', 'Arial')
         .text('Raid Month')
 
     var time_bars = Array(97).fill(0)
     time_bars = time_bars.map((x, i) => i)
 
-    
+
 
     map_controls_svg.selectAll('time-text')
         .data(time_bars)
         .enter()
         .append("text")
         .attr("fill", "#90A4AE")
-        .attr("x", function(d,i){return 10+d*4})
+        .attr("x", function(d, i) { return 10 + d * 4 })
         .attr("y", 370)
-        .attr('text-anchor','middle')
-        .attr('font-size','9px')
-        .text(function(d){return d%12==0?2011+d/12:""})
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .text(function(d) { return d % 12 == 0 ? 2011 + d / 12 : "" })
 
 
     map_controls_svg.selectAll('mc-time-rect')
@@ -1785,10 +1778,10 @@ function map_controls() {
         .enter()
         .append("rect")
         .attr("fill", "#CFD8DC")
-        .attr("x", function(d,i){return 10+d*4+0.5})
+        .attr("x", function(d, i) { return 10 + d * 4 + 0.5 })
         .attr("y", 330)
-        .attr('height',function(d){return d%12==0?25:0})
-        .attr('width',1)
+        .attr('height', function(d) { return d % 12 == 0 ? 25 : 0 })
+        .attr('width', 1)
 
     var drag = d3.drag().subject(function(d) {
             return d == null ? { x: d3.event.x, y: d3.event.y } : d;
@@ -1977,14 +1970,14 @@ function map_controls() {
         .attr("x", 8)
         .attr("y", 450)
         .style("font-size", "17px")
-        .style('fill','#039BE5')
+        .style('fill', '#039BE5')
         .style('font-family', 'Arial')
         .text('Industries')
 
 
-    var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags", "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office", "Electrical & Electronics", "Leather", "Jewellery","_others", ""]
+    var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags", "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office", "Electrical & Electronics", "Leather", "Jewellery", "_others", ""]
 
-    var indst_c_list = ["Garment", "Hotel", "Footwear", "Handicraft", "Cloth Bags", "Cosmetic", "Servant", "Automobile", "Metal", "Retail Shop", "Electronics", "Leather","Jewellery","Others", "Unknown"]
+    var indst_c_list = ["Garment", "Hotel", "Footwear", "Handicraft", "Cloth Bags", "Cosmetic", "Servant", "Automobile", "Metal", "Retail Shop", "Electronics", "Leather", "Jewellery", "Others", "Unknown"]
 
     var ind_list = [];
     for (var i = 0; i < indst_r_list.length; i++) {
@@ -1997,7 +1990,7 @@ function map_controls() {
         .append("text")
         .attr("fill", "#546E7A")
         .attr("x", function(d) { return d[0] + 35 })
-        .attr("y", function(d) { return d[1] +2})
+        .attr("y", function(d) { return d[1] + 2 })
         .attr('text-anchor', 'middle')
         .style("font-size", "12px")
         .style('font-family', 'Arial')
@@ -2029,7 +2022,7 @@ function map_controls() {
         .append("text")
         .attr("fill", "#546E7A")
         .attr("x", 53)
-        .attr("y", 475 +16)
+        .attr("y", 475 + 16)
         .attr('text-anchor', 'middle')
         .style("font-size", "12px")
         .style('font-family', 'Arial')
@@ -2056,7 +2049,7 @@ function map_controls() {
         .append("text")
         .attr("fill", "#546E7A")
         .attr("x", 293)
-        .attr("y", 475 +16)
+        .attr("y", 475 + 16)
         .attr('text-anchor', 'middle')
         .style("font-size", "12px")
         .style('font-family', 'Arial')
@@ -2199,7 +2192,7 @@ function subplot_indst(src, val, board) {
 
     var data = Data.subPlot(src, val, "indst");
     var sum = data.reduce((sum, i) => sum + i[1], 0);
-    var max = data.reduce((max,i)=>max>i[1]?max:i[1],0)
+    var max = data.reduce((max, i) => max > i[1] ? max : i[1], 0)
 
     var bar_ratio = Array(10).fill(0)
     for (var i = 0; i < data.length; i++) {
@@ -2208,43 +2201,43 @@ function subplot_indst(src, val, board) {
         bar_ratio[ind] = data[i][1]
     }
 
-    if(data.length!=0)
-        bar_ratio = bar_ratio.map(x => 200*x / max)
+    if (data.length != 0)
+        bar_ratio = bar_ratio.map(x => 200 * x / max)
 
-    
-    
+
+
     var scale = d3.scaleLinear()
-                  .domain([0,max])
-                  .range([20, 220]);
+        .domain([0, max])
+        .range([20, 220]);
 
     var x_axis = d3.axisBottom()
-                  .scale(scale)
-                  .ticks(5)
+        .scale(scale)
+        .ticks(5)
 
 
     function customXAxis(g) {
         g.call(x_axis);
-        
+
         g.selectAll("path")
-        .attr("opacity", "0")
+            .attr("opacity", "0")
 
         g.selectAll("line")
-        .attr("stroke", "#90A4AE")
+            .attr("stroke", "#90A4AE")
 
 
         g.selectAll("text")
-        .attr("fill", "#90A4AE")
+            .attr("fill", "#90A4AE")
     }
 
 
-    var selected = d3.select('#title'+board.attr('id'));
-    if (selected['_groups'][0][0] == null) { 
+    var selected = d3.select('#title' + board.attr('id'));
+    if (selected['_groups'][0][0] == null) {
         board.append('g')
-        .attr('class','x axis')
-        .attr("transform", "translate(140, 210)")
-        .call(customXAxis);
+            .attr('class', 'x axis')
+            .attr("transform", "translate(140, 210)")
+            .call(customXAxis);
 
-    } else { 
+    } else {
         board.select(".x.axis")
             .transition()
             .duration(500)
@@ -2252,17 +2245,17 @@ function subplot_indst(src, val, board) {
     }
 
 
-    d3.select('#title'+board.attr('id')).remove();
-    d3.selectAll('.subage'+board.attr('id')).remove();
+    d3.select('#title' + board.attr('id')).remove();
+    d3.selectAll('.subage' + board.attr('id')).remove();
 
     board
         .append('text')
-        .attr("x", sub_indst_width/2)
+        .attr("x", sub_indst_width / 2)
         .attr("y", 10)
-        .attr('id','title'+board.attr('id'))
+        .attr('id', 'title' + board.attr('id'))
         .attr("dy", "10px")
         .style("font-size", "15px")
-        .attr('text-anchor','middle')
+        .attr('text-anchor', 'middle')
         .style('font-family', 'Arial')
         .attr('fill', '#607D8B')
         .text('Industry distribution');
@@ -2273,7 +2266,7 @@ function subplot_indst(src, val, board) {
         .data(s_ind_clean)
         .enter().append('text')
         .attr('text-anchor', 'end')
-        .attr('class','subage'+board.attr('id'))
+        .attr('class', 'subage' + board.attr('id'))
         .attr("x", 145)
         .attr("y", function(d, i) { return 44 + 17 * i })
         .attr("dy", "10px")
@@ -2331,9 +2324,9 @@ function subplot_map(src, val, loc, board) {
     var max_val = clr_data.reduce((max, x) => x[1] > max ? x[1] : max, 0)
 
 
-    clr_data.sort(function(a,b){return b[1]-a[1]})
-    var txt_data=clr_data.map(x => [code_to_state[x[0]], x[1]])
-    
+    clr_data.sort(function(a, b) { return b[1] - a[1] })
+    var txt_data = clr_data.map(x => [code_to_state[x[0]], x[1]])
+
 
     var colorise = d3.scaleSequential().domain([2 * max_val, -max_val / 5])
         .interpolator(d3.interpolateInferno);
@@ -2344,15 +2337,15 @@ function subplot_map(src, val, loc, board) {
         clr_dict[clr_data[i][0]] = clr_data[i][1]
 
 
-    d3.select('#title'+board.attr('id')).remove();
+    d3.select('#title' + board.attr('id')).remove();
     board
         .append('text')
-        .attr("x", sub_indst_width/2)
+        .attr("x", sub_indst_width / 2)
         .attr("y", 10)
-        .attr('id','title'+board.attr('id'))
+        .attr('id', 'title' + board.attr('id'))
         .attr("dy", "10px")
         .style("font-size", "15px")
-        .attr('text-anchor','middle')
+        .attr('text-anchor', 'middle')
         .style('font-family', 'Arial')
         .attr('fill', '#607D8B')
         .text('Native state distribution');
@@ -2381,13 +2374,13 @@ function subplot_map(src, val, loc, board) {
 
     if (clr_data.length < 5)
         clr_data = clr_data.concat(Array(5 - clr_data.length).fill(['', 'none']))
-    
-    d3.selectAll('.submap'+board.attr('id')).remove()
+
+    d3.selectAll('.submap' + board.attr('id')).remove()
     board.selectAll('map-text')
         .data(txt_data.slice(0, 5))
         .enter()
         .append('text')
-        .attr('class','submap'+board.attr('id'))
+        .attr('class', 'submap' + board.attr('id'))
         .attr("x", 230)
         .attr("y", function(d, i) { return 130 + 17 * i })
         .attr("dy", "10px")
@@ -2400,15 +2393,15 @@ function subplot_map(src, val, loc, board) {
         .data(txt_data.slice(0, 5))
         .enter()
         .append('text')
-        .attr('class','submap'+board.attr('id'))
+        .attr('class', 'submap' + board.attr('id'))
         .attr("x", 350)
-        .attr('text-anchor','end')
+        .attr('text-anchor', 'end')
         .attr("y", function(d, i) { return 130 + 17 * i })
         .attr("dy", "10px")
         .style("font-size", "13px")
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
-        .text(function(d, i) { return d[1]});
+        .text(function(d, i) { return d[1] });
 
 }
 //---------------------
@@ -2416,7 +2409,7 @@ function subplot_map(src, val, loc, board) {
 
 // AGE SUB PLOT -------
 function subplot_age(src, val, board) {
-    
+
 
     var data = Data.subPlot(src, val, "age");
     var num_data = Array(20).fill(0)
@@ -2424,63 +2417,63 @@ function subplot_age(src, val, board) {
         num_data[parseInt(data[i][0]) - 1] = data[i][1]
 
     var sum = num_data.reduce((sum, i) => sum + i, 0)
-    var max = num_data.reduce((max,i)=> max>i?max:i,0)
+    var max = num_data.reduce((max, i) => max > i ? max : i, 0)
 
-    if(data.length!=0)
-        num_data = num_data.map(x => 180*x / max)
-                       
+    if (data.length != 0)
+        num_data = num_data.map(x => 180 * x / max)
+
 
     var scale = d3.scaleLinear()
-                  .domain([0, max])
-                  .range([200, 20]);
+        .domain([0, max])
+        .range([200, 20]);
 
     var y_axis = d3.axisLeft()
-                  .scale(scale)
-                  .ticks(5)
+        .scale(scale)
+        .ticks(5)
 
 
     function customYAxis(g) {
         g.call(y_axis);
-        
+
         g.selectAll("path")
-        .attr("opacity", "0")
+            .attr("opacity", "0")
 
         g.selectAll("line")
-        .attr("stroke", "#90A4AE")
+            .attr("stroke", "#90A4AE")
 
 
         g.selectAll("text")
-        .attr("fill", "#90A4AE")
+            .attr("fill", "#90A4AE")
     }
 
 
-    var selected = d3.select('#title'+board.attr('id'));
-    if (selected['_groups'][0][0] == null) { 
+    var selected = d3.select('#title' + board.attr('id'));
+    if (selected['_groups'][0][0] == null) {
         board.append('g')
-        .attr('class','y axis')
-        .attr("transform", "translate(30, 10)")
-        .call(customYAxis);
+            .attr('class', 'y axis')
+            .attr("transform", "translate(30, 10)")
+            .call(customYAxis);
 
-    } else { 
+    } else {
         board.select(".y.axis")
             .transition()
             .duration(500)
             .call(customYAxis);
-    }        
+    }
 
-    
-    board.select('#title'+board.attr('id')).remove()
-    board.selectAll('.subagetxt'+board.attr('id')).remove()
+
+    board.select('#title' + board.attr('id')).remove()
+    board.selectAll('.subagetxt' + board.attr('id')).remove()
 
     board
         .append('text')
-        .attr('id','title'+board.attr('id'))
-        .attr("x", sub_age_width/2)
+        .attr('id', 'title' + board.attr('id'))
+        .attr("x", sub_age_width / 2)
         .attr("y", 10)
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
-        .attr('text-anchor','middle')
+        .attr('text-anchor', 'middle')
         .attr('fill', '#607D8B')
         .text('Age distribution');
 
@@ -2489,7 +2482,7 @@ function subplot_age(src, val, board) {
         .data(num_data)
         .enter().append('text')
         .attr('text-anchor', 'end')
-        .attr('class','subagetxt'+board.attr('id'))
+        .attr('class', 'subagetxt' + board.attr('id'))
         .attr("x", function(d, i) { return 35 + 17 * i })
         .attr("y", 215)
         .attr("dy", "10px")
@@ -2532,18 +2525,78 @@ function subplot_raid(month_data) {
     for (var i = 0; i < month_data.length; i++) {
         var r = 5 + month_data[i][3]
         var y = 100 + 20 + i * 75;
-        raid_cir.push([50, y, r, month_data[i][0], month_data[i][1],month_data[i][2]])
+        raid_cir.push([50, y, r, month_data[i][0], month_data[i][1], month_data[i][2]])
     }
 
-    var padd = Array(40 - month_data.length).fill([50, raid_cir[month_data.length - 1][1], 0, '', '',''])
-    
+    var padd = Array(40 - month_data.length).fill([50, raid_cir[month_data.length - 1][1], 0, '', '', ''])
+
     raid_cir = raid_cir.concat(padd)
+
+
+    raid_sub_svg.selectAll('.raidsub-title').remove()
+
+    var mm = month_dict[parseInt(month_data[0][0].split('/')[1]) - 1]
+    var yy = month_data[0][0].split('/')[2]
+    var nr = month_data.length
+    var nc = month_data.reduce((sum, i) => sum + i[3], 0)
+
+    console.log(month_data)
+    raid_sub_svg
+        .append("text")
+        .attr('class', 'raidsub-title')
+        .attr("x", 50)
+        .attr("y", 20)
+        .attr("dy", "10px")
+        .style("font-size", "17px")
+        .style('font-family', 'Arial')
+        .attr('fill', '#607D8B')
+        .text('Raid Details of')
+        .attr('opacity', 1)
+
+    raid_sub_svg
+        .append("text")
+        .attr('class', 'raidsub-title')
+        .attr("x", 50)
+        .attr("y", 50)
+        .attr("dy", "10px")
+        .attr('fill', '#BF360C')
+        .style("font-size", "20px")
+        .style('font-family', 'Arial')
+        .text(mm + ' ' + yy)
+        .attr('opacity', 1)
+
+    raid_sub_svg
+        .append("text")
+        .attr('class', 'raidsub-title')
+        .attr("x", 30 + sub_raid_width / 2)
+        .attr("y", 40)
+        .attr('fill', '#90A4AE')
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .text('Raid conducted : ' + nr)
+        .attr('opacity', 1)
+
+
+    raid_sub_svg
+        .append("text")
+        .attr('class', 'raidsub-title')
+        .attr("x", 30 + sub_raid_width / 2)
+        .attr("y", 60)
+        .attr('fill', '#90A4AE')
+        .style("font-size", "15px")
+        .style('font-family', 'Arial')
+        .text('Children rescued :' + nc)
+        .attr('opacity', 1)
+
+
     //need handling for no data
     var last_c = raid_cir[month_data.length - 1][1]
-    raid_cir = raid_cir.map(x => [x[0], x[1], x[2], x[3], x[4],x[5]])
+    raid_cir = raid_cir.map(x => [x[0], x[1], x[2], x[3], x[4], x[5]])
 
 
-    raid_dots = raid_cir.map(x => [x[0], x[1], x[2] == 0 ? 0 : 3, x[3], x[4], 1,''])
+    raid_dots = raid_cir.map(x => [x[0], x[1], x[2] == 0 ? 0 : 3, x[3], x[4], 1, ''])
+
+
     var sub_raid_circle = raid_sub_svg.selectAll("circle")
         .data(raid_cir.concat(raid_dots))
 
@@ -2559,14 +2612,15 @@ function subplot_raid(month_data) {
         .attr('opacity', function(d) { return d.length == 6 ? 0.2 : 1 })
 
 
-    raid_sub_svg.selectAll("text").remove();
+    raid_sub_svg.selectAll(".raid_txt_up").remove();
 
-    var sub_raid_date = raid_sub_svg.selectAll("text")
+    var sub_raid_date = raid_sub_svg.selectAll("raidsub")
         .data(raid_cir.concat(raid_dots))
         .enter()
 
     sub_raid_date
         .append("text")
+        .attr('class', 'raid_txt_up')
         .attr("x", 150)
         .attr("y", function(d, i) { return d[1] - 5 })
         .attr("dy", "10px")
@@ -2585,6 +2639,7 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
+        .attr('class', 'raid_txt_up')
         .attr("x", 150)
         .attr("y", function(d, i) { return d[1] + 20 })
         .attr("dy", "10px")
@@ -2602,6 +2657,7 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
+        .attr('class', 'raid_txt_up')
         .attr("x", 150)
         .attr("y", function(d, i) { return d[1] + 37 })
         .attr("dy", "10px")
@@ -2619,19 +2675,21 @@ function subplot_raid(month_data) {
 
     sub_raid_date
         .append("text")
+        .attr('class', 'raid_txt_up')
         .attr("x", 230)
-        .attr("y", function(d, i) { return d[1] -6})
+        .attr("y", function(d, i) { return d[1] - 6 })
         .attr("dy", "10px")
         .style("font-size", "14px")
         .style('font-family', 'Arial')
         .attr('fill', '#78909C')
         .attr('opacity', 0)
-        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : '('+ind_dict[d[5]]+')'})
+        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : '(' + ind_dict[d[5]] + ')' })
         .transition().duration(500)
         .attr('opacity', 1)
 
     sub_raid_date
         .append("text")
+        .attr('class', 'raid_txt_up')
         .attr("x", 100)
         .attr("y", function(d, i) { return d[1] + 20 })
         .attr("dy", "10px")
@@ -2639,7 +2697,7 @@ function subplot_raid(month_data) {
         .style('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
         .attr('opacity', 0)
-        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : d[2] })
+        .text(function(d) { return (d[2] == 0 || d.length == 7) ? "" : d[2] - 5 })
         .transition().duration(500)
         .attr('opacity', 1)
 
@@ -2669,75 +2727,75 @@ function subplot_raid(month_data) {
 //---------------------
 
 // AMOUNT SUB PLOT---------
-function subplot_amount(data, board,title="") {
+function subplot_amount(data, board, title = "") {
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
     var scale = 0
     if (max != 0) scale = 150 / max
-    var bar_data=data.map(x=>x[0]*scale)
+    var bar_data = data.map(x => x[0] * scale)
 
     var Yscale = d3.scaleLinear()
-                  .domain([0, max])
-                  .range([150, 0]);
+        .domain([0, max])
+        .range([150, 0]);
 
     var y_axis = d3.axisLeft()
-                  .scale(Yscale)
-                  .ticks(5)
+        .scale(Yscale)
+        .ticks(5)
 
     var Xscale = d3.scaleLinear()
-                  .domain([0, 1000+data[39][1]])
-                  .range([0, 318.5]);
+        .domain([0, 1000 + data[39][1]])
+        .range([0, 318.5]);
 
     var x_axis = d3.axisBottom()
-                  .scale(Xscale)
-                  .ticks(10)
+        .scale(Xscale)
+        .ticks(10)
 
 
     function customYAxis(g) {
         g.call(y_axis);
-        
+
         g.selectAll("path")
-        .attr("opacity", "0")
+            .attr("opacity", "0")
 
         g.selectAll("line")
-        .attr("stroke", "#90A4AE")
+            .attr("stroke", "#90A4AE")
 
 
         g.selectAll("text")
-        .attr("fill", "#90A4AE")
+            .attr("fill", "#90A4AE")
     }
 
     function customXAxis(g) {
         g.call(x_axis);
-    
+
         g.selectAll("path")
-        .attr("opacity", "0")
+            .attr("opacity", "0")
 
         g.selectAll("line")
-        .attr("stroke", "#90A4AE")
+            .attr("stroke", "#90A4AE")
 
 
         g.selectAll("text")
-        .attr("fill", "#90A4AE")
-        .text(function(d){return d.toString().slice(0,-3)+'k'})
+            .attr("fill", "#90A4AE")
+            .text(function(d) { return d.toString().slice(0, -3) + 'k' })
 
 
     }
 
 
-    var selected = d3.select('#title'+board.attr('id'));
-    if (selected['_groups'][0][0] == null) { 
+    var selected = d3.select('#title' + board.attr('id'));
+    if (selected['_groups'][0][0] == null) {
 
         board.append('g')
-        .attr('class','y axis')
-        .attr("transform", "translate(30, 50)")
-        .call(customYAxis);
+            .attr('class', 'y axis')
+            .attr("transform", "translate(30, 50)")
+            .call(customYAxis);
 
         board.append('g')
-        .attr('class','x axis')
-        .attr("transform", "translate(43.5, 205)")
-        .call(customXAxis);
+            .attr('class', 'x axis')
+            .attr("transform", "translate(43.5, 205)")
+            .call(customXAxis);
 
-    } else { 
+    } else {
         board.select(".y.axis")
             .transition()
             .duration(500)
@@ -2746,19 +2804,19 @@ function subplot_amount(data, board,title="") {
 
 
 
-    d3.selectAll('#title'+board.attr('id')).remove();
+    d3.selectAll('#title' + board.attr('id')).remove();
 
     board
         .append('text')
-        .attr('id','title'+board.attr('id'))
-        .attr("x", sub_age_width/2)
+        .attr('id', 'title' + board.attr('id'))
+        .attr("x", sub_age_width / 2)
         .attr("y", 10)
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
-        .attr('text-anchor','middle')
+        .attr('text-anchor', 'middle')
         .attr('fill', '#607D8B')
-        .text(title+' distribution');
+        .text(title + ' distribution');
 
 
     var amt_bar = board.selectAll('rect')
@@ -2775,8 +2833,8 @@ function subplot_amount(data, board,title="") {
         .attr("width", 7)
         .attr('rx', 0.5)
         .attr('ry', 0.5)
-        .attr("y", function(d) { return 200 - d})
-        .attr("height", function(d) { return d})
+        .attr("y", function(d) { return 200 - d })
+        .attr("height", function(d) { return d })
         .attr('opacity', 0.5)
 
 }
@@ -2859,45 +2917,45 @@ function subplot_indst_loc(indst) {
 //DICTS
 
 ind_dict = {
-        "Abattoirs/Slaughter Houses": "Slaughter Houses",
-        "Agriculture": "Agriculture",
-        "Automobile/Transport": "Automobile",
-        "Bakery": "Bakery",
-        "Brick Kilns & Roof tiles units": "Brick & tiles kilns",
-        "Building and Construction": "Construction",
-        "Carpentry": "Carpentry",
-        "Carpet Industry": "Carpet Industry",
-        "Cosmetic": "Cosmetic",
-        "Cracker Industry": "Cracker Industry",
-        "Curtain Making Unit": "Curtain Making",
-        "Dairy Products": "Dairy Products",
-        "Domestic Servant": "Domestic Servant",
-        "Electrical & Electronics": "Electronics",
-        "Factory": "Factory",
-        "Flour Mill": "Flour Mill",
-        "Footwear": "Footwear",
-        "Garment": "Garment",
-        "Handicraft": "Handicraft",
-        "Hotel/Dhaba": "Hotel",
-        "Jewellery": "Jewellery",
-        "Jute/Plastic/Rexin/Cloth Bags": "Cloth Bags",
-        "Leather": "Leather",
-        "Lock Making": "Lock Making",
-        "Metal": "Metal",
-        "Odd Jobs": "Odd Jobs",
-        "Paint Making Unit": "Paint Making",
-        "Paper Industry": "Paper Industry",
-        "Plastic and Nylon units": "Plastic units",
-        "Printing": "Printing",
-        "Retail Shop/Office": "Retail Shop",
-        "Sculpture Making Unit": "Sculpture Making",
-        "Stone Quarry": "Stone Quarry",
-        "Suitcase Making": "Suitcase Making",
-        "Tobacco & Chewing Tobacco": "Tobacco",
-        "Toy Making Unit": "Toy Making Unit",
-        "Umbrela Making Factory": "Umbrela Factory",
-        "Others": "Others"
-    }
+    "Abattoirs/Slaughter Houses": "Slaughter Houses",
+    "Agriculture": "Agriculture",
+    "Automobile/Transport": "Automobile",
+    "Bakery": "Bakery",
+    "Brick Kilns & Roof tiles units": "Brick & tiles kilns",
+    "Building and Construction": "Construction",
+    "Carpentry": "Carpentry",
+    "Carpet Industry": "Carpet Industry",
+    "Cosmetic": "Cosmetic",
+    "Cracker Industry": "Cracker Industry",
+    "Curtain Making Unit": "Curtain Making",
+    "Dairy Products": "Dairy Products",
+    "Domestic Servant": "Domestic Servant",
+    "Electrical & Electronics": "Electronics",
+    "Factory": "Factory",
+    "Flour Mill": "Flour Mill",
+    "Footwear": "Footwear",
+    "Garment": "Garment",
+    "Handicraft": "Handicraft",
+    "Hotel/Dhaba": "Hotel",
+    "Jewellery": "Jewellery",
+    "Jute/Plastic/Rexin/Cloth Bags": "Cloth Bags",
+    "Leather": "Leather",
+    "Lock Making": "Lock Making",
+    "Metal": "Metal",
+    "Odd Jobs": "Odd Jobs",
+    "Paint Making Unit": "Paint Making",
+    "Paper Industry": "Paper Industry",
+    "Plastic and Nylon units": "Plastic units",
+    "Printing": "Printing",
+    "Retail Shop/Office": "Retail Shop",
+    "Sculpture Making Unit": "Sculpture Making",
+    "Stone Quarry": "Stone Quarry",
+    "Suitcase Making": "Suitcase Making",
+    "Tobacco & Chewing Tobacco": "Tobacco",
+    "Toy Making Unit": "Toy Making Unit",
+    "Umbrela Making Factory": "Umbrela Factory",
+    "Others": "Others"
+}
 
 //---------------
 
@@ -2908,9 +2966,9 @@ var map;
 var map_controls_svg = d3.select("#map-controls")
     .append("svg")
     .attr('display', 'inline-block')
-    .attr("width", map_controls_width+50)
+    .attr("width", map_controls_width + 50)
     .attr("height", map_controls_height)
-    .style('background-color','white')
+    .style('background-color', 'white')
 
 var is_hm = 'y'
 var map_age = 0
@@ -2925,34 +2983,34 @@ map_controls()
 // STATE INIT --------------------
 
 var state_svg
-var curr_st='Maharashtra'
-var sel_state='from'
+var curr_st = 'Maharashtra'
+var sel_state = 'from'
 
 
-var state_age_svg= d3.select("#state-age-sub")
+var state_age_svg = d3.select("#state-age-sub")
     .append("svg")
     .attr('display', 'inline-block')
-    .attr('id','state_age_svg')
+    .attr('id', 'state_age_svg')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
-    .style('background-color','#FBE9E7')
-    
+    .style('background-color', '#FBE9E7')
+
 
 var state_indst_svg = d3.select("#state-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
-    .attr('id','state_indst_svg')
+    .attr('id', 'state_indst_svg')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
-    .style('background-color','#E3F2FD')
+    .style('background-color', '#E3F2FD')
 
 var state_paramt_svg = d3.select('#state-paramt-sub')
     .append("svg")
     .attr('display', 'inline-block')
-    .attr('id','state_paramt_svg')
+    .attr('id', 'state_paramt_svg')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
-    .style('background-color','#F9FBE7')
+    .style('background-color', '#F9FBE7')
 
 map_state();
 
@@ -2969,18 +3027,18 @@ var curr_age
 var age_indst_svg = d3.select("#age-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
-    .attr('id','age_indst_svg')
+    .attr('id', 'age_indst_svg')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
-    .style('background-color','#E3F2FD')
-    
+    .style('background-color', '#E3F2FD')
+
 
 var age_map_svg = d3.select("#age-map-sub").append("svg:svg")
     .attr("width", sub_map_width)
     .attr("height", sub_map_height)
-    .style('background-color','#FFF3E0')
+    .style('background-color', '#FFF3E0')
     .append("svg:g")
-    .attr('id','age_map_svg')
+    .attr('id', 'age_map_svg')
 
 
 age_plot();
@@ -3000,23 +3058,23 @@ var traf_age_svg = d3.select("#traf-age-sub")
     .attr('display', 'inline-block')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
-    .style('background-color','#FBE9E7')
-    .attr('id','traf_age_svg')
+    .style('background-color', '#FBE9E7')
+    .attr('id', 'traf_age_svg')
 
 var traf_indst_svg = d3.select("#traf-indst-sub")
     .append("svg")
     .attr('display', 'inline-block')
     .attr("width", sub_indst_width)
     .attr("height", sub_indst_height)
-    .attr('id','traf_indst_svg')
-    .style('background-color','#E3F2FD')
+    .attr('id', 'traf_indst_svg')
+    .style('background-color', '#E3F2FD')
 
 var traf_map_svg = d3.select("#traf-map-sub").append("svg:svg")
     .attr("width", sub_map_width)
     .attr("height", sub_map_height)
-    .style('background-color','#FFF3E0')
+    .style('background-color', '#FFF3E0')
     .append("svg:g")
-    .attr('id','traf_map_svg')
+    .attr('id', 'traf_map_svg')
 
 
 
@@ -3101,7 +3159,6 @@ d3.selectAll('.nav-btn').on('click', function() {
 d3.select('#map-sec').style('display', 'block')
 d3.select('#nav-map').classed('nav-btn-sel', true)
 </script>
-
 <script type="text/javascript">
 map.on('load', function() {
 
