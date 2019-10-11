@@ -28,7 +28,7 @@
             <div class="nav-btn" id="nav-ind">Industry</div>
         </div>
     </div>
-    <div class="page-sec" id="map-sec" style="display: block">
+    <div class="page-sec" id="map-sec" style="display: block;">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
     </div>
@@ -66,6 +66,7 @@
         <div class="viz-panel">
             <div id="sub-amount-1"></div>
             <div id="sub-amount-2"></div>
+            <div id="sub-amount-3"></div>
         </div>
     </div>
     <div class="page-sec" id="sch-sec">
@@ -1090,7 +1091,7 @@ function raid_plot() {
             .attr('fill', '#EF6C00')
             .attr('opacity', 0.3)
         d3.select('#raid-months-' + _id)
-            .style('fill', '#CFD8DC')
+            .style('fill', (parseInt(_id) - 1) % 12 == 0 ? '#B0BEC5' : '#CFD8DC')
     }
 
     function raid_month_click() {
@@ -1099,7 +1100,7 @@ function raid_plot() {
             .attr('fill', '#EF6C00')
             .attr('opacity', 0.3)
         d3.select('#raid-months-' + _id)
-            .style('fill', '#CFD8DC')
+            .style('fill', (parseInt(_id) - 1) % 12 == 0 ? '#B0BEC5' : '#CFD8DC')
 
         var _id = d3.select(this).attr('id').split('-')[2]
         curr_raid_month = _id
@@ -1128,7 +1129,6 @@ function raid_plot() {
 
 }
 //---------------------
-
 // AMOUNT PLOT
 function amount_plot() {
     var amt = Data.amountDist();
@@ -1220,6 +1220,8 @@ function amount_plot() {
         'paramt': paramt_list,
         'wage': wage_list
     }
+    var amt_dict_v = ['Income','Traffick price','Wage']
+
     var amt_sub_dict = {
         'income': [paramt_list, wage_list],
         'paramt': [income_list, wage_list],
@@ -1243,6 +1245,15 @@ function amount_plot() {
         .attr('opacity', 0.5)
         .on('click', amt_btn_click)
 
+    amount_svg.selectAll("btnt")
+        .data(amt_dict_v).enter()
+        .append("text")
+        .attr("fill", '#90A4AE')
+        .attr('font-family','Arial')
+        .attr("x", function(d, i) { return 200 + i * 120 })
+        .attr('text-anchor','middle')
+        .attr("y", 650)
+        .text(function(d){return d})
 
     function update_amount(amt, _id) {
 
@@ -1274,8 +1285,76 @@ function amount_plot() {
     function amt_btn_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
 
-        subplot_amount(amt_sub_dict[_id][0], amount1_sub_svg)
-        subplot_amount(amt_sub_dict[_id][1], amount2_sub_svg)
+        subplot_amount(income_list.map((x,i)=>[x[0],i*5000]), amount1_sub_svg,'Income')
+        subplot_amount(paramt_list.map((x,i)=>[x[0],i*1000]), amount2_sub_svg, 'Traffick price')
+        subplot_amount(wage_list.map((x,i)=>[x[0],i*50]), amount3_sub_svg, 'Wage')
+
+    //==
+    console.log(amt_h_dict[_id])
+
+    var max = amt_h_dict[_id].reduce((sum,x,i)=>i%4==0?sum+x.slice(-2)[0]:sum,0)
+    
+    var Yscale = d3.scaleLinear()
+        .domain([0, max])
+        .range([300, 0]);
+
+    var y_axis = d3.axisLeft()
+        .scale(Yscale)
+        .ticks(5)
+
+    var Xscale = d3.scaleLinear()
+        .domain([0, amt_h_dict[_id].slice(-1)[0].slice(-1)[0]+amt_h_dict[_id][0].slice(-1)[0]])
+        .range([0, 595]);
+
+    var x_axis = d3.axisBottom()
+        .scale(Xscale)
+        .ticks(10)
+
+    function customYAxis(g) {
+        g.call(y_axis);
+
+        g.selectAll("path")
+            .attr("opacity", "0")
+
+        g.selectAll("line")
+            .attr("stroke", "#90A4AE")
+
+
+        g.selectAll("text")
+            .attr("fill", "#90A4AE")
+    }
+
+    function customXAxis(g) {
+        g.call(x_axis);
+
+        g.selectAll("path")
+            .attr("opacity", "0")
+
+        g.selectAll("line")
+            .attr("stroke", "#90A4AE")
+
+
+        g.selectAll("text")
+            .attr("fill", "#90A4AE")
+            .text(function(d) { return (d/1000).toString() + 'k' })
+
+
+    }
+
+
+    
+        amount_svg.select(".y.axis")
+            .transition()
+            .duration(500)
+            .call(customYAxis);
+
+        amount_svg.select(".x.axis")
+            .transition()
+            .duration(500)
+            .call(customXAxis);
+    //*/
+
+    ///===
 
         update_amount(amt_h_dict[_id], _id)
 
@@ -1305,8 +1384,10 @@ function amount_plot() {
         var _id = d3.select(this).attr('id').split('-');
 
         var amt = Data.amountSelDist(_id[1], parseInt(_id[2]))
-        subplot_amount(amt[amtsub_dict[_id[1]][0]], amount1_sub_svg)
-        subplot_amount(amt[amtsub_dict[_id[1]][1]], amount2_sub_svg)
+        
+        subplot_amount(amt['income'], amount1_sub_svg,'Income')
+        subplot_amount(amt['paramt'], amount2_sub_svg,'Traffick price')
+        subplot_amount(amt['wage'], amount3_sub_svg,'Wage')
 
         amount_svg.selectAll('rect')
             .transition().duration(100)
@@ -1326,9 +1407,74 @@ function amount_plot() {
     d3.select('#amt-btn-income')
         .attr("fill", '#B3E5FC')
         .attr("stroke", '#1E88E5')
+
     update_amount(inc_dict, 'income')
-    subplot_amount(paramt_list, amount1_sub_svg)
-    subplot_amount(wage_list, amount2_sub_svg)
+
+    subplot_amount(income_list.map((x,i)=>[x[0],i*5000]), amount1_sub_svg,'Income')
+    subplot_amount(paramt_list.map((x,i)=>[x[0],i*1000]), amount2_sub_svg,'Traffick price')
+    subplot_amount(wage_list.map((x,i)=>[x[0],i*50]), amount3_sub_svg,'Wage')
+
+
+    var Yscale = d3.scaleLinear()
+        .domain([0, income_list.reduce((max,i)=>max>i[1]?max:i[1],0)])
+        .range([300, 0]);
+
+    var y_axis = d3.axisLeft()
+        .scale(Yscale)
+        .ticks(5)
+
+    var Xscale = d3.scaleLinear()
+        .domain([0, income_list[39][1]+income_list[0][1]])
+        .range([0, 595]);
+
+    var x_axis = d3.axisBottom()
+        .scale(Xscale)
+        .ticks(10)
+
+
+    function customYAxis(g) {
+        g.call(y_axis);
+
+        g.selectAll("path")
+            .attr("opacity", "0")
+
+        g.selectAll("line")
+            .attr("stroke", "#90A4AE")
+
+
+        g.selectAll("text")
+            .attr("fill", "#90A4AE")
+    }
+
+    function customXAxis(g) {
+        g.call(x_axis);
+
+        g.selectAll("path")
+            .attr("opacity", "0")
+
+        g.selectAll("line")
+            .attr("stroke", "#90A4AE")
+
+
+        g.selectAll("text")
+            .attr("fill", "#90A4AE")
+            .text(function(d) { return (d/1000).toString() + 'k' })
+
+
+    }
+
+        amount_svg.append('g')
+            .attr('class', 'y axis')
+            .attr("transform", "translate(40, 200)")
+            .call(customYAxis);
+
+        amount_svg.append('g')
+            .attr('class', 'x axis')
+            .attr("transform", "translate(50, 505)")
+            .call(customXAxis);
+
+    
+
 }
 // ----------------------
 
@@ -2742,7 +2888,7 @@ function subplot_amount(data, board, title = "") {
         .ticks(5)
 
     var Xscale = d3.scaleLinear()
-        .domain([0, 1000 + data[39][1]])
+        .domain([0, data[1][1] + data[39][1]])
         .range([0, 318.5]);
 
     var x_axis = d3.axisBottom()
@@ -2776,7 +2922,7 @@ function subplot_amount(data, board, title = "") {
 
         g.selectAll("text")
             .attr("fill", "#90A4AE")
-            .text(function(d) { return d.toString().slice(0, -3) + 'k' })
+            .text(function(d) { return (d/1000).toString() + 'k' })
 
 
     }
@@ -2792,7 +2938,7 @@ function subplot_amount(data, board, title = "") {
 
         board.append('g')
             .attr('class', 'x axis')
-            .attr("transform", "translate(43.5, 205)")
+            .attr("transform", "translate(40, 205)")
             .call(customXAxis);
 
     } else {
@@ -2903,7 +3049,7 @@ function subplot_indst_loc(indst) {
         .attr('opacity', 1)
 
 
-    subplot_amount(loc['wage'], indst_wage_svg)
+    subplot_amount(loc['wage'], indst_wage_svg,'Wage')
 
 
 }
@@ -3106,12 +3252,21 @@ var amount1_sub_svg = d3.select('#sub-amount-1')
     .attr('display', 'inline-block')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
+    .attr('id','amount1_sub_svg')
 
 var amount2_sub_svg = d3.select('#sub-amount-2')
     .append("svg")
     .attr('display', 'inline-block')
     .attr("width", sub_age_width)
     .attr("height", sub_age_height)
+    .attr('id','amount2_sub_svg')
+
+var amount3_sub_svg = d3.select('#sub-amount-3')
+    .append("svg")
+    .attr('display', 'inline-block')
+    .attr("width", sub_age_width)
+    .attr("height", sub_age_height)
+    .attr('id','amount3_sub_svg')
 
 amount_plot()
 

@@ -353,7 +353,7 @@ var Data = {
 
 
 
-        return { 'raid': raid_loc, 'native': native_loc, "wage":wage_list }
+        return { 'raid': raid_loc, 'native': native_loc, "wage":wage_list.map(x=>[x[0],parseInt((x[1]))]) }
     },
 
     parPay: function() {
@@ -655,7 +655,6 @@ var Data = {
 
 
 
-
             var wg = Data.raw[i]['wage_week']
             if (wg != -1)
                 wg = Math.round(wg / 50) * 50
@@ -665,7 +664,6 @@ var Data = {
 
             if (amt_dict[sel_amt] != sel_val)
                 continue;
-
 
             if (inc in income) {
                 income[inc] += 1
@@ -701,8 +699,8 @@ var Data = {
         wage.sort(function(a, b) { return a[0] - b[0] })
 
 
-        var income_list = sample_list.map(x => [0, 0])
-        for (var i = 1; i < income.length; i++) {
+        var income_list = sample_list.map((x,i) => [0, i*5000])
+        for (var i = 0; i < income.length; i++) {
             if (income[i][0] < 0) continue
             var inc = income[i][0] / 5000;
             if (inc > 39) inc = 39
@@ -710,9 +708,8 @@ var Data = {
             income_list[inc][1] = income[i][0]
         }
 
-        var paramt_list = sample_list.map(x => [0, 0])
-
-        for (var i = 1; i < paramt.length; i++) {
+        var paramt_list = sample_list.map((x,i) => [0, i*1000])
+        for (var i = 0; i < paramt.length; i++) {
 
             if (paramt[i][0] < 0) continue
             var inc = paramt[i][0] / 1000;
@@ -720,9 +717,8 @@ var Data = {
             paramt_list[inc][0] += paramt[i][1]
             paramt_list[inc][1] = paramt[i][0]
         }
-
-        var wage_list = sample_list.map(x => [0, 0])
-        for (var i = 1; i < wage.length; i++) {
+        var wage_list = sample_list.map((x,i) => [0, i*50])
+        for (var i = 0; i < wage.length; i++) {
 
             if (wage[i][0] < 0) continue
             var inc = wage[i][0] / 50;
@@ -731,7 +727,11 @@ var Data = {
             wage_list[inc][1] = wage[i][0]
         }
 
-        return { 'income': income_list, 'paramt': paramt_list, 'wage': wage_list }
+        return {
+            'income': income_list.map(x=>[x[0],parseInt(x[1])]),
+            'paramt': paramt_list.map(x=>[x[0],parseInt(x[1])]), 
+            'wage': wage_list.map(x=>[x[0],parseInt(x[1])])
+        }
 
     },
 
