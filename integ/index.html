@@ -33,6 +33,7 @@
         <div class="viz-panel" id="map-controls"></div>
     </div>
     <div class="page-sec" id="state-sec">
+        <img id="state-Jammu_and_Kashmir" src="jk.svg"/>
         <div id="state-map" class="viz-board"></div>
         <div class="viz-panel" id="state-sub">
             <div class="sub-age" id="state-age-sub"></div>
@@ -105,7 +106,6 @@ var sub_map_height = d3.select('.sub-map').style('height').slice(0, -2);
 
 var sub_raid_width = d3.select('#sub-raid').style('width').slice(0, -2);
 var sub_raid_height = d3.select('#sub-raid').style('height').slice(0, -2);
-
 
 
 //MAPS -------------------------------------------
@@ -205,9 +205,6 @@ function mapHeatmap(val, data) {
             "id": "hm-circle-layer",
             "type": "circle",
             "source": "heatmap",
-            "layout": {
-                "visibility": "none"
-            },
             "paint": {
 
 
@@ -266,6 +263,35 @@ function mapHeatmap(val, data) {
 
     })
 
+    var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
+    map.on('mouseenter', 'hm-circle-layer', function(e) {
+
+        map.getCanvas().style.cursor = 'pointer';
+ 
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var village = e.features[0].properties[map_loc]
+
+
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+ 
+        popup.setLngLat(coordinates)
+            .setHTML('<div class="map-tooltip">'+village+'</div>')
+            .addTo(map);
+    });
+ 
+    
+    map.on('mouseleave', 'hm-circle-layer', function() {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+    });
+
+
 }
 
 //------------------------------------------------
@@ -276,15 +302,11 @@ function map_state() {
         .attr("height", board_height)
         .append("svg:g")
 
-
-
     var proj = d3.geo.mercator();
     var path = d3.geo.path().projection(proj);
 
     proj.scale(7500);
     proj.translate([-1400, 800]);
-
-
 
 
     var st_type = ['from', 'to']
@@ -352,7 +374,7 @@ function map_state() {
 
     state_map.merge(entering)
         .attr('d', path)
-        .attr('id', function(d) { return 'state-' + d.id.replace(' ', '_') })
+        .attr('id', function(d) { return 'state-' + d.id.replace(' ', '_').replace(' ', '_') })
         .attr('class', 'statemap-states')
         .on('click', state_map_click)
         .transition().duration(500)
@@ -361,6 +383,7 @@ function map_state() {
         .style("fill", '#CFD8DC')
         .style("opacity", 0.7)
 
+    d3.select('#state-Jammu_and_Kashmir').on('click', state_map_click)
 
     var curr_st_dict = {
         'from': 'raid',
@@ -369,7 +392,7 @@ function map_state() {
 
     function state_map_click() {
 
-        var _id = d3.select(this).attr('id').split('-')[1].replace('_', ' ')
+        var _id = d3.select(this).attr('id').split('-')[1].replace('_', ' ').replace('_', ' ')
         sel_state = _id
         plot_st_data(sel_state)
 
@@ -387,6 +410,7 @@ function map_state() {
 
 
         d3.selectAll('.statemap-states').style('fill', '#CFD8DC')
+        d3.select('#state-Jammu_and_Kashmir').attr('src','jk.svg')
 
         var data = Data.stateStats(st)
 
@@ -396,7 +420,7 @@ function map_state() {
 
         for (var i = 0; i < st_data.length; i++) {
 
-            var s = st_data[i][0].replace(' ', '_')
+            var s = st_data[i][0].replace(' ', '_').replace(' ', '_')
             var clr_dict = {
                 'from': d3.interpolateOranges(0.2 + 0.5 * (st_data[i][1] / f_max)),
                 'to': d3.interpolateBlues(0.3 + 0.5 * (st_data[i][1] / f_max))
@@ -431,6 +455,7 @@ function map_state() {
             .style('font-style', 'italic')
             .style('font-family', 'Arial')
             .text(function(d) { return d });
+
 
         state_svg
             .append('text')
@@ -473,11 +498,13 @@ function map_state() {
             .text(function(d) { return d[1]; });
 
 
-        d3.select('#state-' + st.replace(' ', '_')).style('fill', '#607D8B')
+        d3.select('#state-' + st.replace(' ', '_').replace(' ', '_')).style('fill', '#607D8B')
+        if(st=="Jammu and Kashmir"){
+            d3.select('#state-Jammu_and_Kashmir').attr('src','jk-sel.svg')
+        }
 
     }
     plot_st_data(sel_state)
-
 
 }
 
@@ -516,11 +543,57 @@ function age_plot() {
 
 
 
+    var age_first=true;
     function agebars_plot(data, clr) {
-
         var scale = 1;
         var max = data.reduce((max, i) => max > i ? max : i, 0)
-        scale = 250 / max
+        scale = 250 / max;
+
+
+
+        var scale_a = d3.scaleLinear()
+            .domain([0, max+100])
+            .range([350, 0]);
+
+        var y_axis = d3.axisLeft()
+            .scale(scale_a)
+            .ticks(5)
+
+
+        function customYAxis(g) {
+            g.call(y_axis);
+
+            g.selectAll("path")
+                .attr("opacity", "0")
+
+            g.selectAll("line")
+                .attr("stroke", "#90A4AE")
+
+
+            g.selectAll("text")
+                .attr("fill", "#90A4AE")
+                .text(function(d) { return d})
+        }
+
+        
+        if(age_first){
+            age_svg.append('g')
+                .attr('class', 'y axis')
+                .attr("transform", "translate(50, 50)")
+                .call(customYAxis);
+        }
+        
+        else{
+            age_svg.select(".y.axis")
+                .transition()
+                .duration(500)
+                .call(customYAxis);    
+        }
+
+        age_first=false;
+        
+        
+
         var age_bars = age_svg.selectAll("rect")
             .data(data)
 
@@ -531,18 +604,20 @@ function age_plot() {
             .on('mouseover', age_mouseover)
             .on('mouseout', age_mouseout)
             .on('click', age_click)
-            .transition().duration(500)
             .attr('id', function(d, i) { return 'age-bar-' + i })
             .attr('class', 'age-age-bar')
-            .attr("fill", clr)
             .attr('rx', 2)
             .attr('ry', 2)
             .attr("x", function(d, i) { return 50 + i * 30 })
             .attr("width", 25)
             .attr('opacity', 0.5)
+            .transition().duration(500)
+            .attr("fill", clr)
             .attr("y", function(d, i) { return 400 - d * scale; })
             .attr("height", function(d, i) { return d * scale; })
 
+
+        //d3.select('#age-bar-'+(curr_age-1)).attr('opacity',1)
     }
 
 
@@ -587,6 +662,7 @@ function age_plot() {
         'age': [age_bins, '#FFB74D'],
         'since': [since_bins, '#4DD0E1']
     }
+    
     agebars_plot(age_bins, '#FFB74D');
     d3.selectAll('.ab-age').attr('fill', '#90CAF9');
     d3.selectAll('.abt-age').attr('fill', 'white');
@@ -594,7 +670,6 @@ function age_plot() {
     function age_btn_click() {
 
         var _id = d3.select(this).attr('class').split('-')[2]
-        console.log(_id)
         agebars_plot(agedata_dict[_id][0], agedata_dict[_id][1])
 
         d3.selectAll('.age-btn').attr('fill', '#CFD8DC')
@@ -608,8 +683,7 @@ function age_plot() {
 
         var _id = d3.select(this).attr('id').split('-')[2]
         if (parseInt(_id) + 1 == curr_age) return;
-        d3.select('#since-bar-' + _id)
-            .attr('opacity', 0.8)
+        
         d3.select('#age-bar-' + _id)
             .attr('opacity', 0.8)
         d3.select('#age-txt-' + _id)
@@ -621,8 +695,7 @@ function age_plot() {
 
         var _id = d3.select(this).attr('id').split('-')[2]
         if (parseInt(_id) + 1 == curr_age) return;
-        d3.select('#since-bar-' + _id)
-            .attr('opacity', 0.5)
+        
         d3.select('#age-bar-' + _id)
             .attr('opacity', 0.5)
         d3.select('#age-txt-' + _id)
@@ -634,8 +707,7 @@ function age_plot() {
 
         var _id = curr_age - 1
 
-        d3.select('#since-bar-' + _id)
-            .attr('opacity', 0.5)
+        
         d3.select('#age-bar-' + _id)
             .attr('opacity', 0.5)
         d3.select('#age-txt-' + _id)
@@ -645,12 +717,9 @@ function age_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
         curr_age = parseInt(_id) + 1
 
-
-        d3.select('#since-bar-' + _id)
+        d3.select('#age-bar-' + (curr_age-1))
             .attr('opacity', 1)
-        d3.select('#age-bar-' + _id)
-            .attr('opacity', 1)
-        d3.select('#age-txt-' + _id)
+        d3.select('#age-txt-' + (curr_age-1))
             .attr('fill', '#546E7A')
 
         subplot_indst("age", curr_age, age_indst_svg);
@@ -706,6 +775,7 @@ function traf_plot() {
             .attr("fill", "#90A4AE")
             .text(function(d) { return d < 0 ? -d : d })
     }
+
 
 
     traf_svg.append('g')
@@ -1292,7 +1362,7 @@ function amount_plot() {
     //==
     console.log(amt_h_dict[_id])
 
-    var max = amt_h_dict[_id].reduce((sum,x,i)=>i%4==0?sum+x.slice(-2)[0]:sum,0)
+    var max = amt_h_dict[_id].reduce((max,x)=>max>x[2]?max:x[2],0)
     
     var Yscale = d3.scaleLinear()
         .domain([0, max])
@@ -1472,8 +1542,6 @@ function amount_plot() {
             .attr('class', 'x axis')
             .attr("transform", "translate(50, 505)")
             .call(customXAxis);
-
-    
 
 }
 // ----------------------
@@ -1680,6 +1748,8 @@ function map_controls() {
         .text('Location type')
 
 
+    map_controls_svg.select('#mc-loc-native').attr('fill','#4FC3F7')
+    d3.select('#mc-loct-native').attr('fill', 'white')
 
     function mc_loc_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
@@ -1868,15 +1938,16 @@ function map_controls() {
     }
 
 
-    /*
+    ///*
     map_controls_svg
         .append("text")
         .attr("fill", "#546E7A")
-        .attr("x",15)
-        .attr("y", 320)
+        .style('font-family', 'Arial')
+        .attr("x",115)
+        .attr("y", 293)
         .attr('font-size','12px')
         .text('All')
-    */
+    //*/
 
     map_controls_svg
         .append("text")
@@ -1979,22 +2050,22 @@ function map_controls() {
         .style('cursor', 'ew-resize')
         .call(drag)
 
-    /*
+    ///*
     map_controls_svg
         .append("rect")
         .attr("fill", "#CFD8DC")
         .attr('id', 'mc-time-all')
         .attr('rx', 7)
         .attr('ry', 7)
-        .attr("x", 10)
+        .attr("x", 107)
         .attr("width", 30)
         .attr('opacity', 0.5)
-        .attr("y", 300)
-        .attr("height", 30)
+        .attr("y", 277)
+        .attr("height", 23)
         .on('mouseover', mc_time_all_mouseover)
         .on('mouseout', mc_time_all_mouseout)
         .on('click', mc_time_all_click)
-    */
+    //*/
 
     function mc_time_all_mouseover() {
         d3.select(this).attr('fill', '#80DEEA')
@@ -2496,6 +2567,13 @@ function subplot_map(src, val, loc, board) {
         .attr('fill', '#607D8B')
         .text('Native state distribution');
 
+
+    board.append('svg:image')
+    .attr('x', 71)
+    .attr('y', 20)
+    .attr('width', 40)
+    .attr('height', 30.5)
+    .attr("xlink:href", "jk.svg")
 
 
     var sub_map = board.selectAll("path")
@@ -3168,7 +3246,7 @@ map_state();
 
 //AGE PLOT INIT ------
 var age_svg
-var curr_age
+var curr_age=13;
 
 var age_indst_svg = d3.select("#age-indst-sub")
     .append("svg")

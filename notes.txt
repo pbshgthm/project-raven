@@ -1,9 +1,22 @@
 
+//TODO============
+//+ JK integration
+//+ Map time all button
++ Preselects
+//+ Tooltip for village name on heatmap
++ Amount fix
++ Heatmap description
++ Heatmap color code
++ Legends
++ Color corrections
++ School + brought
++ Traffickers map
++ Industry scale
+//+ Age scale
+
+
 
 in age plot, the subplot filter only based on rescue age
-
-
-
 
 
 
@@ -454,3 +467,7 @@ Tea Shop Helper 1
 Manager 1
 Child Care Worker 1
 Vegetable Shop 1
+
+
+
+//JK

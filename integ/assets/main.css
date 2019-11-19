@@ -3,20 +3,27 @@ body,html{
 	padding: 0;
 }
 
+#state-Jammu_and_Kashmir{
+	z-index: 999999;
+	position: fixed;
+	width: 150px;
+	top: 15px;
+	left: 350px;
+}
 #nav-pane{
 	position: fixed;
 	top: 5vh;
 	left: 2vw;
-	width: 12vw;
+	width: 172px;
 	height: 90vh;
 	background-color: #ECEFF1;
 }
 
 .page-sec{
-	width: 81vw;
+	width: 1165px;
 	height: 95vh;
 	padding-top: 5vh;
-	padding-left: 19vw;
+	padding-left: 273px;
 	border-bottom: 3px solid white;
 	background-color: white;
 	display: none;
@@ -25,25 +32,34 @@ body,html{
 
 .viz-board{
 	position: fixed;
-	left: 16vw;
-	width: 50vw;
+	left: 230px;
+	width: 719px;
 	height: 90vh;
 	background-color: white;
-
-
 }
 
 .viz-panel{
-	position: absolute;
-	left: 68vw;
-	width: 28vw;
+	position: fixed;
+	left: 978px;
+	width: 703px;
 	height: 90vh;
 	background-color: white;
-	padding-left: 2vw;
+	padding-left: 29px;
 	border-left: 2px solid #CFD8DC;
 	
 }
 
+.map-tooltip{
+	font-size: 20px;
+	color: #546E7A;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-top: 5px;
+}
+
+.mapboxgl-popup-content{
+	border: 2px solid #90A4AE;
+}
 .sub-indst{
 	width: 27vw;
 	height: 30vh;

@@ -1,7 +1,7 @@
 var Data = {
 
     raw: [],
-    init: function(raw_csv) {
+    init: function (raw_csv) {
         var key = raw_csv[0]
         var data = []
         for (var i = 1; i < raw_csv.length; i++) {
@@ -13,21 +13,24 @@ var Data = {
         this.raw = data;
     },
 
-    toGeojson: function(crds, typ = "Point") {
+    toGeojson: function (crds, typ = "Point") {
+        console.log(crds)
         var geo = {};
         geo['type'] = 'FeatureCollection';
         geo['features'] = [];
         for (var i = 0; i < crds.length; i++) {
-            if (crds[i].length == 0) continue;
-            if (crds[i][0].length == 0 || crds[i][1].length == 0) continue;
+            if (crds[i][0].length == 0) continue;
+            if (crds[i][0][0].length == 0 || crds[i][0][1].length == 0) continue;
             var c = {
                 "type": "Feature",
                 "properties": {
                     "val": 1,
+                    "native": crds[i][1]['native_v'],
+                    "raid": crds[i][1]['raid_v']
                 },
                 "geometry": {
                     "type": typ,
-                    "coordinates": crds[i]
+                    "coordinates": crds[i][0]
                 }
             }
             geo['features'].push(c)
@@ -35,40 +38,7 @@ var Data = {
         return geo;
     },
 
-    getMarkers: function(loc, key) {
-        var geo = {};
-        geo['type'] = 'FeatureCollection';
-        geo['features'] = [];
-
-
-        var clrs = ['#f44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3',
-            '#03A9F4', '#00BCD4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39',
-            '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'
-        ]
-
-        for (var i = 0; i < this.raw.length; i++) {
-            var crd = this.raw[i][loc + "_v_crd"].split(',');
-            if (crd[0] == "") continue;
-            var item = this.raw[i][key];
-            if (item == "") continue;
-            var c = {
-                "type": "Feature",
-                "properties": {
-                    "val": 1,
-                    "item": item,
-                    'clr': clrs[item - 1]
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": crd
-                }
-            }
-            geo['features'].push(c)
-        }
-        return geo;
-
-    },
-    getPoints: function(src) {
+    getPoints: function (src) {
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
             var crd = this.raw[i][src].split(',')
@@ -78,7 +48,7 @@ var Data = {
         return this.toGeojson(crds)
     },
 
-    getLines: function(src, dst) {
+    getLines: function (src, dst) {
 
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
@@ -95,14 +65,14 @@ var Data = {
     },
 
 
-    filterPoints: function(age, time, indst, loc) {
+    filterPoints: function (age, time, indst, loc) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
             "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
             "Electrical & Electronics", "Leather", "_others", ""
         ]
         indst = indst.map(x => indst_r_list[x])
         var crds = []
-        var l_crds=[]
+        var l_crds = []
         for (var i = 0; i < this.raw.length; i++) {
             if (age != this.raw[i]['age']) {
                 if (age != 0) continue;
@@ -124,58 +94,81 @@ var Data = {
                 continue;
             }
 
-            
-                var r=this.raw[i]['native_v_crd'].split(',')
-                var n=this.raw[i]['raid_v_crd'].split(',')
-                if(r==""||n=="")continue;
-                l_crds.push([r,n])
 
-            if(loc!='line'){
-            var crd = this.raw[i][loc + '_v_crd'].split(',')
-            if (crd[0] == "") continue;
-            crds.push(crd)
-        }
+            var r = this.raw[i]['native_v_crd'].split(',')
+            var n = this.raw[i]['raid_v_crd'].split(',')
+            if (r == "" || n == "") continue;
             
+            var crd_l=[r, n];
+            var crdl_point=[crd_l];
+            crdl_point.push({
+                'native_v': this.raw[i]['native_v_name'],
+                'raid_v': this.raw[i]['raid_v_name']
+            })
+            l_crds.push(crdl_point)
+
+            if (loc != 'line') {
+                var crd = this.raw[i][loc + '_v_crd'].split(',')
+                if (crd[0] == "") continue;
+
+                var crd_point = [crd]
+                crd_point.push({
+                    'native_v': this.raw[i]['native_v_name'],
+                    'raid_v': this.raw[i]['raid_v_name']
+                })
+                crds.push(crd_point)
+            }
+
 
         }
-        
-        return {'point':this.toGeojson(crds),'line':this.toGeojson(l_crds,"LineString")}
-        
+
+        return {
+            'point': this.toGeojson(crds),
+            'line': this.toGeojson(l_crds, "LineString")
+        }
+
     },
 
-    stateStats: function(state){
-        var nat_state={}
-        var fac_state={}
-        for(var i=0;i<this.raw.length;i++){
-            var n=this.raw[i]['native_v_area'].split(',').slice(-2,-1)[0]
-            var r=this.raw[i]['raid_v_area'].split(',').slice(-2,-1)[0]
+    stateStats: function (state) {
+        var nat_state = {}
+        var fac_state = {}
+        for (var i = 0; i < this.raw.length; i++) {
+            var n = this.raw[i]['native_v_area'].split(',').slice(-2, -1)[0]
+            var r = this.raw[i]['raid_v_area'].split(',').slice(-2, -1)[0]
 
-            if(n!="")n=n.substr(1)
-            if(r!="")r=r.substr(1)
-            
-            if(state==n&&r!=""){
-                if(r in fac_state)
-                    fac_state[r]+=1
+            if (n != "") n = n.substr(1)
+            if (r != "") r = r.substr(1)
+
+            if (state == n && r != "") {
+                if (r in fac_state)
+                    fac_state[r] += 1
                 else
-                    fac_state[r]=1
+                    fac_state[r] = 1
             }
-            if(state==r&&n!=""){
-                if(n in nat_state)
-                    nat_state[n]+=1
+            if (state == r && n != "") {
+                if (n in nat_state)
+                    nat_state[n] += 1
                 else
-                    nat_state[n]=1
+                    nat_state[n] = 1
             }
         }
-        nat_state=Object.entries(nat_state)
-        fac_state=Object.entries(fac_state)
+        nat_state = Object.entries(nat_state)
+        fac_state = Object.entries(fac_state)
 
-        nat_state.sort(function(a,b){return b[1]-a[1]})
-        fac_state.sort(function(a,b){return b[1]-a[1]})
+        nat_state.sort(function (a, b) {
+            return b[1] - a[1]
+        })
+        fac_state.sort(function (a, b) {
+            return b[1] - a[1]
+        })
 
-        return {'from':nat_state,'to':fac_state}
+        return {
+            'from': nat_state,
+            'to': fac_state
+        }
     },
 
-    age_dist: function() {
+    age_dist: function () {
         var age = Array(21).fill(0)
         var start_age = Array(21).fill(0)
         for (var i = 0; i < this.raw.length; i++) {
@@ -187,7 +180,7 @@ var Data = {
         return [age, start_age];
     },
 
-    traffickDate: function() {
+    traffickDate: function () {
 
         var traf_m = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -201,11 +194,13 @@ var Data = {
 
         traf_m = Object.entries(traf_m).map(x => [parseInt(x[0]), x[1]])
 
-        return traf_m.sort(function(a, b) { return a[0] - b[0] })
+        return traf_m.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
     },
 
-    traffickDur: function() {
+    traffickDur: function () {
         var dur = []
         for (var i = 0; i < this.raw.length; i++) {
             var t = this.raw[i]['t_date'].split("/")
@@ -215,19 +210,21 @@ var Data = {
             if (isNaN(t) || isNaN(r)) continue;
             dur.push([t, r])
         }
-        return dur.sort(function(a, b) { return a[0] - b[0] });
+        return dur.sort(function (a, b) {
+            return a[0] - b[0]
+        });
 
     },
 
-    raidDist: function() {
+    raidDist: function () {
         var r_data = {};
         for (var i = 0; i < this.raw.length; i++) {
             var r_date = this.raw[i]['r_date']
             var r_place = this.raw[i]['raid_v_name']
-            var r_indst=this.raw[i]['indst']
+            var r_indst = this.raw[i]['indst']
             if (r_date == "") continue;
             if (r_place == "") continue;
-            var _key = r_date + '--' + r_place+ '--'+r_indst
+            var _key = r_date + '--' + r_place + '--' + r_indst
             if (_key in r_data) r_data[_key] += 1
             else r_data[_key] = 1
         }
@@ -246,7 +243,7 @@ var Data = {
         return r_freq;
     },
 
-    originDist: function() {
+    originDist: function () {
         var s_data = {};
         for (var i = 0; i < this.raw.length; i++) {
             var s_val = this.raw[i]['since']
@@ -265,7 +262,7 @@ var Data = {
         return s_data;
     },
 
-    industryDist: function() {
+    industryDist: function () {
         var indCat = [
             ['Garment', 'Footwear', 'Jewellery'],
             ['Automobile/Transport', 'Metal', 'Retail Shop/Office', 'Odd Jobs', 'Stone Quarry', 'Factory', 'Plastic and Nylon units'],
@@ -291,16 +288,18 @@ var Data = {
         for (var i = 0; i < indCat.length; i++) {
             for (var j = 0; j < indCat[i].length; j++)
                 indCat[i][j] = [ind_dict[indCat[i][j]], indCat[i][j]]
-            indCat[i].sort(function(a, b) { return b - a })
+            indCat[i].sort(function (a, b) {
+                return b - a
+            })
         }
 
         return indCat
     },
 
-    industryLoc: function(indst) {
+    industryLoc: function (indst) {
         var raid_loc = {}
         var native_loc = {}
-        var wage={}
+        var wage = {}
 
 
 
@@ -331,16 +330,22 @@ var Data = {
 
 
         raid_loc = Object.entries(raid_loc)
-        raid_loc.sort(function(a, b) { return b[1] - a[1] })
+        raid_loc.sort(function (a, b) {
+            return b[1] - a[1]
+        })
         native_loc = Object.entries(native_loc)
-        native_loc.sort(function(a, b) { return b[1] - a[1] })
+        native_loc.sort(function (a, b) {
+            return b[1] - a[1]
+        })
 
 
         wage = Object.entries(wage)
-        wage.sort(function(a, b) { return a[0] - b[0] })
+        wage.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
-        var wage_list = Array(40).fill(0).map((x,i)=>[0,50*i])
+        var wage_list = Array(40).fill(0).map((x, i) => [0, 50 * i])
         for (var i = 1; i < wage.length; i++) {
 
             if (wage[i][0] < 0) continue
@@ -353,10 +358,14 @@ var Data = {
 
 
 
-        return { 'raid': raid_loc, 'native': native_loc, "wage":wage_list.map(x=>[x[0],parseInt((x[1]))]) }
+        return {
+            'raid': raid_loc,
+            'native': native_loc,
+            "wage": wage_list.map(x => [x[0], parseInt((x[1]))])
+        }
     },
 
-    parPay: function() {
+    parPay: function () {
         var paypar = {};
         var p_c = 0;
         var a_c = 0;
@@ -376,7 +385,7 @@ var Data = {
 
     },
 
-    amountDist: function() {
+    amountDist: function () {
         var income = {};
         var paramt = {};
         var wage = {};
@@ -571,15 +580,21 @@ var Data = {
 
         income = Object.entries(income)
         income = income.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        income.sort(function(a, b) { return a[0] - b[0] })
+        income.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
         paramt = Object.entries(paramt)
         paramt = paramt.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        paramt.sort(function(a, b) { return a[0] - b[0] })
+        paramt.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
         wage = Object.entries(wage)
         wage = wage.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        wage.sort(function(a, b) { return a[0] - b[0] })
+        wage.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
         inc_dict = Object.entries(inc_dict)
@@ -588,7 +603,9 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 5000
         ])
-        inc_dict = inc_dict.sort(function(a, b) { return a[0] - b[0] })
+        inc_dict = inc_dict.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
         par_dict = Object.entries(par_dict)
@@ -597,7 +614,9 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 1000
         ])
-        par_dict = par_dict.sort(function(a, b) { return a[0] - b[0] })
+        par_dict = par_dict.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
         wag_dict = Object.entries(wag_dict)
@@ -606,7 +625,9 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 50
         ])
-        wag_dict = wag_dict.sort(function(a, b) { return a[0] - b[0] })
+        wag_dict = wag_dict.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
         return {
@@ -619,7 +640,7 @@ var Data = {
         }
     },
 
-    amountSelDist: function(sel_amt, sel_val) {
+    amountSelDist: function (sel_amt, sel_val) {
 
         var income = {};
         var paramt = {};
@@ -690,16 +711,22 @@ var Data = {
 
         var sample_list = Array(40).fill(0)
         income = Object.entries(income)
-        income.sort(function(a, b) { return a[0] - b[0] })
+        income.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
         paramt = Object.entries(paramt)
-        paramt.sort(function(a, b) { return a[0] - b[0] })
+        paramt.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
         wage = Object.entries(wage)
-        wage.sort(function(a, b) { return a[0] - b[0] })
+        wage.sort(function (a, b) {
+            return a[0] - b[0]
+        })
 
 
-        var income_list = sample_list.map((x,i) => [0, i*5000])
+        var income_list = sample_list.map((x, i) => [0, i * 5000])
         for (var i = 0; i < income.length; i++) {
             if (income[i][0] < 0) continue
             var inc = income[i][0] / 5000;
@@ -708,7 +735,7 @@ var Data = {
             income_list[inc][1] = income[i][0]
         }
 
-        var paramt_list = sample_list.map((x,i) => [0, i*1000])
+        var paramt_list = sample_list.map((x, i) => [0, i * 1000])
         for (var i = 0; i < paramt.length; i++) {
 
             if (paramt[i][0] < 0) continue
@@ -717,7 +744,7 @@ var Data = {
             paramt_list[inc][0] += paramt[i][1]
             paramt_list[inc][1] = paramt[i][0]
         }
-        var wage_list = sample_list.map((x,i) => [0, i*50])
+        var wage_list = sample_list.map((x, i) => [0, i * 50])
         for (var i = 0; i < wage.length; i++) {
 
             if (wage[i][0] < 0) continue
@@ -728,14 +755,14 @@ var Data = {
         }
 
         return {
-            'income': income_list.map(x=>[x[0],parseInt(x[1])]),
-            'paramt': paramt_list.map(x=>[x[0],parseInt(x[1])]), 
-            'wage': wage_list.map(x=>[x[0],parseInt(x[1])])
+            'income': income_list.map(x => [x[0], parseInt(x[1])]),
+            'paramt': paramt_list.map(x => [x[0], parseInt(x[1])]),
+            'wage': wage_list.map(x => [x[0], parseInt(x[1])])
         }
 
     },
 
-    getDict: function(item) {
+    getDict: function (item) {
         var gen_dict = {}
         for (var i = 0; i < this.raw.length; i++) {
             if (this.raw[i][item] in gen_dict)
@@ -744,10 +771,12 @@ var Data = {
                 gen_dict[this.raw[i][item]] = 1;
         }
 
-        return Object.entries(gen_dict).sort(function(a, b) { return b[1] - a[1] });
+        return Object.entries(gen_dict).sort(function (a, b) {
+            return b[1] - a[1]
+        });
     },
 
-    subPlot: function(filter, val, key) {
+    subPlot: function (filter, val, key) {
         var dist = {}
         for (var i = 0; i < this.raw.length; i++) {
             var f = this.raw[i][filter];
@@ -757,9 +786,9 @@ var Data = {
                 f = (f[2] - 2010) * 6 + parseInt(parseInt(f[1]) / 2)
             }
 
-            if(filter.split('_')[2] == "area"){
-                f=f.split(',').slice(-2,-1)[0]
-                if(f!="")f=f.substr(1)
+            if (filter.split('_')[2] == "area") {
+                f = f.split(',').slice(-2, -1)[0]
+                if (f != "") f = f.substr(1)
             }
 
             if (f != val) continue;
@@ -767,7 +796,7 @@ var Data = {
             if (k == "") continue;
             if (key.slice(-3) == "add")
                 k = k.split(',')[2].substring(1)
-            if (key=='paramt'){
+            if (key == 'paramt') {
                 k = parseInt(k)
                 k = Math.round(k / 1000) * 1000
             }
@@ -780,11 +809,13 @@ var Data = {
         }
 
         dist = Object.entries(dist);
-        dist.sort(function(a, b) { return b[0] - a[0] })
+        dist.sort(function (a, b) {
+            return b[0] - a[0]
+        })
 
-        if(key=='paramt'){
+        if (key == 'paramt') {
 
-            var paramt_list = Array(40).fill(0).map((x,i)=>[0,1000*i])
+            var paramt_list = Array(40).fill(0).map((x, i) => [0, 1000 * i])
             for (var i = 1; i < dist.length; i++) {
 
                 if (dist[i][0] < 0) continue
@@ -799,7 +830,7 @@ var Data = {
         return dist;
     },
 
-    r_month_data: function(curr_month) {
+    r_month_data: function (curr_month) {
         var month_data = []
         var r_data = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -816,7 +847,7 @@ var Data = {
 
             if (r_date == "") continue;
             if (r_place == "") continue;
-            var _key = r_date + '--' + r_place+'--'+r_indst;
+            var _key = r_date + '--' + r_place + '--' + r_indst;
 
             if (_key in r_data) r_data[_key] += 1
             else r_data[_key] = 1
@@ -824,7 +855,9 @@ var Data = {
         }
         month_data = Object.entries(r_data)
         month_data = month_data.map(x => x[0].split('--').concat(x[1]))
-        month_data.sort(function(a, b) { return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0]) })
+        month_data.sort(function (a, b) {
+            return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0])
+        })
         //month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
         //console.log(month_data)
         return month_data
