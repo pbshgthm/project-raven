@@ -14,7 +14,6 @@ var Data = {
     },
 
     toGeojson: function (crds, typ = "Point") {
-        console.log(crds)
         var geo = {};
         geo['type'] = 'FeatureCollection';
         geo['features'] = [];
@@ -394,6 +393,12 @@ var Data = {
         var par_dict = {};
         var wag_dict = {};
 
+        parcount=0;
+        parc={
+            'loan':0,
+            'advance':0,
+            'loan&advance':0
+        }
         for (var i = 0; i < Data.raw.length; i++) {
 
 
@@ -435,9 +440,9 @@ var Data = {
 
 
             var par = Data.raw[i]['paramt']
+            var paypar = Data.raw[i]['paypar']
             if (par == "") {
-                var paypar = Data.raw[i]['paypar']
-                if (paypar == 'no')
+                if (paypar == 'no'||paypar=="")
                     par = -1
                 else
                     par = -2
@@ -454,11 +459,13 @@ var Data = {
             }
 
             ///////////////////
-            if (par >= 0) {
+            if (par > 0) {
+                parcount++;
                 var ind = par / 1000;
                 if (ind > 39) ind = 39;
 
                 if (paypar == "loan") {
+                    parc['loan']+=1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -476,7 +483,8 @@ var Data = {
                     else par_dict[k] = 1
                 }
 
-                if (paypar == "advance") {
+                else if (paypar == "advance") {
+                    parc['advance']+=1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -490,7 +498,8 @@ var Data = {
                     else par_dict[k] = 1
                 }
 
-                if (paypar == "loan&advance") {
+                else if (paypar == "loan&advance") {
+                    parc['loan&advance']+=1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -500,15 +509,14 @@ var Data = {
                     else par_dict[k] = 1
 
                 }
-
+                else console.log(paypar,par)
 
 
 
             }
 
             ////////////////
-
-
+            
             var wg = Data.raw[i]['wage_week']
             var wtype = Data.raw[i]['wage_type']
             if (wg != -1)
@@ -578,17 +586,29 @@ var Data = {
 
         }
 
+        console.log(parcount)
+        lala=0;
+        for(i in par_dict){
+            lala+=par_dict[i]
+        }
+        console.log(lala)
+        console.log(parc)
+        console.log('pd',par_dict)
+
+
         income = Object.entries(income)
         income = income.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         income.sort(function (a, b) {
             return a[0] - b[0]
         })
 
+        console.log('llll',paramt)
         paramt = Object.entries(paramt)
         paramt = paramt.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         paramt.sort(function (a, b) {
             return a[0] - b[0]
         })
+        console.log('kkkk',paramt)
 
         wage = Object.entries(wage)
         wage = wage.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])

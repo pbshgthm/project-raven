@@ -2,16 +2,17 @@
 //TODO============
 //+ JK integration
 //+ Map time all button
++ Tooltip for line map
 + Preselects
 //+ Tooltip for village name on heatmap
-+ Amount fix
-+ Heatmap description
-+ Heatmap color code
-+ Legends
+//[+] Amount fix
+//[+] Heatmap description
+[+] Heatmap color code
+[+] Legends
 + Color corrections
-+ School + brought
+[+] School + brought
 + Traffickers map
-+ Industry scale
+//[+] Industry scale
 //+ Age scale
 
 
