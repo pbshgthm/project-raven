@@ -1,0 +1,123 @@
+body,html{
+	margin: 0;
+	padding: 0;
+}
+
+#state-Jammu_and_Kashmir{
+	z-index: 999999;
+	position: fixed;
+	width: 150px;
+	top: 15px;
+	left: 350px;
+}
+#nav-pane{
+	position: fixed;
+	top: 5vh;
+	left: 2vw;
+	width: 172px;
+	height: 90vh;
+	background-color: #ECEFF1;
+}
+
+.page-sec{
+	width: 1165px;
+	height: 95vh;
+	padding-top: 5vh;
+	padding-left: 273px;
+	border-bottom: 3px solid white;
+	background-color: white;
+	display: none;
+	
+}
+
+.viz-board{
+	position: fixed;
+	left: 230px;
+	width: 719px;
+	height: 90vh;
+	background-color: white;
+}
+
+.viz-panel{
+	position: fixed;
+	left: 978px;
+	width: 703px;
+	height: 90vh;
+	background-color: white;
+	padding-left: 29px;
+	border-left: 2px solid #CFD8DC;
+	
+}
+
+.map-tooltip{
+	font-size: 20px;
+	color: #546E7A;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-top: 5px;
+}
+
+.mapboxgl-popup-content{
+	border: 2px solid #90A4AE;
+}
+.sub-indst{
+	width: 27vw;
+	height: 30vh;
+}
+
+.sub-map{
+	width: 27vw;
+	height: 30vh;
+}
+
+.sub-age{
+	width: 27vw;
+	height: 30vh;
+}
+
+.label-font{
+	font-family: Ariel;
+}
+
+#sub-raid{
+	width: 27vw;
+	height: 90vh;
+	overflow-y: scroll;
+}
+#nav-list{
+	margin-top: 100px;
+	font-size: 20px;
+}
+.nav-btn{
+	margin-bottom: 20px;
+	margin-left: 15px;
+	color: #90A4AE;
+	cursor: pointer;
+	font-family: arial;
+}
+.nav-btn:hover{
+	color: #2196F3;
+}
+.nav-btn-sel{
+	color:#2196F3;
+}
+
+
+#amount-key{
+	width: 150px;
+	z-index: 10;
+	position: absolute;
+	right: 50px;
+	top: 50px;
+
+}
+
+#indst-key{
+	width: 150px;
+	z-index: 10;
+	position: absolute;
+	right: 50px;
+	bottom: 75px;
+	opacity: 0.5;
+
+}
