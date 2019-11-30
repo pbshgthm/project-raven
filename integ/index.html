@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html>
 
 <head>
@@ -24,7 +24,9 @@
             <div class="nav-btn" id="nav-traf">Taffick Date</div>
             <div class="nav-btn" id="nav-raid">Raid date</div>
             <div class="nav-btn" id="nav-amt">Amount</div>
+            <!--
             <div class="nav-btn" id="nav-sch">School</div>
+            -->
             <div class="nav-btn" id="nav-ind">Industry</div>
         </div>
     </div>
@@ -63,20 +65,26 @@
         </div>
     </div>
     <div class="page-sec" id="amt-sec">
-        <div id="amount-board" class="viz-board"></div>
+        <div id="amount-board" class="viz-board">
+            <img src="assets/income-key.png" id="amount-key"/>
+        </div>
         <div class="viz-panel">
             <div id="sub-amount-1"></div>
             <div id="sub-amount-2"></div>
             <div id="sub-amount-3"></div>
         </div>
     </div>
+    <!--
     <div class="page-sec" id="sch-sec">
         <div id="school-board" class="viz-board"></div>
         <div class="viz-panel">
         </div>
     </div>
+    -->
     <div class="page-sec" id="ind-sec">
-        <div id="indst-board" class="viz-board"></div>
+        <div id="indst-board" class="viz-board">
+            <img src="assets/indst-key.png" id="indst-key"/>
+        </div>
         <div class="viz-panel">
             <div id="indst-sub"></div>
         </div>
@@ -1320,7 +1328,7 @@
         var income = amt['income']
         var paramt = amt['paramt']
         var wage = amt['wage']
-        var clr = ['#AB47BC', '#673AB7', '#42A5F5', '#26C6DA']
+        var clr = ['#EC407A', '#673AB7', '#2196F3', '#26C6DA']
 
         amount_svg = d3.select("#amount-board")
             .append("svg")
@@ -1497,7 +1505,8 @@
 
         function amt_btn_click() {
             var _id = d3.select(this).attr('id').split('-')[2]
-
+            console.log(_id)
+            d3.select('#amount-key').attr('src','assets/'+_id+'-key.png')
             subplot_amount(income_list.map((x, i) => [x[0], i * 5000]),
                 amount1_sub_svg, 'Income')
             subplot_amount(paramt_list.map((x, i) => [x[0], i * 1000]),

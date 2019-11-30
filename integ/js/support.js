@@ -509,7 +509,7 @@ var Data = {
                     else par_dict[k] = 1
 
                 }
-                else console.log(paypar,par)
+                
 
 
 
@@ -586,15 +586,12 @@ var Data = {
 
         }
 
-        console.log(parcount)
+        
         lala=0;
         for(i in par_dict){
             lala+=par_dict[i]
         }
-        console.log(lala)
-        console.log(parc)
-        console.log('pd',par_dict)
-
+        
 
         income = Object.entries(income)
         income = income.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
@@ -602,13 +599,13 @@ var Data = {
             return a[0] - b[0]
         })
 
-        console.log('llll',paramt)
+        
         paramt = Object.entries(paramt)
         paramt = paramt.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
         paramt.sort(function (a, b) {
             return a[0] - b[0]
         })
-        console.log('kkkk',paramt)
+       
 
         wage = Object.entries(wage)
         wage = wage.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])

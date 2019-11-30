@@ -101,3 +101,23 @@ body,html{
 .nav-btn-sel{
 	color:#2196F3;
 }
+
+
+#amount-key{
+	width: 150px;
+	z-index: 10;
+	position: absolute;
+	right: 50px;
+	top: 50px;
+
+}
+
+#indst-key{
+	width: 150px;
+	z-index: 10;
+	position: absolute;
+	right: 50px;
+	bottom: 75px;
+	opacity: 0.5;
+
+}
