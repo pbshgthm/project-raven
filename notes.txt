@@ -1,4 +1,5 @@
 color scheme of the map
+
 //label - for the axis (age, inr, num pr kids)
 //label - number of parent's income
 //desc for amount plots // annotations
