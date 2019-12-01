@@ -18,12 +18,12 @@
 <body>
     <div id="nav-pane">
         <div id="nav-list">
-            <div class="nav-btn" id="nav-map">Map</div>
-            <div class="nav-btn" id="nav-state">State stats</div>
-            <div class="nav-btn" id="nav-age">Age</div>
-            <div class="nav-btn" id="nav-traf">Taffick Date</div>
+            <div class="nav-btn" id="nav-map">Heat Map</div>
+            <div class="nav-btn" id="nav-state">Source & Destination</div>
+            <div class="nav-btn" id="nav-age">Age Distribution</div>
+            <div class="nav-btn" id="nav-traf">TTrafficking Trends </div>
             <div class="nav-btn" id="nav-raid">Raid date</div>
-            <div class="nav-btn" id="nav-amt">Amount</div>
+            <div class="nav-btn" id="nav-amt">Income, Wage & Price</div>
             <!--
             <div class="nav-btn" id="nav-sch">School</div>
             -->
@@ -35,8 +35,10 @@
         <div class="viz-panel" id="map-controls"></div>
     </div>
     <div class="page-sec" id="state-sec">
-        <img id="state-Jammu_and_Kashmir" src="assets/jk.svg" />
-        <div id="state-map" class="viz-board"></div>
+        
+        <div id="state-map" class="viz-board">
+            <img id="state-Jammu_and_Kashmir" src="assets/jk.svg" />
+        </div>
         <div class="viz-panel" id="state-sub">
             <div class="sub-age" id="state-age-sub"></div>
             <div class="sub-indst" id="state-indst-sub"></div>
@@ -128,11 +130,11 @@
             container: val + '-map',
             style: 'mapbox://styles/mapbox/light-v10',
             center: [81.590, 23.308],
-            zoom: 3.85,
+            zoom: 3.8,
             maxZoom: 9,
             maxBounds: [
-                [64.871, 6.942],
-                [98.308, 37.891]
+                [54.63, 0.22],
+                [103.12, 44.28]
             ]
         });
 
@@ -307,15 +309,15 @@
 
     function map_state() {
         state_svg = d3.select("#state-map").append("svg:svg")
-            .attr("width", board_width)
-            .attr("height", board_height)
+            .attr("width", 700)
+            .attr("height", 700)
             .append("svg:g")
 
         var proj = d3.geo.mercator();
         var path = d3.geo.path().projection(proj);
 
         proj.scale(7500);
-        proj.translate([-1400, 800]);
+        proj.translate([-1400, 825]);
 
 
         var st_type = ['from', 'to']
@@ -430,7 +432,7 @@
             subplot_indst(curr_st_dict[curr_st] + '_v_area', sel_state, state_indst_svg)
             subplot_amount(
                 Data.subPlot(curr_st_dict[curr_st] + '_v_area', sel_state, 'paramt'),
-                state_paramt_svg, 'Traffick price')
+                state_paramt_svg, 'Amount received by parents')
 
 
             d3.selectAll('.statemap-states').style('fill', '#CFD8DC')
@@ -536,7 +538,7 @@
 
             d3.select('#state-' + st.replace(' ', '_').replace(' ', '_')).style('fill', '#607D8B')
             if (st == "Jammu and Kashmir") {
-                d3.select('#state-Jammu_and_Kashmir').attr('src', 'jk-sel.svg')
+                d3.select('#state-Jammu_and_Kashmir').attr('src', 'assets/jk-sel.svg')
             }
 
         }
@@ -546,12 +548,15 @@
 
     function age_plot() {
 
+
+
         age_svg = d3.select("#age-board")
             .append("svg")
             .attr("width", board_width)
             .attr("height", board_height)
             .style('background-color', 'white')
             .append('g')
+
 
         var age_bins = Data.age_dist()[0];
         var since_bins = Data.age_dist()[1];
@@ -565,7 +570,7 @@
             .attr('class', 'age-txt')
             .attr('text-anchor', 'middle')
             .attr("x", function (d, i) {
-                return 62 + i * 30
+                return 92 + i * 30
             })
             .attr("y", 410)
             .attr("dy", "10px")
@@ -581,6 +586,24 @@
             .on('click', age_click)
 
 
+        age_svg
+        .append('text')
+        .text('No. of children →')
+        .attr('transform','rotate(-90)')
+        .attr('x',-400)
+        .attr('y',30)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+        age_svg
+        .append('text')
+        .text('Age →')
+        .attr('x',90)
+        .attr('y',450)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
 
         var age_first = true;
 
@@ -621,7 +644,7 @@
             if (age_first) {
                 age_svg.append('g')
                     .attr('class', 'y axis')
-                    .attr("transform", "translate(50, 50)")
+                    .attr("transform", "translate(75, 50)")
                     .call(customYAxis);
             } else {
                 age_svg.select(".y.axis")
@@ -651,7 +674,7 @@
                 .attr('rx', 2)
                 .attr('ry', 2)
                 .attr("x", function (d, i) {
-                    return 50 + i * 30
+                    return 80 + i * 30
                 })
                 .attr("width", 25)
                 .attr('opacity', 0.5)
@@ -683,7 +706,7 @@
                 .attr('cx', function (d, i) {
                     return 7 * k + 300 + i * 150
                 })
-                .attr('cy', 600)
+                .attr('cy', 600-50)
                 .attr('r', 17)
                 .attr('cursor', 'pointer')
                 .on('click', age_btn_click)
@@ -703,7 +726,7 @@
             .attr("x", function (d, i) {
                 return 332.5 + i * 150
             })
-            .attr("y", 596)
+            .attr("y", 596-50)
             .attr("dy", "10px")
             .style("font-size", "15px")
             .style('font-family', 'Arial')
@@ -803,6 +826,17 @@
         //.append("g")
 
 
+        traf_svg
+        .append('text')
+        .text('No. of children →')
+        .attr('transform','rotate(-90)')
+        .attr('x',-270)
+        .attr('y',50)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+        
 
         var month_data = Data.traffickDate();
         var colorise = d3.scaleSequential().domain([-50, 270])
@@ -1039,6 +1073,7 @@
 
         }
     }
+
 
     function raid_plot() {
 
@@ -1324,11 +1359,6 @@
     }
 
     function amount_plot() {
-        var amt = Data.amountDist();
-        var income = amt['income']
-        var paramt = amt['paramt']
-        var wage = amt['wage']
-        var clr = ['#EC407A', '#673AB7', '#2196F3', '#26C6DA']
 
         amount_svg = d3.select("#amount-board")
             .append("svg")
@@ -1336,6 +1366,36 @@
             .attr("height", board_height)
             .style('background-color', 'white')
             .append('g')
+
+
+        amount_svg
+        .append('text')
+        .text('No. of children →')
+        .attr('transform','rotate(-90)')
+        .attr('x',-400)
+        .attr('y',50)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+        amount_svg
+        .append('text')
+        .text('Amount in Rs. →')
+        .attr('x',100)
+        .attr('y',500-50)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+
+
+        var amt = Data.amountDist();
+        var income = amt['income']
+        var paramt = amt['paramt']
+        var wage = amt['wage']
+        var clr = ['#EC407A', '#673AB7', '#2196F3', '#26C6DA']
+
+        
 
         var inc_dict = []
         for (var i = 0; i < 160; i++) {
@@ -1420,7 +1480,7 @@
             'paramt': paramt_list,
             'wage': wage_list
         }
-        var amt_dict_v = ['Income', 'Traffick price', 'Wage']
+        var amt_dict_v = ["Parent's annual income", 'Amount received by parents', "Child's wage"]
 
         var amt_sub_dict = {
             'income': [paramt_list, wage_list],
@@ -1438,12 +1498,12 @@
             .attr("stroke", '#90A4AE')
             .attr("stroke-width", 2)
             .attr("cx", function (d, i) {
-                return 200 + i * 120
+                return 140 + i * 250
             })
             .attr("width", 80)
             .attr('rx', 8)
             .attr('ry', 8)
-            .attr("cy", 600)
+            .attr("cy", 600-100)
             .attr("r", 20)
             .attr("height", 30)
             .attr('opacity', 0.5)
@@ -1455,10 +1515,10 @@
             .attr("fill", '#90A4AE')
             .attr('font-family', 'Arial')
             .attr("x", function (d, i) {
-                return 200 + i * 120
+                return 140 + i * 250
             })
             .attr('text-anchor', 'middle')
-            .attr("y", 650)
+            .attr("y", 650-100)
             .text(function (d) {
                 return d
             })
@@ -1488,13 +1548,13 @@
                     return 'amtbar-' + d[0]
                 })
                 .attr("x", function (d, i) {
-                    return 50 + d[0] * 15
+                    return 100 + d[0] * 15
                 })
                 .attr("width", 10)
                 .attr('rx', 2)
                 .attr('ry', 2)
                 .attr("y", function (d) {
-                    return 500 - d[2] * scale
+                    return 500 - d[2] * scale -100
                 })
                 .attr("height", function (d) {
                     return d[2] * scale
@@ -1508,11 +1568,11 @@
             console.log(_id)
             d3.select('#amount-key').attr('src','assets/'+_id+'-key.png')
             subplot_amount(income_list.map((x, i) => [x[0], i * 5000]),
-                amount1_sub_svg, 'Income')
+                amount1_sub_svg, "Parent's annual income")
             subplot_amount(paramt_list.map((x, i) => [x[0], i * 1000]),
-                amount2_sub_svg, 'Traffick price')
+                amount2_sub_svg, 'Amount received by parents')
             subplot_amount(wage_list.map((x, i) => [x[0], i * 50]),
-                amount3_sub_svg, 'Wage')
+                amount3_sub_svg, "Child's wage")
 
             //==
             
@@ -1609,9 +1669,10 @@
 
             var amt = Data.amountSelDist(_id[1], parseInt(_id[2]))
 
-            subplot_amount(amt['income'], amount1_sub_svg, 'Income')
-            subplot_amount(amt['paramt'], amount2_sub_svg, 'Traffick price')
-            subplot_amount(amt['wage'], amount3_sub_svg, 'Wage')
+            //console.log(_id)
+            subplot_amount(amt['income'], amount1_sub_svg, "Parent's annual income",_id)
+            subplot_amount(amt['paramt'], amount2_sub_svg, 'Amount received by parents',_id)
+            subplot_amount(amt['wage'], amount3_sub_svg, "Child's wage",_id)
 
             amount_svg.selectAll('rect')
                 .transition().duration(100)
@@ -1636,9 +1697,9 @@
 
         update_amount(inc_dict, 'income')
 
-        subplot_amount(income_list.map((x, i) => [x[0], i * 5000]), amount1_sub_svg, 'Income')
-        subplot_amount(paramt_list.map((x, i) => [x[0], i * 1000]), amount2_sub_svg, 'Traffick price')
-        subplot_amount(wage_list.map((x, i) => [x[0], i * 50]), amount3_sub_svg, 'Wage')
+        subplot_amount(income_list.map((x, i) => [x[0], i * 5000]), amount1_sub_svg, "Parent's annual income")
+        subplot_amount(paramt_list.map((x, i) => [x[0], i * 1000]), amount2_sub_svg, 'Amount received by parents')
+        subplot_amount(wage_list.map((x, i) => [x[0], i * 50]), amount3_sub_svg, "Child's wage")
 
 
         var Yscale = d3.scaleLinear()
@@ -1691,12 +1752,12 @@
 
         amount_svg.append('g')
             .attr('class', 'y axis')
-            .attr("transform", "translate(40, 200)")
+            .attr("transform", "translate(90, 100)")
             .call(customYAxis);
 
         amount_svg.append('g')
             .attr('class', 'x axis')
-            .attr("transform", "translate(50, 505)")
+            .attr("transform", "translate(100, 405)")
             .call(customXAxis);
 
     }
@@ -1762,6 +1823,7 @@
             .attr('opacity', 0.5)
     }
 
+
     function indust_plot() {
         indst_svg = d3.select("#indst-board")
             .append("svg")
@@ -1770,6 +1832,8 @@
             .style('background-color', 'white')
             .append('g')
 
+
+        
 
         var ind_cat = Data.industryDist()
         var ind = []
@@ -1825,6 +1889,15 @@
             .text(function (d) {
                 return ind_dict[d[1]]
             })
+
+        indst_svg
+        .append('text')
+        .text('No. of children →')
+        .attr('x',150)
+        .attr('y',40)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
 
 
         var scale_a = d3.scaleLinear()
@@ -2722,6 +2795,16 @@
     }
 
     function subplot_indst(src, val, board) {
+        
+        
+        board
+        .append('text')
+        .text('No. of Children →')
+        .attr('x',160)
+        .attr('y',235)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
 
         var s_ind = ["Garment", "Hotel/Dhaba", "Footwear", "Jute/Plastic/Rexin/Cloth Bags", "Handicraft",
             "Domestic Servant", "Cosmetic", "Stone Quarry", "Odd Jobs", "Automobile/Transport"
@@ -2776,7 +2859,7 @@
         if (selected['_groups'][0][0] == null) {
             board.append('g')
                 .attr('class', 'x axis')
-                .attr("transform", "translate(140, 210)")
+                .attr("transform", "translate(140, 200)")
                 .call(customXAxis);
 
         } else {
@@ -2811,7 +2894,7 @@
             .attr('class', 'subage' + board.attr('id'))
             .attr("x", 145)
             .attr("y", function (d, i) {
-                return 44 + 17 * i
+                return 34 + 17 * i
             })
             .attr("dy", "10px")
             .style("font-size", "15px")
@@ -2838,7 +2921,7 @@
                 return d
             })
             .attr("y", function (d, i) {
-                return 48 + 17 * i
+                return 38 + 17 * i
             })
             .attr("height", 3);
 
@@ -2857,7 +2940,7 @@
                 return 160 + d
             })
             .attr("cy", function (d, i) {
-                return 50 + 17 * i
+                return 40 + 17 * i
             })
 
     }
@@ -2976,6 +3059,27 @@
     function subplot_age(src, val, board) {
 
 
+
+        board
+        .append('text')
+        .text('No. of children →')
+        .attr('transform','rotate(-90)')
+        .attr('x',-200)
+        .attr('y',20)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+        board
+        .append('text')
+        .text('Age →')
+        .attr('x',40)
+        .attr('y',235)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+        
+        
         var data = Data.subPlot(src, val, "age");
         var num_data = Array(20).fill(0)
         for (var i = 0; i < data.length; i++)
@@ -2985,12 +3089,12 @@
         var max = num_data.reduce((max, i) => max > i ? max : i, 0)
 
         if (data.length != 0)
-            num_data = num_data.map(x => 180 * x / max)
+            num_data = num_data.map(x => 160 * x / max)
 
 
         var scale = d3.scaleLinear()
             .domain([0, max])
-            .range([200, 20]);
+            .range([190, 30]);
 
         var y_axis = d3.axisLeft()
             .scale(scale)
@@ -3016,7 +3120,7 @@
         if (selected['_groups'][0][0] == null) {
             board.append('g')
                 .attr('class', 'y axis')
-                .attr("transform", "translate(30, 10)")
+                .attr("transform", "translate(50, 10)")
                 .call(customYAxis);
 
         } else {
@@ -3049,9 +3153,9 @@
             .attr('text-anchor', 'end')
             .attr('class', 'subagetxt' + board.attr('id'))
             .attr("x", function (d, i) {
-                return 35 + 17 * i
+                return 55 + 17 * i
             })
-            .attr("y", 215)
+            .attr("y", 205)
             .attr("dy", "10px")
             .style("font-size", "10px")
             .style('font-family', 'Arial')
@@ -3073,11 +3177,11 @@
             .attr('ry', 1)
             .attr('opacity', 1)
             .attr("x", function (d, i) {
-                return 25 + 17 * i
+                return 45 + 17 * i
             })
             .attr("width", 10)
             .attr("y", function (d) {
-                return 210 - d
+                return 200 - d
             })
             .attr("height", function (d) {
                 return 1 + d
@@ -3141,7 +3245,7 @@
             .attr('fill', '#90A4AE')
             .style("font-size", "15px")
             .style('font-family', 'Arial')
-            .text('Raid conducted : ' + nr)
+            .text('Raids conducted : ' + nr)
             .attr('opacity', 1)
 
 
@@ -3153,7 +3257,7 @@
             .attr('fill', '#90A4AE')
             .style("font-size", "15px")
             .style('font-family', 'Arial')
-            .text('Children rescued :' + nc)
+            .text('Children rescued : ' + nc)
             .attr('opacity', 1)
 
 
@@ -3321,7 +3425,29 @@
 
     }
 
-    function subplot_amount(data, board, title = "") {
+    function subplot_amount(data, board, title = "", filter=[]) {
+
+
+        board
+        .append('text')
+        .text('No. of children →')
+        .attr('transform','rotate(-90)')
+        .attr('x',-190)
+        .attr('y',10)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+        board
+        .append('text')
+        .text('Amount in Rs. →')
+        .attr('x',60)
+        .attr('y',235)
+        .attr('font-size','13px')
+        .attr('font-family','Arial')
+        .attr('fill','#B0BEC5')
+
+
         var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
         var scale = 0
         if (max != 0) scale = 150 / max
@@ -3384,12 +3510,12 @@
 
             board.append('g')
                 .attr('class', 'y axis')
-                .attr("transform", "translate(30, 50)")
+                .attr("transform", "translate(50, 40)")
                 .call(customYAxis);
 
             board.append('g')
                 .attr('class', 'x axis')
-                .attr("transform", "translate(40, 205)")
+                .attr("transform", "translate(60, 195)")
                 .call(customXAxis);
 
         } else {
@@ -3400,9 +3526,29 @@
         }
 
 
+        var f_text=""
+        if(filter.length>0){
+            var f_t_dict={
+                'income':'annual income',
+                'paramt':'parents received',
+                'wage':"child's wage"
+            }
+            var f_dict={
+                'income':5000,
+                'paramt':1000,
+                'wage': 50
+            }
+            var ft=filter[1];
+            var fr=filter[2];
+            console.log(filter)
+            fr = (fr/1000).toString()+'k - '+((parseInt(fr)+f_dict[ft])/1000).toString()+'k'
+            f_text='of '+f_t_dict[ft]+' : '+fr
+        }
+
 
         d3.selectAll('#title' + board.attr('id')).remove();
-
+        d3.selectAll('#filter' + board.attr('id')).remove();
+        
         board
             .append('text')
             .attr('id', 'title' + board.attr('id'))
@@ -3413,7 +3559,19 @@
             .style('font-family', 'Arial')
             .attr('text-anchor', 'middle')
             .attr('fill', '#607D8B')
-            .text(title + ' distribution');
+            .text(title);
+
+        board
+            .append('text')
+            .attr('id', 'filter' + board.attr('id'))
+            .attr("x", sub_age_width / 2)
+            .attr("y", 30)
+            .attr("dy", "10px")
+            .style("font-size", "15px")
+            .style('font-family', 'Arial')
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#90A4AE')
+            .text(f_text);
 
 
         var amt_bar = board.selectAll('rect')
@@ -3427,13 +3585,13 @@
             .transition().duration(500)
             .attr("fill", '#81C784')
             .attr("x", function (d, i) {
-                return 40 + i * 8
+                return 60 + i * 8
             })
             .attr("width", 7)
             .attr('rx', 0.5)
             .attr('ry', 0.5)
             .attr("y", function (d) {
-                return 200 - d
+                return 200 - d -10
             })
             .attr("height", function (d) {
                 return d
@@ -3529,7 +3687,7 @@
             .attr('opacity', 1)
 
 
-        subplot_amount(loc['wage'], indst_wage_svg, 'Wage')
+        subplot_amount(loc['wage'], indst_wage_svg, "Child's wage")
 
 
     }
@@ -3603,7 +3761,7 @@
 
     var state_svg
     var curr_st = 'Maharashtra'
-    var sel_state = 'from'
+    var sel_state = ''
 
 
     var state_age_svg = d3.select("#state-age-sub")
@@ -3772,7 +3930,6 @@
     subplot_indst_loc('Garment')
 
     // -------------
-
 
     //------------------------------------------------
 

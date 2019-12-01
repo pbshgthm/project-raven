@@ -321,7 +321,6 @@ var Data = {
             var wg = Data.raw[i]['wage_week']
             if (wg != -1)
                 wg = Math.round(wg / 50) * 50
-
             if (wg in wage) wage[wg] += 1
             else wage[wg] = 1
 
@@ -351,12 +350,12 @@ var Data = {
             var inc = wage[i][0] / 50;
             if (inc > 39) inc = 39
             wage_list[inc][0] += wage[i][1]
-            wage_list[inc][1] = wage[i][0]
+            wage_list[inc][1] = inc*50
         }
 
 
 
-
+        console.log(wage_list)
         return {
             'raid': raid_loc,
             'native': native_loc,

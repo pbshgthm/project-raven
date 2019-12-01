@@ -1,3 +1,14 @@
+color scheme of the map
+//label - for the axis (age, inr, num pr kids)
+//label - number of parent's income
+//desc for amount plots // annotations
+// js sel ?
+//map being cut off ?
+//traffic prine -> amount received by parents
+//colon consistency, raid date
+//income -> annual income
+//wage - child wage
+
 
 //TODO============
 //+ JK integration

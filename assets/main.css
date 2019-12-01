@@ -5,25 +5,26 @@ body,html{
 
 #state-Jammu_and_Kashmir{
 	z-index: 999999;
-	position: fixed;
+	position: absolute;
 	width: 150px;
-	top: 15px;
-	left: 350px;
+	top: 00px;
+	left: 120px;
+	opacity: 0.7;
 }
 #nav-pane{
 	position: fixed;
 	top: 5vh;
 	left: 2vw;
-	width: 172px;
+	width: 14vw;
 	height: 90vh;
 	background-color: #ECEFF1;
 }
 
 .page-sec{
-	width: 1165px;
+	width: 85vw;
 	height: 95vh;
 	padding-top: 5vh;
-	padding-left: 273px;
+	padding-left: 15vw;
 	border-bottom: 3px solid white;
 	background-color: white;
 	display: none;
@@ -32,17 +33,23 @@ body,html{
 
 .viz-board{
 	position: fixed;
-	left: 230px;
-	width: 719px;
+	left: 17vw;
+	width: 50vw;
 	height: 90vh;
 	background-color: white;
 }
-
+#state-map{
+	position: absolute;
+	height: 700px;
+	overflow-y: scroll;
+}
 .viz-panel{
-	position: fixed;
-	left: 978px;
-	width: 703px;
-	height: 90vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	position: absolute;
+	left: 68vw;
+	width: 30vw;
+	height: 750px;
 	background-color: white;
 	padding-left: 29px;
 	border-left: 2px solid #CFD8DC;
@@ -62,17 +69,17 @@ body,html{
 }
 .sub-indst{
 	width: 27vw;
-	height: 30vh;
+	height: 243px;
 }
 
 .sub-map{
 	width: 27vw;
-	height: 30vh;
+	height: 243px;
 }
 
 .sub-age{
 	width: 27vw;
-	height: 30vh;
+	height: 243px;
 }
 
 .label-font{
@@ -89,7 +96,7 @@ body,html{
 	font-size: 20px;
 }
 .nav-btn{
-	margin-bottom: 20px;
+	margin-bottom: 25px;
 	margin-left: 15px;
 	color: #90A4AE;
 	cursor: pointer;
