@@ -2,7 +2,13 @@ body,html{
 	margin: 0;
 	padding: 0;
 }
-
+#map-scale{
+	z-index: 99999;
+	position: absolute;
+	width: 15vw;
+	bottom: 10vh;
+	left: 50vw;
+}
 #state-Jammu_and_Kashmir{
 	z-index: 999999;
 	position: absolute;

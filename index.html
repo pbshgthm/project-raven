@@ -31,6 +31,7 @@
         </div>
     </div>
     <div class="page-sec" id="map-sec" style="display: block;">
+        <img id="map-scale" src="assets/map-native.png">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
     </div>
@@ -2062,6 +2063,7 @@
             var _id = d3.select(this).attr('id').split('-')[2]
             map_loc = _id
 
+            d3.select('#map-scale').attr('src','assets/map-'+_id+'.png')
             map_controls_svg.select('#map-loc-desc').text(loc_desc[_id])
 
             if (_id == 'line') {
