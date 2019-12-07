@@ -1,4 +1,4 @@
-color scheme of the map
+color scheme of the map - with numerical
 
 //label - for the axis (age, inr, num pr kids)
 //label - number of parent's income

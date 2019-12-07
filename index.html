@@ -1,4 +1,3 @@
-
 <html>
 
 <head>
@@ -22,12 +21,12 @@
             <div class="nav-btn" id="nav-state">Source & Destination</div>
             <div class="nav-btn" id="nav-age">Age Distribution</div>
             <div class="nav-btn" id="nav-traf">Trafficking Trends </div>
-            <div class="nav-btn" id="nav-raid">Raid date</div>
+            <div class="nav-btn" id="nav-raid">Raid Data</div>
             <div class="nav-btn" id="nav-amt">Income, Wage & Price</div>
             <!--
             <div class="nav-btn" id="nav-sch">School</div>
             -->
-            <div class="nav-btn" id="nav-ind">Industry</div>
+            <div class="nav-btn" id="nav-ind">Industry Distribution</div>
         </div>
     </div>
     <div class="page-sec" id="map-sec" style="display: block;">
@@ -2719,7 +2718,7 @@
                 map.getSource('linemap').setData(new_crds['line'])
             } else {
 
-                if (map_ind.length == 1) return;
+                //if (map_ind.length == 1) return;
                 d3.select('#mc-ind-all').attr('fill', 'white')
                 d3.select('#mc-ind-' + _id).attr('fill', 'white');
                 map_ind.splice(map_ind.indexOf(_id), 1)
@@ -2750,7 +2749,7 @@
 
             if (map_ind.length == 15) return;
             d3.select(this).attr('fill', '#80DEEA')
-            map_ind = Array(14).fill(0).map((x, i) => i)
+            map_ind = Array(15).fill(0).map((x, i) => i)
             d3.select('#mc-ind-clear').attr('fill', 'white')
 
             for (var i = 0; i < map_ind.length; i++)
@@ -2763,28 +2762,30 @@
 
 
         function mc_ind_clear_mouseover() {
-            if (map_ind.length == 1) return
+            if (map_ind.length == 0) return
             d3.select(this).attr('fill', '#B2EBF2')
 
         }
 
         function mc_ind_clear_mouseout() {
-            if (map_ind.length == 1) return
+            //if (map_ind.length == 1) return
             d3.select(this).attr('fill', 'white')
         }
 
         function mc_ind_clear_click() {
 
-            if (map_ind.length == 1) return;
+            //if (map_ind.length == 1) return;
             d3.select(this).attr('fill', '#80DEEA')
 
             for (var i = 0; i < map_ind.length; i++)
                 d3.select('#mc-ind-' + map_ind[i]).attr('fill', 'white')
 
-            d3.select('#mc-ind-0').attr('fill', '#80DEEA')
             d3.select('#mc-ind-all').attr('fill', 'white')
 
-            map_ind = [0]
+            //d3.select('#mc-ind-0').attr('fill', '#80DEEA')
+            //d3.select('#mc-ind-all').attr('fill', 'white')
+
+            map_ind = []
             var new_crds = Data.filterPoints(map_age, map_time, map_ind, map_loc);
             map.getSource('heatmap').setData(new_crds['point']);
             map.getSource('linemap').setData(new_crds['line'])
