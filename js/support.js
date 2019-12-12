@@ -1,7 +1,7 @@
 var Data = {
 
     raw: [],
-    init: function (raw_csv) {
+    init: function(raw_csv) {
         var key = raw_csv[0]
         var data = []
         for (var i = 1; i < raw_csv.length; i++) {
@@ -12,8 +12,10 @@ var Data = {
         }
         this.raw = data;
     },
-
-    toGeojson: function (crds, typ = "Point") {
+    initData: function(data) {
+        this.raw=data
+    },
+    toGeojson: function(crds, typ = "Point") {
         var geo = {};
         geo['type'] = 'FeatureCollection';
         geo['features'] = [];
@@ -37,7 +39,7 @@ var Data = {
         return geo;
     },
 
-    getPoints: function (src) {
+    getPoints: function(src) {
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
             var crd = this.raw[i][src].split(',')
@@ -47,7 +49,7 @@ var Data = {
         return this.toGeojson(crds)
     },
 
-    getLines: function (src, dst) {
+    getLines: function(src, dst) {
 
         var crds = []
         for (var i = 0; i < this.raw.length; i++) {
@@ -64,7 +66,7 @@ var Data = {
     },
 
 
-    filterPoints: function (age, time, indst, loc) {
+    filterPoints: function(age, time, indst, loc) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
             "Cosmetic", "Domestic Servant", "Automobile/Transport", "Metal", "Retail Shop/Office",
             "Electrical & Electronics", "Leather", "_others", ""
@@ -97,9 +99,9 @@ var Data = {
             var r = this.raw[i]['native_v_crd'].split(',')
             var n = this.raw[i]['raid_v_crd'].split(',')
             if (r == "" || n == "") continue;
-            
-            var crd_l=[r, n];
-            var crdl_point=[crd_l];
+
+            var crd_l = [r, n];
+            var crdl_point = [crd_l];
             crdl_point.push({
                 'native_v': this.raw[i]['native_v_name'],
                 'raid_v': this.raw[i]['raid_v_name']
@@ -128,7 +130,7 @@ var Data = {
 
     },
 
-    stateStats: function (state) {
+    stateStats: function(state) {
         var nat_state = {}
         var fac_state = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -154,10 +156,10 @@ var Data = {
         nat_state = Object.entries(nat_state)
         fac_state = Object.entries(fac_state)
 
-        nat_state.sort(function (a, b) {
+        nat_state.sort(function(a, b) {
             return b[1] - a[1]
         })
-        fac_state.sort(function (a, b) {
+        fac_state.sort(function(a, b) {
             return b[1] - a[1]
         })
 
@@ -167,7 +169,7 @@ var Data = {
         }
     },
 
-    age_dist: function () {
+    age_dist: function() {
         var age = Array(21).fill(0)
         var start_age = Array(21).fill(0)
         for (var i = 0; i < this.raw.length; i++) {
@@ -179,7 +181,7 @@ var Data = {
         return [age, start_age];
     },
 
-    traffickDate: function () {
+    traffickDate: function() {
 
         var traf_m = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -193,13 +195,13 @@ var Data = {
 
         traf_m = Object.entries(traf_m).map(x => [parseInt(x[0]), x[1]])
 
-        return traf_m.sort(function (a, b) {
+        return traf_m.sort(function(a, b) {
             return a[0] - b[0]
         })
 
     },
 
-    traffickDur: function () {
+    traffickDur: function() {
         var dur = []
         for (var i = 0; i < this.raw.length; i++) {
             var t = this.raw[i]['t_date'].split("/")
@@ -209,13 +211,13 @@ var Data = {
             if (isNaN(t) || isNaN(r)) continue;
             dur.push([t, r])
         }
-        return dur.sort(function (a, b) {
+        return dur.sort(function(a, b) {
             return a[0] - b[0]
         });
 
     },
 
-    raidDist: function () {
+    raidDist: function() {
         var r_data = {};
         for (var i = 0; i < this.raw.length; i++) {
             var r_date = this.raw[i]['r_date']
@@ -242,7 +244,7 @@ var Data = {
         return r_freq;
     },
 
-    originDist: function () {
+    originDist: function() {
         var s_data = {};
         for (var i = 0; i < this.raw.length; i++) {
             var s_val = this.raw[i]['since']
@@ -261,7 +263,7 @@ var Data = {
         return s_data;
     },
 
-    industryDist: function () {
+    industryDist: function() {
         var indCat = [
             ['Garment', 'Footwear', 'Jewellery'],
             ['Automobile/Transport', 'Metal', 'Retail Shop/Office', 'Odd Jobs', 'Stone Quarry', 'Factory', 'Plastic and Nylon units'],
@@ -287,7 +289,7 @@ var Data = {
         for (var i = 0; i < indCat.length; i++) {
             for (var j = 0; j < indCat[i].length; j++)
                 indCat[i][j] = [ind_dict[indCat[i][j]], indCat[i][j]]
-            indCat[i].sort(function (a, b) {
+            indCat[i].sort(function(a, b) {
                 return b - a
             })
         }
@@ -295,7 +297,7 @@ var Data = {
         return indCat
     },
 
-    industryLoc: function (indst) {
+    industryLoc: function(indst) {
         var raid_loc = {}
         var native_loc = {}
         var wage = {}
@@ -328,17 +330,17 @@ var Data = {
 
 
         raid_loc = Object.entries(raid_loc)
-        raid_loc.sort(function (a, b) {
+        raid_loc.sort(function(a, b) {
             return b[1] - a[1]
         })
         native_loc = Object.entries(native_loc)
-        native_loc.sort(function (a, b) {
+        native_loc.sort(function(a, b) {
             return b[1] - a[1]
         })
 
 
         wage = Object.entries(wage)
-        wage.sort(function (a, b) {
+        wage.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -350,12 +352,11 @@ var Data = {
             var inc = wage[i][0] / 50;
             if (inc > 39) inc = 39
             wage_list[inc][0] += wage[i][1]
-            wage_list[inc][1] = inc*50
+            wage_list[inc][1] = inc * 50
         }
 
 
 
-        console.log(wage_list)
         return {
             'raid': raid_loc,
             'native': native_loc,
@@ -363,7 +364,7 @@ var Data = {
         }
     },
 
-    parPay: function () {
+    parPay: function() {
         var paypar = {};
         var p_c = 0;
         var a_c = 0;
@@ -383,7 +384,7 @@ var Data = {
 
     },
 
-    amountDist: function () {
+    amountDist: function() {
         var income = {};
         var paramt = {};
         var wage = {};
@@ -392,11 +393,11 @@ var Data = {
         var par_dict = {};
         var wag_dict = {};
 
-        parcount=0;
-        parc={
-            'loan':0,
-            'advance':0,
-            'loan&advance':0
+        parcount = 0;
+        parc = {
+            'loan': 0,
+            'advance': 0,
+            'loan&advance': 0
         }
         for (var i = 0; i < Data.raw.length; i++) {
 
@@ -441,7 +442,7 @@ var Data = {
             var par = Data.raw[i]['paramt']
             var paypar = Data.raw[i]['paypar']
             if (par == "") {
-                if (paypar == 'no'||paypar=="")
+                if (paypar == 'no' || paypar == "")
                     par = -1
                 else
                     par = -2
@@ -464,7 +465,7 @@ var Data = {
                 if (ind > 39) ind = 39;
 
                 if (paypar == "loan") {
-                    parc['loan']+=1
+                    parc['loan'] += 1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -480,10 +481,8 @@ var Data = {
                     var k = ind + '-4';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
-                }
-
-                else if (paypar == "advance") {
-                    parc['advance']+=1
+                } else if (paypar == "advance") {
+                    parc['advance'] += 1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -495,10 +494,8 @@ var Data = {
                     var k = ind + '-3';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
-                }
-
-                else if (paypar == "loan&advance") {
-                    parc['loan&advance']+=1
+                } else if (paypar == "loan&advance") {
+                    parc['loan&advance'] += 1
                     var k = ind + '-1';
                     if (k in par_dict) par_dict[k] += 1;
                     else par_dict[k] = 1
@@ -508,14 +505,14 @@ var Data = {
                     else par_dict[k] = 1
 
                 }
-                
+
 
 
 
             }
 
             ////////////////
-            
+
             var wg = Data.raw[i]['wage_week']
             var wtype = Data.raw[i]['wage_type']
             if (wg != -1)
@@ -585,30 +582,30 @@ var Data = {
 
         }
 
-        
-        lala=0;
-        for(i in par_dict){
-            lala+=par_dict[i]
+
+        lala = 0;
+        for (i in par_dict) {
+            lala += par_dict[i]
         }
-        
+
 
         income = Object.entries(income)
         income = income.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        income.sort(function (a, b) {
+        income.sort(function(a, b) {
             return a[0] - b[0]
         })
 
-        
+
         paramt = Object.entries(paramt)
         paramt = paramt.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        paramt.sort(function (a, b) {
+        paramt.sort(function(a, b) {
             return a[0] - b[0]
         })
-       
+
 
         wage = Object.entries(wage)
         wage = wage.map(x => [x[0], x[1][0], Math.round(x[1][1]), Math.round(x[1][2])])
-        wage.sort(function (a, b) {
+        wage.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -619,7 +616,7 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 5000
         ])
-        inc_dict = inc_dict.sort(function (a, b) {
+        inc_dict = inc_dict.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -630,7 +627,7 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 1000
         ])
-        par_dict = par_dict.sort(function (a, b) {
+        par_dict = par_dict.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -641,7 +638,7 @@ var Data = {
             x[1],
             parseInt(x[0].split('-')[0]) * 50
         ])
-        wag_dict = wag_dict.sort(function (a, b) {
+        wag_dict = wag_dict.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -656,7 +653,7 @@ var Data = {
         }
     },
 
-    amountSelDist: function (sel_amt, sel_val) {
+    amountSelDist: function(sel_amt, sel_val) {
 
         var income = {};
         var paramt = {};
@@ -727,17 +724,17 @@ var Data = {
 
         var sample_list = Array(40).fill(0)
         income = Object.entries(income)
-        income.sort(function (a, b) {
+        income.sort(function(a, b) {
             return a[0] - b[0]
         })
 
         paramt = Object.entries(paramt)
-        paramt.sort(function (a, b) {
+        paramt.sort(function(a, b) {
             return a[0] - b[0]
         })
 
         wage = Object.entries(wage)
-        wage.sort(function (a, b) {
+        wage.sort(function(a, b) {
             return a[0] - b[0]
         })
 
@@ -778,7 +775,7 @@ var Data = {
 
     },
 
-    getDict: function (item) {
+    getDict: function(item) {
         var gen_dict = {}
         for (var i = 0; i < this.raw.length; i++) {
             if (this.raw[i][item] in gen_dict)
@@ -787,12 +784,12 @@ var Data = {
                 gen_dict[this.raw[i][item]] = 1;
         }
 
-        return Object.entries(gen_dict).sort(function (a, b) {
+        return Object.entries(gen_dict).sort(function(a, b) {
             return b[1] - a[1]
         });
     },
 
-    subPlot: function (filter, val, key) {
+    subPlot: function(filter, val, key) {
         var dist = {}
         for (var i = 0; i < this.raw.length; i++) {
             var f = this.raw[i][filter];
@@ -825,7 +822,7 @@ var Data = {
         }
 
         dist = Object.entries(dist);
-        dist.sort(function (a, b) {
+        dist.sort(function(a, b) {
             return b[0] - a[0]
         })
 
@@ -846,7 +843,7 @@ var Data = {
         return dist;
     },
 
-    r_month_data: function (curr_month) {
+    r_month_data: function(curr_month) {
         var month_data = []
         var r_data = {}
         for (var i = 0; i < this.raw.length; i++) {
@@ -871,11 +868,9 @@ var Data = {
         }
         month_data = Object.entries(r_data)
         month_data = month_data.map(x => x[0].split('--').concat(x[1]))
-        month_data.sort(function (a, b) {
+        month_data.sort(function(a, b) {
             return parseInt(a[0].split('/')[0]) - parseInt(b[0].split('/')[0])
         })
-        //month_data = month_data.map(x => x.slice(0, 2).concat([Object.entries(x[2])]))
-        //console.log(month_data)
         return month_data
 
     }
