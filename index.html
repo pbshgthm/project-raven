@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
-    <script src="js/d3.min.js"></script>
-    <script src="js/d3.geo.min.js"></script>
-    <script src="js/indiaGeo.json"></script>
-    <script src="js/support.js"></script>
-    <script src="js/data.json"></script>
-    <script src="js/d3-chromatic.min.js"></script>
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <script type="text/javascript" src="js/d3.geo.min.js"></script>
+    <script type="text/javascript" src="js/indiaGeo.json"></script>
+    <script type="text/javascript" src="js/support.js"></script>
+    <script type="text/javascript" src="js/data.json"></script>
+    <script type="text/javascript" src="js/d3-chromatic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="assets/main.css">
     <title>Project Raven</title>
 </head>
@@ -3340,7 +3340,7 @@ function subplot_raid(month_data) {
         .text(function(d) {
             var m = d[4].split('&');
             if (m.length == 1) return "";
-            return m[0] //+'\n'+m[1] 
+            return m[0] //+'\n'+m[1]
         })
         .transition().duration(500)
         .attr('opacity', 1)
@@ -3360,7 +3360,7 @@ function subplot_raid(month_data) {
         .text(function(d) {
             var m = d[4].split('&');
             if (m.length == 1) return "";
-            return m[1].slice(0, -5) //+'\n'+m[1] 
+            return m[1].slice(0, -5) //+'\n'+m[1]
         })
         .transition().duration(500)
         .attr('opacity', 1)

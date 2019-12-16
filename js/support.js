@@ -13,7 +13,7 @@ var Data = {
         this.raw = data;
     },
     initData: function(data) {
-        this.raw=data
+        this.raw=data;
     },
     toGeojson: function(crds, typ = "Point") {
         var geo = {};
