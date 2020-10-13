@@ -30,7 +30,7 @@
         </div>
 	</div>
 	<!--EDIT DISPLAY TO BLOCK-->
-    <div class="page-sec" id="map-sec" style="display: none;">
+    <div class="page-sec" id="map-sec" style="display: block;">
         <img id="map-scale" src="assets/map-native.png">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
@@ -93,6 +93,15 @@
     </div>
 </body>
 <script type="text/javascript">
+
+var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tooltip")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "hidden")
+	.text("a simple tooltip");
+
 
 d3.csv('data.csv', function(data) {
     Data.initData(data);
@@ -318,6 +327,7 @@ function map_state() {
         .attr("height", 700)
         .append("svg:g")
 
+
     var proj = d3.geo.mercator();
     var path = d3.geo.path().projection(proj);
 
@@ -331,7 +341,15 @@ function map_state() {
         'to': 'Native'
     }
 
-
+	
+	state_tot=state_svg
+		.append('text')
+		.text('')
+		.attr('x',500)
+		.attr('y',100)
+		.attr('fill', '#546E7A')
+        .style("font-size", "18px")
+        .style('font-family', 'Arial')
 
     state_svg.selectAll('state-btns')
         .data(st_type)
@@ -352,6 +370,7 @@ function map_state() {
         .attr('ry', 15)
         .attr('cursor', 'pointer')
         .on('click', st_type_click)
+		
 
 
     state_svg.selectAll('state-btns-txt')
@@ -395,6 +414,7 @@ function map_state() {
         d3.select('#st-btnt-' + _id).attr('fill', 'white')
     }
 
+
     var state_map = state_svg.selectAll("path")
         .data(india_geo.features)
 
@@ -408,11 +428,23 @@ function map_state() {
         })
         .attr('class', 'statemap-states')
         .on('click', state_map_click)
+		.on("mouseover", ()=>{tooltip.style("visibility", "visible")})
+		.on("mousemove", (d)=>{
+			var data=Data.stateStats(d.id)[curr_st];
+			var tot=0;
+			if(data.length>0)tot=data.reduce((sum,x)=>sum+x[1],0)
+			tooltip
+			.text(curr_st_dict_tool[curr_st]+' '+d.id+' : '+tot)
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
+		.on("mouseout", ()=>{tooltip.style("visibility", "hidden")})
         .transition().duration(500)
         .style('stroke', 'white')
         .style('stroke-width', 1)
         .style("fill", '#CFD8DC')
         .style("opacity", 0.7)
+		
 
     d3.select('#state-Jammu_and_Kashmir').on('click', state_map_click)
 
@@ -421,6 +453,14 @@ function map_state() {
         'to': 'native'
     }
 
+	var curr_st_dict_tool = {
+        'from': 'To',
+        'to': 'From'
+    }
+	var curr_st_dict_tot = {
+        'from': 'Rescued',
+        'to': 'Native'
+    }
     function state_map_click() {
 
         var _id = d3.select(this).attr('id').split('-')[1].replace('_', ' ').replace('_', ' ')
@@ -444,7 +484,7 @@ function map_state() {
         d3.select('#state-Jammu_and_Kashmir').attr('src', 'assets/jk.svg')
 
         var data = Data.stateStats(st)
-
+		state_tot.text(curr_st_dict_tot[curr_st]+' : '+data.tot[curr_st])
         var st_data = data[curr_st]
         var f_max = st_data.reduce((max, x) => max > x[1] ? max : x[1], 0)
 
@@ -473,6 +513,8 @@ function map_state() {
         else
             curr_st_list = ['To', 'From']
 
+		
+
         state_svg.selectAll("state-title")
             .data(curr_st_list)
             .enter()
@@ -489,9 +531,9 @@ function map_state() {
             .style('font-family', 'Arial')
             .text(function(d) {
                 return d
-            });
+            })
 
-
+	
         state_svg
             .append('text')
             .attr("x", 500)
@@ -519,7 +561,8 @@ function map_state() {
             .attr('fill', '#B0BEC5')
             .text(function(d) {
                 return d[0];
-            });
+            })
+			
 
 
         state_svg.selectAll("count")
@@ -562,6 +605,14 @@ function age_plot() {
         .style('background-color', 'white')
         .append('g')
 
+	age_tot=age_svg
+		.append('text')
+		.text('qwerty')
+		.attr('x',600)
+		.attr('y',100)
+		.attr('fill', '#546E7A')
+        .style("font-size", "16px")
+        .style('font-family', 'Arial')
 
     var age_bins = Data.age_dist()[0];
     var since_bins = Data.age_dist()[1];
@@ -615,17 +666,18 @@ function age_plot() {
     function agebars_plot(data, clr) {
         var scale = 1;
         var max = data.reduce((max, i) => max > i ? max : i, 0)
-        scale = 250 / max;
+        scale = 350 / max;
 
-
+		var sum = data.reduce((sum, i) => sum + i, 0)
+		age_tot.text('Total : '+sum)
 
         var scale_a = d3.scaleLinear()
-            .domain([0, max + 100])
+            .domain([0, max])
             .range([350, 0]);
 
         var y_axis = d3.axisLeft()
             .scale(scale_a)
-            .ticks(5)
+            .ticks(10)
 
 
         function customYAxis(g) {
@@ -661,6 +713,7 @@ function age_plot() {
         age_first = false;
 
 
+		
 
         var age_bars = age_svg.selectAll("rect")
             .data(data)
@@ -669,9 +722,12 @@ function age_plot() {
             .append('rect')
 
         age_bars.merge(entering)
-            .on('mouseover', age_mouseover)
-            .on('mouseout', age_mouseout)
             .on('click', age_click)
+			.on("mouseover",age_mouseover)
+			.on("mousemove", function(d){
+				return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px").text(d);
+			})
+			.on("mouseout", age_mouseout)
             .attr('id', function(d, i) {
                 return 'age-bar-' + i
             })
@@ -691,6 +747,7 @@ function age_plot() {
             .attr("height", function(d, i) {
                 return d * scale;
             })
+			
 
 
         //d3.select('#age-bar-'+(curr_age-1)).attr('opacity',1)
@@ -766,6 +823,7 @@ function age_plot() {
     }
 
     function age_mouseover() {
+		tooltip.style("visibility", "visible");
 
         var _id = d3.select(this).attr('id').split('-')[2]
         if (parseInt(_id) + 1 == curr_age) return;
@@ -778,6 +836,7 @@ function age_plot() {
     }
 
     function age_mouseout() {
+		tooltip.style("visibility", "hidden")
 
         var _id = d3.select(this).attr('id').split('-')[2]
         if (parseInt(_id) + 1 == curr_age) return;
@@ -821,7 +880,7 @@ function traf_plot() {
     var month_name = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 	
-		
+	
     traf_svg = d3.select("#traf-board")
         .append("svg")
         .attr("width", board_width)
@@ -829,18 +888,31 @@ function traf_plot() {
         .style('background-color', 'white')
     	.call(d3.zoom().on("zoom", function() {
 			var trans=d3.event.transform.x
-			if(trans>56||trans<-700)return;
+			if(trans>56||trans<-800)return;
 
 			traf_svg.attr("transform", 'translate('+trans+',0)')
 			traf_svg_scale_value.attr("transform", 'translate('+(50-trans)+',148)')
 			traf_svg_scale_text.attr("y", 20-trans)
 			traf_svg_scale_bg.attr("x", -25-trans)
+			traf_tot.attr('x',550-trans)
    		}))
     	.append("g")
 
 	
+	
+
 
     var month_data = Data.traffickDate();
+
+	traf_tot=traf_svg
+		.append('text')
+		.text('Total : '+month_data.reduce((sum,x)=>sum+x[1],0))
+		.attr('x',550)
+		.attr('y',80)
+		.attr('fill', '#546E7A')
+        .style("font-size", "18px")
+        .style('font-family', 'Arial')
+	
     var colorise = d3.scaleSequential().domain([270,-50])
         .interpolator(d3.interpolateInferno);
 
@@ -862,7 +934,6 @@ function traf_plot() {
 
         g.selectAll("line")
             .attr("stroke", "#90A4AE")
-
 
         g.selectAll("text")
             .attr("fill", "#90A4AE")
@@ -920,6 +991,9 @@ function traf_plot() {
             return month_name[d[0] % 12] + ' ' + (10 + parseInt(d[0] / 12))
         })
 
+	
+	
+	
 
     var bars = traf_svg.selectAll("bar")
         .data(month_data).enter()
@@ -948,7 +1022,15 @@ function traf_plot() {
         .on('mouseover', traf_mouseover)
         .on('mouseout', traf_mouseout)
         .on('click', traf_click)
+		.on("mousemove", (d)=>{
+			tooltip
+			.text(d[1])
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
+		
 	
+		
 
 
     ///*
@@ -1027,6 +1109,7 @@ function traf_plot() {
 
 
     function traf_mouseover() {
+		tooltip.style("visibility", "visible");
         var _id = d3.select(this).attr('id').split('-')[2]
 
 
@@ -1045,7 +1128,7 @@ function traf_plot() {
     }
 
     function traf_mouseout() {
-
+		tooltip.style("visibility", "hidden")
         var _id = d3.select(this).attr('id').split('-')[2]
 
         if (_id == curr_traf) return
@@ -1095,7 +1178,6 @@ function traf_plot() {
     }
 }
 
-
 function raid_plot() {
 
 
@@ -1123,6 +1205,18 @@ function raid_plot() {
         .append("g")
 
     var r_data = Data.raidDist();
+	var tot_r=r_data.reduce((sum,x)=>sum+x.length,0)
+	var tot_c=r_data.reduce((sum,x)=>sum+x.reduce((s,y)=>s+y,0),0)
+
+	raid_tot=raid_scale_svg
+		.append('text')
+		.text('Total raids : '+tot_r+' | Total rescued : '+tot_c)
+		.attr('x',250)
+		.attr('y',200)
+		.attr('fill', '#546E7A')
+        .style("font-size", "18px")
+        .style('font-family', 'Arial')
+
     var cir_data = []
     var line_data = []
     for (var i = 0; i < r_data.length; i++) {
@@ -1408,17 +1502,28 @@ function amount_plot() {
         .attr('font-family', 'Arial')
         .attr('fill', '#B0BEC5')
 
+	amount_tot=amount_svg
+		.append('text')
+		.text('Total : ')
+		.attr('x',50)
+		.attr('y',50)
+		.attr('fill', '#546E7A')
+        .style("font-size", "18px")
+        .style('font-family', 'Arial')
 
+	
 
     var amt = Data.amountDist();
+
+	amount_tot.text('Total : '+amt['income'].reduce((sum,x)=>sum+parseInt(x[0]>0?x[1]:0),0))
+
     var income = amt['income']
     var paramt = amt['paramt']
     var wage = amt['wage']
     var clr = ['#EC407A', '#673AB7', '#2196F3', '#26C6DA']
 
 
-
-    var inc_dict = []
+	var inc_dict = []
     for (var i = 0; i < 160; i++) {
         inc_dict.push([Math.floor(i / 4), (i % 4) + 1, 0, Math.floor(i / 4) * 5000])
     }
@@ -1507,6 +1612,7 @@ function amount_plot() {
         'paramt': [income_list, wage_list],
         'wage': [income_list, paramt_list]
     }
+
     amount_svg.selectAll("btn")
         .data(amt_btn).enter()
         .append("circle")
@@ -1557,6 +1663,14 @@ function amount_plot() {
 
         amt_bar.merge(entering)
             .on('click', amt_bar_click)
+			.on("mousemove", (d)=>{
+				tooltip
+				.text(d[4]+' / total : '+d[5])
+				.style("top", (event.pageY-10)+"px")
+				.style("left",(event.pageX+10)+"px")
+			})
+			.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+			.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
             .transition().duration(500)
             .attr("fill", function(d) {
                 return clr[d[1] - 1]
@@ -1579,13 +1693,13 @@ function amount_plot() {
             .attr("height", function(d) {
                 return d[2] * scale
             })
+			
 
     }
 
 
     function amt_btn_click() {
         var _id = d3.select(this).attr('id').split('-')[2]
-        console.log(_id)
         d3.select('#amount-key').attr('src', 'assets/' + _id + '-key.png')
         subplot_amount(income_list.map((x, i) => [x[0], i * 5000]),
             amount1_sub_svg, "Parent's annual income")
@@ -1594,6 +1708,8 @@ function amount_plot() {
         subplot_amount(wage_list.map((x, i) => [x[0], i * 50]),
             amount3_sub_svg, "Child's wage")
 
+		amount_tot.text('Total : '+
+			amt[_id].reduce((sum,x)=>sum+parseInt(x[0]>0?x[1]:0),0))
         //==
 
         var max = amt_h_dict[_id].reduce((max, x) => max > x[2] ? max : x[2], 0)
@@ -1843,7 +1959,6 @@ function school_plot() {
         .attr('opacity', 0.5)
 }
 
-
 function indust_plot() {
     indst_svg = d3.select("#indst-board")
         .append("svg")
@@ -1852,10 +1967,19 @@ function indust_plot() {
         .style('background-color', 'white')
         .append('g')
 
-
+	
 
 
     var ind_cat = Data.industryDist()
+	indst_tot=indst_svg
+		.append('text')
+		.text('Total : '+ind_cat.reduce((sum,x)=>sum+x.reduce((s,y)=>s+y[0],0),0))
+		.attr('x',520)
+		.attr('y',450)
+		.attr('fill', '#546E7A')
+        .style("font-size", "18px")
+        .style('font-family', 'Arial')
+
     var ind = []
     var ind_clrs = ['#FF9800', '#CDDC39', '#AB47BC', '#29B6F6', '#B0BEC5']
 
@@ -1891,6 +2015,14 @@ function indust_plot() {
             return d[0] / 8
         })
         .on('click', ind_bar_click)
+		.on("mousemove", (d)=>{
+				tooltip
+				.text(d[0])
+				.style("top", (event.pageY-10)+"px")
+				.style("left",(event.pageX+10)+"px")
+		})
+		.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+		.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
 
 
     indst_svg.selectAll('text')
@@ -1947,12 +2079,10 @@ function indust_plot() {
     }
 
 
-
     indst_svg.append('g')
         .attr('class', 'x axis')
         .attr("transform", "translate(150, 70)")
         .call(customXAxis);
-
 
 
     function ind_bar_click() {
@@ -2906,7 +3036,7 @@ function subplot_indst(src, val, board) {
         .attr('text-anchor', 'middle')
         .style('font-family', 'Arial')
         .attr('fill', '#607D8B')
-        .text('Industry distribution');
+        .text('Industry distribution ('+sum+')');
 
 
 
@@ -2935,6 +3065,14 @@ function subplot_indst(src, val, board) {
         .append("rect");
 
     sub_indst_bars.merge(entering)
+		.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+		.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
+		.on("mousemove", (d)=>{
+			tooltip
+			.text(Math.round(d*max/200))
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
         .transition().duration(500)
         .attr("fill", "#90CAF9")
         .attr('rx', 0.5)
@@ -2956,6 +3094,14 @@ function subplot_indst(src, val, board) {
         .append("circle");
 
     sub_indst_circle.merge(entering_c)
+		.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+		.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
+		.on("mousemove", (d)=>{
+			tooltip
+			.text(Math.round(d*max/200))
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
         .transition().duration(500)
         .attr("fill", "#B3E5FC")
         .attr('r', 5)
@@ -3111,6 +3257,7 @@ function subplot_age(src, val, board) {
     var sum = num_data.reduce((sum, i) => sum + i, 0)
     var max = num_data.reduce((max, i) => max > i ? max : i, 0)
 
+	
     if (data.length != 0)
         num_data = num_data.map(x => 160 * x / max)
 
@@ -3167,7 +3314,7 @@ function subplot_age(src, val, board) {
         .style('font-family', 'Arial')
         .attr('text-anchor', 'middle')
         .attr('fill', '#607D8B')
-        .text('Age distribution');
+        .text('Age distribution ('+sum+')');
 
 
     board.selectAll('txt')
@@ -3194,6 +3341,14 @@ function subplot_age(src, val, board) {
         .append("rect");
 
     sub_age_bars.merge(entering)
+		.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+		.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
+		.on("mousemove", (d)=>{
+			tooltip
+			.text(Math.round(d*max/160))
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
         .transition().duration(500)
         .attr("fill", "#FFAB91")
         .attr('rx', 1)
@@ -3472,6 +3627,7 @@ function subplot_amount(data, board, title = "", filter = []) {
 
 
     var max = data.reduce((max, i) => max > i[0] ? max : i[0], 0)
+	var sum = data.reduce((sum, i) => sum+i[0], 0)
     var scale = 0
     if (max != 0) scale = 150 / max
     var bar_data = data.map(x => x[0] * scale)
@@ -3563,7 +3719,6 @@ function subplot_amount(data, board, title = "", filter = []) {
         }
         var ft = filter[1];
         var fr = filter[2];
-        console.log(filter)
         fr = (fr / 1000).toString() + 'k - ' + ((parseInt(fr) + f_dict[ft]) / 1000).toString() + 'k'
         f_text = 'of ' + f_t_dict[ft] + ' : ' + fr
     }
@@ -3594,7 +3749,7 @@ function subplot_amount(data, board, title = "", filter = []) {
         .style('font-family', 'Arial')
         .attr('text-anchor', 'middle')
         .attr('fill', '#90A4AE')
-        .text(f_text);
+        .text(f_text+' ( '+sum+' )');
 
 
     var amt_bar = board.selectAll('rect')
@@ -3605,6 +3760,14 @@ function subplot_amount(data, board, title = "", filter = []) {
         .append("rect");
 
     amt_bar.merge(entering)
+		.on('mouseover',()=>{tooltip.style("visibility", "visible")})
+		.on('mouseout',()=>{tooltip.style("visibility", "hidden")})
+		.on("mousemove", (d)=>{
+			tooltip
+			.text(Math.round(d*max/150))
+			.style("top", (event.pageY-10)+"px")
+			.style("left",(event.pageX+10)+"px")
+		})
         .transition().duration(500)
         .attr("fill", '#81C784')
         .attr("x", function(d, i) {
@@ -3620,6 +3783,7 @@ function subplot_amount(data, board, title = "", filter = []) {
             return d
         })
         .attr('opacity', 0.5)
+		
 
 }
 
@@ -3683,7 +3847,7 @@ function subplot_indst_loc(indst) {
         .attr('fill', '#b0958d')
         .attr('opacity', 0)
         .text(function(d) {
-            return d[0].slice(0, -7)
+            return d[0].slice(0, -7)+' ( '+d[1]+' )'
         })
         .transition().duration(500)
         .attr('opacity', 1)
@@ -3704,7 +3868,7 @@ function subplot_indst_loc(indst) {
         .attr('fill', '#78909e')
         .attr('opacity', 0)
         .text(function(d) {
-            return d[0].slice(0, -7)
+            return d[0].slice(0, -7)+' ( '+d[1]+' )'
         })
         .transition().duration(500)
         .attr('opacity', 1)
@@ -4001,8 +4165,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#traf-sec').style('display', 'block')
-d3.select('#nav-traf').classed('nav-btn-sel', true)
+d3.select('#map-sec').style('display', 'block')
+d3.select('#nav-map').classed('nav-btn-sel', true)
 </script>
 
 </html>

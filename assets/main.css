@@ -132,5 +132,14 @@ body,html{
 	right: 50px;
 	bottom: 75px;
 	opacity: 0.5;
+	transform: rotateZ(-90deg);
 
+}
+.tooltip{
+	background: #ffffff;
+	padding:5px;
+	border: 1px #90A4AE solid;
+	border-radius: 5px;
+	font-family: sans-serif;
+	color: #555555
 }

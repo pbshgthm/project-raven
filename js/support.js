@@ -15,6 +15,17 @@ var Data = {
     initData: function(data) {
         this.raw=data;
     },
+
+	totalPoints: function(plot){
+		switch (plot) {
+			case 'state':
+				
+				break;
+		
+			default:
+				break;
+		}
+	},
     toGeojson: function(crds, typ = "Point") {
         var geo = {};
         geo['type'] = 'FeatureCollection';
@@ -64,7 +75,6 @@ var Data = {
         }
         return this.toGeojson(crds, "LineString")
     },
-
 
     filterPoints: function(age, time, indst, loc) {
         var indst_r_list = ["Garment", "Hotel/Dhaba", "Footwear", "Handicraft", "Jute/Plastic/Rexin/Cloth Bags",
@@ -133,24 +143,35 @@ var Data = {
     stateStats: function(state) {
         var nat_state = {}
         var fac_state = {}
+
+		var tot={
+			'from':0,
+			'to':0
+		}
         for (var i = 0; i < this.raw.length; i++) {
             var n = this.raw[i]['native_v_area'].split(',').slice(-2, -1)[0]
             var r = this.raw[i]['raid_v_area'].split(',').slice(-2, -1)[0]
 
             if (n != "") n = n.substr(1)
             if (r != "") r = r.substr(1)
-
-            if (state == n && r != "") {
-                if (r in fac_state)
-                    fac_state[r] += 1
-                else
-                    fac_state[r] = 1
+			//console.log(i,r,n)
+            if (r != "") {
+				tot['from']+=1
+				if(state == n){
+					if (r in fac_state)
+                    	fac_state[r] += 1
+                	else
+                    	fac_state[r] = 1
+				}
             }
-            if (state == r && n != "") {
-                if (n in nat_state)
-                    nat_state[n] += 1
-                else
-                    nat_state[n] = 1
+            if (n != "") {
+				tot['to']+=1
+				if(state == r){
+					if (n in nat_state)
+                    	nat_state[n] += 1
+                	else
+                   	 	nat_state[n] = 1
+				}
             }
         }
         nat_state = Object.entries(nat_state)
@@ -165,7 +186,8 @@ var Data = {
 
         return {
             'from': nat_state,
-            'to': fac_state
+            'to': fac_state,
+			'tot':tot
         }
     },
 
@@ -418,23 +440,26 @@ var Data = {
                 if (ind > 39) ind = 39;
 
                 var k = ind + '-1';
-                if (k in inc_dict) inc_dict[k] += 1;
-                else inc_dict[k] = 1
+                if (k in inc_dict) inc_dict[k][0] += 1;
+                else inc_dict[k] = [1,0]
 
 
                 var k = ind + '-2';
-                if (k in inc_dict) inc_dict[k] += 1;
-                else inc_dict[k] = 1
+                if (k in inc_dict) inc_dict[k][0] += 1;
+                else inc_dict[k] = [1,0]
 
 
                 var k = ind + '-3';
-                if (k in inc_dict) inc_dict[k] += 1;
-                else inc_dict[k] = 1
+                if (k in inc_dict) inc_dict[k][0] += 1;
+                else inc_dict[k] = [1,0]
 
 
                 var k = ind + '-4';
-                if (k in inc_dict) inc_dict[k] += 1;
-                else inc_dict[k] = 1
+                if (k in inc_dict){
+					inc_dict[k][0] += 1;
+					inc_dict[k][1] += 1;
+				}
+                else inc_dict[k] = [1,1]
 
             }
 
@@ -467,47 +492,53 @@ var Data = {
                 if (paypar == "loan") {
                     parc['loan'] += 1
                     var k = ind + '-1';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-3';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-4';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict){
+						par_dict[k][0] += 1;
+						par_dict[k][1] += 1;
+					}
+                    else par_dict[k] = [1,1]
                 } else if (paypar == "advance") {
                     parc['advance'] += 1
                     var k = ind + '-1';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-3';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict){
+						par_dict[k][0] += 1;
+						par_dict[k][1] += 1;
+					}
+                    else par_dict[k] = [1,1]
                 } else if (paypar == "loan&advance") {
                     parc['loan&advance'] += 1
                     var k = ind + '-1';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict) par_dict[k][0] += 1;
+                    else par_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in par_dict) par_dict[k] += 1;
-                    else par_dict[k] = 1
+                    if (k in par_dict){
+						par_dict[k][0] += 1;
+						par_dict[k][1] += 1;
+					}
+                    else par_dict[k] = [1,1]
 
                 }
-
-
-
 
             }
 
@@ -533,47 +564,59 @@ var Data = {
 
                 if (wtype == "m") {
                     var k = ind + '-1';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-3';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-4';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict){
+						wag_dict[k][0] += 1;
+						wag_dict[k][1] += 1
+					}
+                    else wag_dict[k] = [1,1]
                 }
                 if (wtype == "w") {
                     var k = ind + '-1';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-3';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict){
+						wag_dict[k][0] += 1;
+						wag_dict[k][1] += 1
+					}
+                    else wag_dict[k] = [1,1]
                 }
                 if (wtype == "d") {
                     var k = ind + '-1';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict) wag_dict[k][0] += 1;
+                    else wag_dict[k] = [1,0]
 
                     var k = ind + '-2';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict){
+						wag_dict[k][0] += 1;
+						wag_dict[k][1] += 1
+					}
+                    else wag_dict[k] = [1,1]
                 }
                 if (wtype == "o") {
                     var k = ind + '-1';
-                    if (k in wag_dict) wag_dict[k] += 1;
-                    else wag_dict[k] = 1
+                    if (k in wag_dict){
+						wag_dict[k][0] += 1;
+						wag_dict[k][1] += 1
+					}
+                    else wag_dict[k] = [1,1]
                 }
 
             }
@@ -582,11 +625,6 @@ var Data = {
 
         }
 
-
-        lala = 0;
-        for (i in par_dict) {
-            lala += par_dict[i]
-        }
 
 
         income = Object.entries(income)
@@ -609,23 +647,27 @@ var Data = {
             return a[0] - b[0]
         })
 
-
+		
         inc_dict = Object.entries(inc_dict)
-        inc_dict = inc_dict.map(x => [parseInt(x[0].split('-')[0]),
+        inc_dict = inc_dict.map(x => [
+			parseInt(x[0].split('-')[0]),
             parseInt(x[0].split('-')[1]),
-            x[1],
-            parseInt(x[0].split('-')[0]) * 5000
+            x[1][0],
+            parseInt(x[0].split('-')[0]) * 5000,
+			x[1][1],
+			(income.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 5000))?income.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 5000))[1]:0)
         ])
         inc_dict = inc_dict.sort(function(a, b) {
             return a[0] - b[0]
         })
 
-
-        par_dict = Object.entries(par_dict)
+		par_dict = Object.entries(par_dict)
         par_dict = par_dict.map(x => [parseInt(x[0].split('-')[0]),
             parseInt(x[0].split('-')[1]),
-            x[1],
-            parseInt(x[0].split('-')[0]) * 1000
+            x[1][0],
+            parseInt(x[0].split('-')[0]) * 1000,
+			x[1][1],
+			(paramt.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 1000))?paramt.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 1000))[1]:0)
         ])
         par_dict = par_dict.sort(function(a, b) {
             return a[0] - b[0]
@@ -635,16 +677,18 @@ var Data = {
         wag_dict = Object.entries(wag_dict)
         wag_dict = wag_dict.map(x => [parseInt(x[0].split('-')[0]),
             parseInt(x[0].split('-')[1]),
-            x[1],
-            parseInt(x[0].split('-')[0]) * 50
+            x[1][0],
+            parseInt(x[0].split('-')[0]) * 50,
+			x[1][1],
+			(wage.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 50))?wage.find(y=>y[0]==(parseInt(x[0].split('-')[0]) * 50))[1]:0)
         ])
         wag_dict = wag_dict.sort(function(a, b) {
             return a[0] - b[0]
         })
-
+		
 
         return {
-            'income': income,
+			'income': income,
             'paramt': paramt,
             'wage': wage,
             'income_h': inc_dict,
@@ -796,7 +840,7 @@ var Data = {
 
             if (filter == "t_date") {
                 f = f.split("/")
-                f = (f[2] - 2010) * 6 + parseInt(parseInt(f[1]) / 2)
+                f = (f[2] - 2010) * 12 + parseInt(parseInt(f[1]) / 1)
             }
 
             if (filter.split('_')[2] == "area") {
