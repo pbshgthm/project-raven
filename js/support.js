@@ -186,7 +186,7 @@ var Data = {
         var traf_m = {}
         for (var i = 0; i < this.raw.length; i++) {
             var m = this.raw[i]['t_date'].split('/')
-            m = (m[2] - 2010) * 6 + parseInt(parseInt(m[1]) / 2)
+            m = (m[2] - 2010) * 12 + parseInt(parseInt(m[1]) / 1)
             if (isNaN(m)) continue
             //if(m<0)continue
             if (m in traf_m) traf_m[m] += 1

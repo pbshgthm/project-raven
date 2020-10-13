@@ -12,7 +12,7 @@
     <script type="text/javascript" src="js/d3-chromatic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="assets/main.css">
     <title>Project Raven</title>
-</head>
+	</head>
 
 <body>
     <div id="nav-pane">
@@ -28,8 +28,9 @@
             -->
             <div class="nav-btn" id="nav-ind">Industry Distribution</div>
         </div>
-    </div>
-    <div class="page-sec" id="map-sec" style="display: block;">
+	</div>
+	<!--EDIT DISPLAY TO BLOCK-->
+    <div class="page-sec" id="map-sec" style="display: none;">
         <img id="map-scale" src="assets/map-native.png">
         <div id="native-map" class="viz-board"></div>
         <div class="viz-panel" id="map-controls"></div>
@@ -817,39 +818,36 @@ function age_plot() {
 function traf_plot() {
 
 
-    var month_name = ['Jan-Feb', 'Mar-Apr', 'May-Jun', 'Jul-Aug', 'Sep-Oct', 'Nov-Dec']
+    var month_name = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+	
+		
     traf_svg = d3.select("#traf-board")
         .append("svg")
         .attr("width", board_width)
         .attr("height", board_height)
         .style('background-color', 'white')
-    //.call(d3.zoom().on("zoom", function() {
-    //    traf_svg.attr("transform", d3.event.transform)
-    //}))
-    //.append("g")
+    	.call(d3.zoom().on("zoom", function() {
+			var trans=d3.event.transform.x
+			if(trans>56||trans<-700)return;
 
+			traf_svg.attr("transform", 'translate('+trans+',0)')
+			traf_svg_scale_value.attr("transform", 'translate('+(50-trans)+',148)')
+			traf_svg_scale_text.attr("y", 20-trans)
+			traf_svg_scale_bg.attr("x", -25-trans)
+   		}))
+    	.append("g")
 
-    traf_svg
-        .append('text')
-        .text('No. of children →')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', -270)
-        .attr('y', 50)
-        .attr('font-size', '13px')
-        .attr('font-family', 'Arial')
-        .attr('fill', '#B0BEC5')
-
-
+	
 
     var month_data = Data.traffickDate();
-    var colorise = d3.scaleSequential().domain([-50, 270])
+    var colorise = d3.scaleSequential().domain([270,-50])
         .interpolator(d3.interpolateInferno);
 
 
     var scale = d3.scaleLinear()
-        .domain([-250, 250])
-        .range([500, 0]);
+        .domain([0, 125])
+        .range([250, 0]);
 
     var y_axis = d3.axisLeft()
         .scale(scale)
@@ -875,14 +873,6 @@ function traf_plot() {
 
 
 
-    traf_svg.append('g')
-        .attr('class', 'y axis')
-        .attr("transform", "translate(30, 50)")
-        .call(customYAxis);
-
-
-
-
     var traf_box = traf_svg.selectAll("traf-box")
         .data(month_data).enter()
         .append("rect")
@@ -902,8 +892,9 @@ function traf_plot() {
         .attr('ry', 8)
         .attr('opacity', 0.9)
         .attr('display', 'none')
-        .attr("y", 285)
+        .attr("y", 425)
         .attr("height", 30)
+		
 
 
 
@@ -917,7 +908,7 @@ function traf_plot() {
         .attr("x", function(d, i) {
             return 0 + d[0] * 13 + 6.5
         })
-        .attr("y", 295)
+        .attr("y", 435)
         .attr("dy", "10px")
         .style("font-size", "15px")
         .style('font-family', 'Arial')
@@ -926,7 +917,7 @@ function traf_plot() {
         })
         .attr('opacity', 0)
         .text(function(d) {
-            return month_name[d[0] % 6] + ' ' + (10 + parseInt(d[0] / 6))
+            return month_name[d[0] % 12] + ' ' + (10 + parseInt(d[0] / 12))
         })
 
 
@@ -937,7 +928,7 @@ function traf_plot() {
             return 'traf-bar-' + i
         })
         .attr("fill", function(d) {
-            return colorise(d[1])
+            return colorise(d[1]*2)
         })
         .attr("x", function(d, i) {
             return 0 + d[0] * 13
@@ -949,14 +940,15 @@ function traf_plot() {
         .attr('ry', 4)
         .attr('opacity', 0.5)
         .attr("y", function(d, i) {
-            return 300 - d[1];
+            return 400 - d[1]*2;
         })
         .attr("height", function(d, i) {
-            return d[1] * 2;
+            return d[1]*2;
         })
         .on('mouseover', traf_mouseover)
         .on('mouseout', traf_mouseout)
         .on('click', traf_click)
+	
 
 
     ///*
@@ -964,8 +956,8 @@ function traf_plot() {
         .append('line')
         .attr("x1", 000)
         .attr("x2", 800)
-        .attr("y1", 300)
-        .attr("y2", 300)
+        .attr("y1", 405)
+        .attr("y2", 405)
         .style("stroke", "white")
         .attr('opacity', 0.5)
         .style("stroke-linecap", "round")
@@ -982,10 +974,10 @@ function traf_plot() {
         .attr("width", 2)
         .attr('fill', '#607D8B')
         .attr("y", function(d, i) {
-            return 300 - 5
+            return 400 
         })
         .attr("height", function(d, i) {
-            return (d[0] % 6 == 0) ? 10 : 0
+            return (d[0] % 12 == 0) ? 10 : 0
         })
 
 
@@ -996,17 +988,42 @@ function traf_plot() {
         .attr("x", function(d, i) {
             return 0 + d[0] * 13 + 13
         })
-        .attr("y", 295)
+        .attr("y", 400)
         .attr("dy", "10px")
         .style("font-size", function(d, i) {
-            return (d[0] % 6 == 2) ? "12px" : '0px'
+            return (d[0] % 12 == 6) ? "12px" : '0px'
         })
         .style('font-family', 'Arial')
         .attr("fill", '#455A64')
         .text(function(d) {
-            return (2010 + parseInt(d[0] / 6))
+            return (2010 + parseInt(d[0] / 12))
         })
 
+
+	
+	traf_svg_scale_bg=traf_svg
+		.append('rect')
+		.attr('width',80)
+		.attr('height',300)
+		.attr('fill','white')
+		.attr('x',-25)
+		.attr('y',150)
+
+	traf_svg_scale_text=traf_svg
+        .append('text')
+        .text('No. of children →')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -370)
+        .attr('y', 20)
+        .attr('font-size', '13px')
+        .attr('font-family', 'Arial')
+        .attr('fill', '#B0BEC5')
+
+	traf_svg_scale_value=traf_svg
+		.append('g')
+        .attr('class', 'y axis')
+        .attr("transform", "translate(50, 148)")
+        .call(customYAxis)
 
 
     function traf_mouseover() {
@@ -1305,7 +1322,7 @@ function raid_plot() {
         var _id = d3.select(this).attr('id').split('-')[2]
         if (_id == curr_raid_month) return;
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#EF6C00')
+            .attr('fill', 'red')
             .attr('opacity', 0.8)
 
         d3.select('#raid-months-' + _id)
@@ -1335,7 +1352,7 @@ function raid_plot() {
         curr_raid_month = _id
 
         d3.selectAll('.raid-dots-' + _id)
-            .attr('fill', '#EF6C00')
+            .attr('fill', 'red')
             .attr('opacity', 0.8)
 
         d3.select('#raid-months-' + _id)
@@ -3984,8 +4001,8 @@ d3.selectAll('.nav-btn').on('click', function() {
     d3.selectAll('.nav-btn').classed('nav-btn-sel', false)
     d3.select(this).classed('nav-btn-sel', true)
 })
-d3.select('#map-sec').style('display', 'block')
-d3.select('#nav-map').classed('nav-btn-sel', true)
+d3.select('#traf-sec').style('display', 'block')
+d3.select('#nav-traf').classed('nav-btn-sel', true)
 </script>
 
 </html>
